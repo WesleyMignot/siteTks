@@ -13,6 +13,7 @@ mkdir -p "$OUT"
 CLIPES="
 hero-720 0 38.2 720 30
 hero-540 0 38.2 540 31
+janela-720 5.8 4 720 30
 boiler 5.8 3 360 30
 filme 9.0 2.2 360 30
 grade 11.0 2.5 360 30

@@ -2,14 +2,53 @@
 import { escolherHero, formatarContagem } from './util.js';
 import { criarMorcegoSvg } from './morcego.js';
 
-/** Hero: escolhe a versão do reel e aplica o parallax de saída. */
+/** Divide o texto de `el` em <span class="palavra"> (para revelar palavra por palavra). */
+export function dividirPalavras(el) {
+  const palavras = el.textContent.trim().split(/\s+/);
+  el.textContent = '';
+  palavras.forEach((p, i) => {
+    const span = document.createElement('span');
+    span.className = 'palavra';
+    span.textContent = p;
+    el.append(span, i < palavras.length - 1 ? ' ' : '');
+  });
+  return el.querySelectorAll('.palavra');
+}
+
+/**
+ * Hero: o card do Boiler Baile (.hero__janela recortada por clip-path no retângulo de .hero__card-ref)
+ * cresce com o scroll até cobrir a tela e vira a abertura da Carreira.
+ */
 export function iniciarHero({ gsap, menosMovimento }) {
-  if (menosMovimento) return; // movimento reduzido: só o pôster, sem baixar o vídeo
+  if (menosMovimento) return; // reduzido/estático: card pequeno com pôster, frase na própria Carreira
   document.querySelector('.hero__video').src = escolherHero(innerWidth);
-  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } })
-    .fromTo('.hero__video', { scale: 1 }, { scale: 1.12, ease: 'none' }, 0)
-    .fromTo('.hero__escuro', { opacity: 0 }, { opacity: 0.5, ease: 'none' }, 0)
-    .to('.hero__logo', { yPercent: -30, ease: 'none' }, 0);
+  document.documentElement.classList.add('anima-hero');
+
+  const palco = document.querySelector('.hero__palco');
+  const ref = document.querySelector('.hero__card-ref');
+  // Medidas relativas ao palco (valem mesmo se o refresh acontecer com a página rolada).
+  const caixa = () => {
+    const p = palco.getBoundingClientRect(), r = ref.getBoundingClientRect();
+    return { t: r.top - p.top, l: r.left - p.left, b: p.bottom - r.bottom, d: p.right - r.right, cx: r.left - p.left + r.width / 2, cy: r.top - p.top + r.height / 2 };
+  };
+  const recorte = () => { const c = caixa(); return `inset(${c.t}px ${c.d}px ${c.b}px ${c.l}px round 10px)`; };
+  const origem = () => { const c = caixa(); return `${c.cx}px ${c.cy}px`; };
+  const palavras = dividirPalavras(document.querySelector('.hero__frase'));
+
+  gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
+  })
+    .fromTo('.hero__janela',
+      { clipPath: recorte, rotation: -4, transformOrigin: origem },
+      { clipPath: 'inset(0px 0px 0px 0px round 0px)', rotation: 0, duration: 0.58, ease: 'power2.inOut' }, 0.12)
+    .to('.hero__etiqueta', { opacity: 0, duration: 0.08 }, 0.12)
+    .to('.hero__logo', { scale: 1.35, opacity: 0, duration: 0.45 }, 0.12)
+    .to(['.hero__topo', '.hero__base', '#hero .letreiro', '#hero .estrela'], { opacity: 0, y: 40, duration: 0.35 }, 0.12)
+    .to('.hero__escuro', { opacity: 0.6, duration: 0.5 }, 0.12)
+    .to('.hero__abertura', { opacity: 1, duration: 0.1 }, 0.7)
+    .fromTo(palavras, { opacity: 0.15 }, { opacity: 1, stagger: 0.015, duration: 0.12 }, 0.74)
+    .set({}, {}, 1); // timeline com duração 1 = progresso do scroll
 }
 
 /** Letreiros infinitos (.letreiro__trilho com o conteúdo duplicado). Aceleram com o scroll. */
@@ -48,15 +87,7 @@ export function iniciarEstrelas({ gsap, menosMovimento }) {
 export function iniciarReveals({ gsap, menosMovimento }) {
   if (menosMovimento) return;
   document.querySelectorAll('[data-revelar]').forEach(el => {
-    const palavras = el.textContent.trim().split(/\s+/);
-    el.textContent = '';
-    palavras.forEach((p, i) => {
-      const span = document.createElement('span');
-      span.className = 'palavra';
-      span.textContent = p;
-      el.append(span, i < palavras.length - 1 ? ' ' : '');
-    });
-    gsap.fromTo(el.querySelectorAll('.palavra'), { opacity: 0.15 }, {
+    gsap.fromTo(dividirPalavras(el), { opacity: 0.15 }, {
       opacity: 1, stagger: 0.05, ease: 'none',
       scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 40%', scrub: true },
     });

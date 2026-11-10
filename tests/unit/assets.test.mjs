@@ -32,3 +32,8 @@ test('og e pdf', () => {
   assert.ok(tam('assets/og.jpg') <= 300_000);
   assert.ok(tam('assets/presskit.pdf') > 1_000_000);
 });
+
+test('janela do hero', () => {
+  assert.ok(tam('assets/video/janela-720.mp4') <= 800_000);
+  assert.ok(tam('assets/video/janela-720.jpg') > 0);
+});
