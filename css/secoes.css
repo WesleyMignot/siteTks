@@ -252,23 +252,20 @@
 }
 .lineup__palcos small { font-size: 1em; color: var(--creme-60); font-weight: 500; }
 
-/* ---------- assinatura (transição para o Contrate) ---------- */
-.assinatura { position: relative; height: 200vh; }
-.assinatura__palco { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; place-items: center; }
-.assinatura__svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
-.assinatura__traco {
-  fill: none; stroke: var(--vermelho); stroke-width: 14; stroke-linecap: round;
-  stroke-dasharray: 1; stroke-dashoffset: 1;
+/* ---------- assinatura (morcegos formam o "Brunin": js/assinatura.js) ---------- */
+.assinatura { position: relative; }
+.assinatura__palco {
+  position: relative; height: 100vh; height: 100svh; min-height: 480px;
+  overflow: hidden; display: grid; place-items: center;
 }
-.assinatura__nome { position: relative; z-index: 2; font-size: clamp(72px, 15vw, 230px); line-height: 1; color: currentColor; font-weight: 400; }
-.assinatura__cortina { position: absolute; inset: 0; z-index: 3; background: var(--vermelho); transform: scaleY(0); transform-origin: bottom; }
-.menos-movimento .assinatura { height: auto; }
-.menos-movimento .assinatura__palco { position: relative; }
-.menos-movimento .assinatura__traco { stroke-dashoffset: 0; }
-.assinatura__svg--retrato { display: none; }
-@media (orientation: portrait) and (max-width: 820px) {
-  .assinatura__svg--paisagem { display: none; }
-  .assinatura__svg--retrato { display: block; }
+.anima-assinatura .assinatura { height: 300vh; }
+.anima-assinatura .assinatura__palco { position: sticky; top: 0; }
+.assinatura__tela { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* sem JS (ou sem canvas) o nome aparece como texto; com o canvas, fica só para o leitor de tela */
+.assinatura__nome { font-size: clamp(72px, 15vw, 230px); line-height: 1; font-weight: 400; }
+.assinatura--tela .assinatura__nome {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
 }
 
 /* ---------- contrate ---------- */

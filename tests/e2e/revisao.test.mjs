@@ -111,16 +111,3 @@ test('números: o leitor de tela ouve os valores finais antes do scroll', async 
   assert.ok(!/\b0 mil\+/.test(tudo), tudo);
 });
 
-// #13 — rabisco da assinatura visível no celular em retrato
-test('celular em retrato: o rabisco da assinatura fica dentro da tela', async () => {
-  const { page } = await abrir(amb, { largura: 390, altura: 844 });
-  await rolarPara(page, '#assinatura', 600);
-  const fracao = await page.evaluate(() => {
-    const p = [...document.querySelectorAll('.assinatura__traco')].find(e => e.closest('svg').getBoundingClientRect().width > 0);
-    const r = p.getBoundingClientRect();
-    const w = Math.max(0, Math.min(r.right, innerWidth) - Math.max(r.left, 0));
-    const h = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
-    return (w * h) / (r.width * r.height);
-  });
-  assert.ok(fracao > 0.85, String(fracao));
-});

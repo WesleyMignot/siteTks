@@ -36,13 +36,44 @@ test('cartaz: 7 nacionais e 13 do underground, separados por morcegos', async ()
   assert.equal(await page.$('#lineup .letreiro'), null);
 });
 
-test('assinatura desenha o traço com o scroll', async () => {
+const escuros = p => p.$eval('.assinatura__tela', c => {
+  const g = c.getContext('2d'), w = c.width, h = c.height;
+  const d = g.getImageData(w * 0.3, h * 0.4, w * 0.4, h * 0.25).data; let n = 0;
+  for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200 && d[i] < 60) n++; return n;
+});
+test('assinatura: no fim, o "Brunin" está formado no canvas', async () => {
   const { page } = await abrir(amb);
-  const off = () => page.$eval('.assinatura__traco', p => parseFloat(getComputedStyle(p).strokeDashoffset));
+  await rolarPara(page, '#assinatura', 3 * 900 - 900);
+  await new Promise(r => setTimeout(r, 400));
+  assert.ok(await escuros(page) > 5000);
+});
+test('assinatura: no começo, as letras ainda não existem', async () => {
+  const { page } = await abrir(amb);
   await rolarPara(page, '#assinatura', 10);
-  const a = await off();
-  await rolarPara(page, '#assinatura', 900);
-  assert.ok(await off() < a);
+  await new Promise(r => setTimeout(r, 400));
+  assert.ok(await escuros(page) < 1500);
+});
+test('assinatura: girar a tela no fim mantém o texto formado', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#assinatura', 3 * 900 - 900);
+  await page.setViewport({ width: 900, height: 1200 });
+  await new Promise(r => setTimeout(r, 900));
+  await rolarPara(page, '#assinatura', 3 * 1200 - 1200);
+  await new Promise(r => setTimeout(r, 400));
+  assert.ok(await escuros(page) > 3000);
+});
+test('assinatura no modo reduzido: estado final sem scroll', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  await rolarPara(page, '#assinatura');
+  assert.ok(await escuros(page) > 5000);
+});
+test('assinatura tem nome para leitor de tela', async () => {
+  const { page } = await abrir(amb);
+  assert.equal(await page.$eval('#assinatura', s => document.getElementById(s.getAttribute('aria-labelledby')).textContent.trim()), 'Brunin');
+});
+test('assinatura sem JS: o nome aparece como texto', async () => {
+  const { page } = await abrir(amb, { semJs: true, esperarPronto: false });
+  assert.ok(await page.$eval('#t-assinatura', h => h.getBoundingClientRect().width > 200));
 });
 
 test('contrate: contatos exatos e PDF disponível', async () => {

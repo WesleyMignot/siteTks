@@ -6,8 +6,9 @@ import { observarVideos } from './videos.js';
 import { iniciarSets } from './sets.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
-  iniciarProducoes, iniciarAssinatura, iniciarDivisores, iniciarCartaz,
+  iniciarProducoes, iniciarDivisores, iniciarCartaz,
 } from './animacoes.js';
+import { iniciarAssinatura } from './assinatura.js';
 
 const CELULAR = '(max-width: 820px)';
 const raiz = document.documentElement;
