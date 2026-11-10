@@ -37,6 +37,8 @@ bash tools/cortar-video.sh     # clipes do reel (precisa de ffmpeg)
 
 ## Publicar
 
+**Antes de publicar (obrigatório):** no `<head>` do `index.html`, troque `assets/og.jpg` pelo endereço completo (ex.: `https://SEU-DOMINIO/assets/og.jpg`) em `og:image` e `twitter:image`, e acrescente `<meta property="og:url" content="https://SEU-DOMINIO/">`. WhatsApp, Instagram e X não montam a prévia do link com caminho relativo.
+
 O site é estático. Publique a pasta **sem** `node_modules/`, `tests/`, `docs/`, `tools/` e `.superpowers/`.
 
 - **Netlify Drop:** arraste a pasta preparada em https://app.netlify.com/drop.
