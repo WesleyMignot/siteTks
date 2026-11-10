@@ -1,5 +1,6 @@
 // Animações das seções (hero, letreiros, estrelas...). Cada função recebe o ctx de main.js.
 import { escolherHero, formatarContagem } from './util.js';
+import { criarMorcegoSvg } from './morcego.js';
 
 /** Hero: escolhe a versão do reel e aplica o parallax de saída. */
 export function iniciarHero({ gsap, menosMovimento }) {
@@ -173,4 +174,13 @@ export function iniciarAssinatura({ gsap, menosMovimento }) {
   })
     .fromTo('.assinatura__traco', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7 })
     .fromTo('.assinatura__cortina', { scaleY: 0 }, { scaleY: 1, duration: 0.3 });
+}
+
+/** Troca o ✦ de cada .div-morcego pelo morcego (o ✦ fica como fallback sem JS). */
+export function iniciarDivisores() {
+  document.querySelectorAll('.div-morcego').forEach((d, i) => {
+    const m = criarMorcegoSvg('morcego morcego--div');
+    m.style.setProperty('--atraso', `${-(i % 7) * 0.13}s`);
+    d.replaceChildren(m);
+  });
 }

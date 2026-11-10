@@ -6,7 +6,7 @@ import { observarVideos } from './videos.js';
 import { iniciarSets } from './sets.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
-  iniciarProducoes, iniciarAssinatura,
+  iniciarProducoes, iniciarAssinatura, iniciarDivisores,
 } from './animacoes.js';
 
 const CELULAR = '(max-width: 820px)';
@@ -42,6 +42,7 @@ function seguro(nome, fn) {
 
 seguro('header', () => iniciarHeader(ctx));
 seguro('hero', () => iniciarHero(ctx));
+seguro('divisores', () => iniciarDivisores()); // antes dos letreiros: muda a largura do trilho
 seguro('letreiros', () => iniciarLetreiros(ctx));
 seguro('reveals', () => iniciarReveals(ctx));
 seguro('contadores', () => iniciarContadores(ctx));
