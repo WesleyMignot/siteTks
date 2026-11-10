@@ -15,13 +15,42 @@ test('4 produções na ordem, com os papéis', async () => {
   assert.ok(papeis[0].includes('Fundador') && papeis.slice(1).every(p => p.includes('Cofundador')));
 });
 
-test('desktop: foto segue o cursor', async () => {
+const opac = (p, i) => p.$$eval('.producao__fundo', (l, i) => +getComputedStyle(l[i]).opacity, i);
+
+test('desktop: a foto da faixa acende no hover', async () => {
   const { page } = await abrir(amb);
-  await rolarPara(page, '#producoes', 200);
-  const linha = (await page.$$('.producao'))[1];
-  await linha.hover();
-  await espera(400);
-  assert.ok(await page.$eval('.producoes__flutuante', e => +getComputedStyle(e).opacity > 0.5 && e.src.includes('boiler')));
+  await rolarPara(page, '#producoes', 300);
+  assert.ok(await opac(page, 1) < 0.3);
+  await (await page.$$('.producao'))[1].hover();
+  await espera(700);
+  assert.ok(await opac(page, 1) > 0.9);
+  assert.equal(await page.$('.producoes__flutuante'), null);
+});
+
+test('celular: a faixa no centro da tela acende', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  await page.evaluate(() => { const l = document.querySelectorAll('.producao')[2]; const r = l.getBoundingClientRect();
+    scrollTo(0, scrollY + r.top + r.height / 2 - innerHeight / 2); });
+  await espera(700);
+  assert.ok(await page.$$eval('.producao', l => l[2].classList.contains('producao--acesa')));
+});
+
+test('celular: abrir uma faixa não desalinha o acender das outras', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  await rolarPara(page, '#producoes');
+  await page.click('.producao:first-child .producao__botao');
+  await espera(300);
+  await page.evaluate(() => { const l = document.querySelectorAll('.producao')[3]; const r = l.getBoundingClientRect();
+    scrollTo(0, scrollY + r.top + r.height / 2 - innerHeight / 2); });
+  await espera(700);
+  assert.deepEqual(await page.$$eval('.producao', l => l.map(e => e.classList.contains('producao--acesa'))),
+    [false, false, false, true]);
+});
+
+test('fotos de fundo das faixas', async () => {
+  const { page } = await abrir(amb);
+  assert.deepEqual(await page.$$eval('.producao__fundo', l => l.map(e => [e.getAttribute('aria-hidden'), e.style.backgroundImage.match(/[\w-]+\.webp/)?.[0]])),
+    [['true', 'foto-21-tks.webp'], ['true', 'boiler-quadro.webp'], ['true', 'foto-57-tks.webp'], ['true', 'foto-39-tks.webp']]);
 });
 
 test('celular: toque abre e fecha', async () => {
