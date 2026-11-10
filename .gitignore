@@ -1,0 +1,8 @@
+# Material bruto (fica só local; o que o site usa está em assets/)
+/*.zip
+/2 REELS.mp4
+/LOGO STICKER PRETO.png
+/BRUNIN TKS PRESS KIT 2026.pdf
+__pycache__/
+.DS_Store
+Thumbs.db
