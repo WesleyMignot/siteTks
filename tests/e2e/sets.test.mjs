@@ -46,3 +46,18 @@ test('destaque do Aquele Tuim', async () => {
   assert.ok(await page.$eval('.destaques', e => [...e.querySelectorAll('a')].some(a =>
     a.href === 'https://www.aqueletuim.com.br/2024/11/os-melhores-dj-sets-de-funk-de-2024.html')));
 });
+
+test('vídeos dos sets: 5 do YouTube + 3 do reel em sets/', async () => {
+  const { page } = await abrir(amb);
+  assert.deepEqual(await page.$$eval('.set__video', l => l.map(v => v.dataset.src)),
+    ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'maos', 'pista', 'cabine'].map(n => `assets/video/sets/${n}.mp4`));
+});
+
+test('clipe que não carrega não quebra a pilha', async () => {
+  const { page, erros } = await abrir(amb, { bloquear: [/sets\/ataque\.mp4/] });
+  await rolarPara(page, '.sets__pilha', 2 * 900 + 60);
+  await espera(900);
+  assert.equal(await page.$eval('.sets__contador', e => e.textContent.trim()), '03 / 08');
+  assert.ok(await page.$eval('.set:nth-child(3) .set__video', v => v.poster.endsWith('sets/ataque.jpg')));
+  assert.deepEqual(erros, []);
+});

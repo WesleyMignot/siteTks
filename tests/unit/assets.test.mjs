@@ -37,3 +37,13 @@ test('janela do hero', () => {
   assert.ok(tam('assets/video/janela-720.mp4') <= 800_000);
   assert.ok(tam('assets/video/janela-720.jpg') > 0);
 });
+
+test('clipes dos sets', () => {
+  for (const n of ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi'])
+    assert.ok(tam(`assets/video/sets/${n}.mp4`) <= 700_000, n);
+  for (const n of ['maos', 'pista', 'cabine'])
+    assert.ok(tam(`assets/video/sets/${n}.mp4`) <= 450_000, n);
+  for (const n of ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'maos', 'pista', 'cabine'])
+    assert.ok(tam(`assets/video/sets/${n}.jpg`) > 0, n);
+  assert.ok(tam('assets/img/boiler-quadro.webp') <= 250_000);
+});
