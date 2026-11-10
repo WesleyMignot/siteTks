@@ -99,3 +99,54 @@ export function iniciarFotosDuplas() {
     });
   });
 }
+
+/**
+ * Produções. Desktop: painéis sempre abertos e uma foto que segue o cursor sobre a linha.
+ * Celular: cada linha é um acordeão (botão alterna aria-expanded + hidden no painel).
+ */
+export function iniciarProducoes({ gsap, celular, menosMovimento }) {
+  const secao = document.getElementById('producoes');
+  const linhas = [...secao.querySelectorAll('.producao')];
+
+  if (celular) {
+    linhas.forEach(linha => {
+      const botao = linha.querySelector('.producao__botao');
+      const painel = linha.querySelector('.producao__painel');
+      botao.setAttribute('aria-expanded', 'false');
+      painel.hidden = true;
+      botao.addEventListener('click', () => {
+        const abrir = botao.getAttribute('aria-expanded') !== 'true';
+        botao.setAttribute('aria-expanded', String(abrir));
+        painel.hidden = !abrir;
+      });
+    });
+    return;
+  }
+
+  const flut = secao.querySelector('.producoes__flutuante');
+  const irX = gsap.quickTo(flut, 'x', { duration: menosMovimento ? 0 : 0.45, ease: 'power3.out' });
+  const irY = gsap.quickTo(flut, 'y', { duration: menosMovimento ? 0 : 0.45, ease: 'power3.out' });
+  const girar = gsap.quickTo(flut, 'rotation', { duration: 0.6, ease: 'power3.out' });
+  let ultimoX = 0;
+
+  secao.addEventListener('pointermove', e => {
+    const caixa = secao.getBoundingClientRect();
+    const x = e.clientX - caixa.left;
+    const y = e.clientY - caixa.top;
+    irX(x - flut.offsetWidth / 2);
+    irY(y - flut.offsetHeight / 2);
+    if (!menosMovimento) girar(Math.max(-12, Math.min(12, (x - ultimoX) * 0.6)));
+    ultimoX = x;
+  });
+  linhas.forEach(linha => {
+    linha.addEventListener('pointerenter', () => {
+      linhas.forEach(l => l.classList.toggle('producao--ativa', l === linha));
+      if (!flut.src.endsWith(linha.dataset.foto)) flut.src = linha.dataset.foto;
+      gsap.to(flut, { opacity: 1, duration: 0.3 });
+    });
+  });
+  secao.querySelector('.producoes__lista').addEventListener('pointerleave', () => {
+    linhas.forEach(l => l.classList.remove('producao--ativa'));
+    gsap.to(flut, { opacity: 0, duration: 0.3 });
+  });
+}
