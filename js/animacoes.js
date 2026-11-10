@@ -150,3 +150,14 @@ export function iniciarProducoes({ gsap, celular, menosMovimento }) {
     gsap.to(flut, { opacity: 0, duration: 0.3 });
   });
 }
+
+/** Assinatura do reel: o rabisco vermelho se desenha com o scroll e a cortina vermelha leva ao Contrate. */
+export function iniciarAssinatura({ gsap, menosMovimento }) {
+  if (menosMovimento) return; // CSS mostra o traço completo, sem cortina
+  gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: '#assinatura', start: 'top top', end: 'bottom bottom', scrub: true },
+  })
+    .fromTo('.assinatura__traco', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7 })
+    .fromTo('.assinatura__cortina', { scaleY: 0 }, { scaleY: 1, duration: 0.3 });
+}

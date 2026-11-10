@@ -7,7 +7,7 @@ import { ITENS_GALERIA } from './dados.js';
 import { iniciarSets } from './sets.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
-  iniciarProducoes,
+  iniciarProducoes, iniciarAssinatura,
 } from './animacoes.js';
 
 const raiz = document.documentElement;
@@ -38,6 +38,7 @@ iniciarContadores(ctx);
 iniciarFotosDuplas();
 iniciarProducoes(ctx);
 iniciarSets(ctx);
+iniciarAssinatura(ctx);
 
 // Galeria: recria com outro número de itens quando a tela cruza o breakpoint de celular.
 const elGaleria = document.getElementById('galeria');
