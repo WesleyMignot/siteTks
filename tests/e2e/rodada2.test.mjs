@@ -77,3 +77,15 @@ test('movimento reduzido: sem revoadas', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
   assert.equal(await page.$$eval('.revoada svg', l => l.length), 0);
 });
+
+test('pular pelo menu do topo ao Contrate deixa tudo no estado final coerente', async () => {
+  const { page } = await abrir(amb);
+  await page.click('#menu-botao'); await page.click('#menu a[href="#contrate"]');
+  await new Promise(r => setTimeout(r, 2600));
+  const topo = await page.$eval('#contrate', e => e.getBoundingClientRect().top);
+  assert.ok(topo > -5 && topo < 100);
+  await page.click('#menu-botao'); await page.click('#menu a[href="#carreira"]');
+  await new Promise(r => setTimeout(r, 2600));
+  const ins = await page.$eval('.hero__janela', e => (getComputedStyle(e).clipPath.match(/-?[\d.]+px/g) ?? []).map(parseFloat));
+  assert.ok(ins.slice(0, 4).every(v => Math.abs(v) < 1)); // passou do hero: janela aberta
+});

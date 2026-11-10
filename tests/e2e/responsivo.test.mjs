@@ -23,11 +23,15 @@ for (const [largura, altura] of [[390, 844], [1440, 900]]) {
 
   test(`telas ${largura}px`, async () => {
     const { page } = await abrir(amb, { largura, altura });
+    const tela = async nome => { await espera(500); await page.screenshot({ path: `tests/e2e/telas/${largura}-${nome}.png` }); };
     for (const s of SECOES) {
-      await rolarPara(page, s, s === '#assinatura' ? altura : 0);
-      await espera(500);
-      await page.screenshot({ path: `tests/e2e/telas/${largura}-${s.slice(1)}.png` });
+      await rolarPara(page, s, s === '#assinatura' ? 2 * altura : 0); // assinatura: estado final (p = 1)
+      await tela(s.slice(1));
     }
+    // extras: hero no meio do pin (0,4 de 1,5 tela) e a assinatura em formação (p 0,3 e 0,7 de 2 telas)
+    await rolarPara(page, '#hero', Math.round(0.4 * 1.5 * altura)); await tela('hero-0.4');
+    await rolarPara(page, '#assinatura', Math.round(0.3 * 2 * altura)); await tela('assinatura-0.3');
+    await rolarPara(page, '#assinatura', Math.round(0.7 * 2 * altura)); await tela('assinatura-0.7');
   });
 }
 
