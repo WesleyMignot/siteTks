@@ -9,7 +9,7 @@ after(async () => { await amb.fechar(); });
 test('carrega sem erros, com as seções na ordem', async () => {
   const { page, erros } = await abrir(amb);
   assert.deepEqual(await page.$$eval('main > section', s => s.map(e => e.id)),
-    ['hero', 'carreira', 'numeros', 'galeria', 'producoes', 'sets', 'lineup', 'assinatura', 'contrate']);
+    ['hero', 'carreira', 'numeros', 'producoes', 'sets', 'lineup', 'assinatura', 'contrate']);
   assert.equal(await page.$eval('html', h => h.lang), 'pt-BR');
   assert.equal(await page.evaluate(() => typeof gsap + typeof ScrollTrigger + typeof Lenis), 'objectfunctionfunction');
   assert.equal(await page.$eval('html', h => h.dataset.lenis), 'on');

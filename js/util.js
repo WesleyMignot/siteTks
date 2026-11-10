@@ -19,3 +19,15 @@ export function formatarContagem(valor, { milhar = false } = {}) {
   const n = Math.round(valor);
   return milhar ? n.toLocaleString('pt-BR') : String(n);
 }
+
+/** Gerador pseudoaleatório determinístico (mulberry32): mesma semente, mesma sequência em [0,1). */
+export function criarRng(semente) {
+  let a = semente >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}

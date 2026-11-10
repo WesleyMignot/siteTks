@@ -7,15 +7,15 @@ import { join } from 'node:path';
 const RAIZ = fileURLToPath(new URL('../../', import.meta.url));
 const tam = p => statSync(join(RAIZ, p)).size;
 const FOTOS = ['21', '22', '29', '31', '32', '39', '43', '57'];
-const RECORTES = ['p1-capa', 'p2-moldura', 'p2-maos', 'p3-costas', 'p5-figura', 'p6-cadeira', 'p7-dreads', 'tex-chamas'];
 const CLIPES = ['boiler', 'chamas', 'dj-luz', 'filme', 'grade', 'maos', 'pista', 'cabine'];
 
 test('fotos cor e tks ≤ 350 KB', () => {
   for (const f of FOTOS) for (const v of ['cor', 'tks'])
     assert.ok(tam(`assets/img/foto-${f}-${v}.webp`) <= 350_000, `${f}-${v}`);
 });
-test('recortes ≤ 350 KB', () => {
-  for (const r of RECORTES) assert.ok(tam(`assets/recortes/${r}.webp`) <= 350_000, r);
+test('texturas ≤ 200 KB', () => {
+  for (const t of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme'])
+    assert.ok(tam(`assets/texturas/${t}.webp`) <= 200_000, t);
 });
 test('clipes ≤ 300 KB com pôster', () => {
   for (const c of CLIPES) {

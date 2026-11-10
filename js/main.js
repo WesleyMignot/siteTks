@@ -3,8 +3,6 @@
 /* global gsap, ScrollTrigger, Lenis */
 import { iniciarPreloader, iniciarHeader, liberarPagina } from './interface.js';
 import { observarVideos } from './videos.js';
-import { iniciarGaleria } from './galeria.js';
-import { ITENS_GALERIA } from './dados.js';
 import { iniciarSets } from './sets.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
@@ -51,14 +49,6 @@ seguro('fotos', () => iniciarFotosDuplas());
 seguro('producoes', () => iniciarProducoes(ctx));
 seguro('sets', () => iniciarSets(ctx));
 seguro('assinatura', () => iniciarAssinatura(ctx));
-
-// Galeria: recria com outro número de itens quando a tela cruza o breakpoint de celular.
-const elGaleria = document.getElementById('galeria');
-let galeria = seguro('galeria', () => iniciarGaleria(elGaleria, ITENS_GALERIA, ctx));
-matchMedia(CELULAR).addEventListener('change', e => seguro('galeria', () => {
-  galeria?.destruir();
-  galeria = iniciarGaleria(elGaleria, ITENS_GALERIA, { ...ctx, celular: e.matches });
-}));
 
 seguro('estrelas', () => iniciarEstrelas(ctx));
 seguro('videos', () => observarVideos(document, ctx));

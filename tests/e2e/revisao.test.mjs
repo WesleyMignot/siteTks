@@ -15,7 +15,7 @@ const estiloPreloader = p => p.$eval('#preloader', e => {
 test('CDN do GSAP fora do ar: a página abre no modo estático', async () => {
   const { page, erros } = await abrir(amb, { bloquear: [/cdnjs\.cloudflare\.com/] });
   assert.equal((await estiloPreloader(page)).display, 'none');
-  assert.ok(await page.$eval('#galeria', e => e.classList.contains('galeria--estatica')));
+  assert.ok(await page.$$eval('#contrate .contato a', l => l.length === 5 && l.every(a => a.getBoundingClientRect().height > 0)));
   assert.deepEqual(erros, []);
 });
 

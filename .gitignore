@@ -8,3 +8,4 @@ __pycache__/
 Thumbs.db
 node_modules/
 tests/e2e/telas/
+/bruto/

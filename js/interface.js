@@ -109,14 +109,15 @@ function iniciarMenu({ gsap, lenis, menosMovimento }) {
   });
 }
 
-/** Header: relógio, menu e texto escuro sobre a seção vermelha do Contrate. */
+/** Header: relógio, menu e texto escuro sobre as seções claras (vermelhas/creme). */
 export function iniciarHeader(ctx) {
   iniciarRelogio();
   iniciarMenu(ctx);
-  ctx.ScrollTrigger?.create({
-    trigger: '#contrate',
+  // Sobre seções vermelhas/creme (data-tema="claro"), texto e logo do header ficam pretos.
+  document.querySelectorAll('[data-tema="claro"]').forEach(secao => ctx.ScrollTrigger?.create({
+    trigger: secao,
     start: 'top 60px',
-    end: 'bottom top',
+    end: 'bottom 60px',
     toggleClass: { targets: '.header', className: 'header--escuro' },
-  });
+  }));
 }

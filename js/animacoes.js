@@ -101,9 +101,9 @@ export function iniciarContadores({ gsap, menosMovimento }) {
   });
 }
 
-/** Fotos com versão colorida (.foto-dupla fora da galeria): toque alterna a cor no celular. */
+/** Fotos com versão colorida (.foto-dupla): toque alterna a cor no celular. */
 export function iniciarFotosDuplas() {
-  document.querySelectorAll('.foto-dupla:not(.galeria__item)').forEach(f => {
+  document.querySelectorAll('.foto-dupla').forEach(f => {
     f.addEventListener('pointerup', e => {
       if (e.pointerType !== 'mouse') f.classList.toggle('foto-dupla--cor');
     });

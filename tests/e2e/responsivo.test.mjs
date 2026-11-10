@@ -7,7 +7,7 @@ let amb;
 before(async () => { amb = await iniciarAmbiente(); mkdirSync('tests/e2e/telas', { recursive: true }); });
 after(async () => { await amb.fechar(); });
 const espera = ms => new Promise(r => setTimeout(r, ms));
-const SECOES = ['#hero', '#carreira', '#numeros', '#galeria', '#producoes', '#sets', '#lineup', '#assinatura', '#contrate'];
+const SECOES = ['#hero', '#carreira', '#numeros', '#producoes', '#sets', '#lineup', '#assinatura', '#contrate'];
 
 for (const [largura, altura] of [[390, 844], [1440, 900]]) {
   test(`varredura ${largura}px: sem rolagem horizontal e sem erros`, async () => {
@@ -24,7 +24,7 @@ for (const [largura, altura] of [[390, 844], [1440, 900]]) {
   test(`telas ${largura}px`, async () => {
     const { page } = await abrir(amb, { largura, altura });
     for (const s of SECOES) {
-      await rolarPara(page, s, s === '#galeria' || s === '#assinatura' ? altura : 0);
+      await rolarPara(page, s, s === '#assinatura' ? altura : 0);
       await espera(500);
       await page.screenshot({ path: `tests/e2e/telas/${largura}-${s.slice(1)}.png` });
     }

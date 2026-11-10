@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { horaPOA, escolherHero, formatarContagem } from '../../js/util.js';
+import { horaPOA, escolherHero, formatarContagem, criarRng } from '../../js/util.js';
 
 test('horaPOA', () => {
   assert.equal(horaPOA(new Date('2026-11-10T01:10:00Z')), '22:10');
@@ -17,4 +17,9 @@ test('formatarContagem', () => {
   assert.equal(formatarContagem(2000, { milhar: true }), '2.000');
   assert.equal(formatarContagem(287.6), '288');
   assert.equal(formatarContagem(2017), '2017');
+});
+
+test('criarRng determinístico em [0,1)', () => {
+  const a = criarRng(7), b = criarRng(7);
+  for (let i = 0; i < 20; i++) { const v = a(); assert.equal(v, b()); assert.ok(v >= 0 && v < 1); }
 });

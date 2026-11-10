@@ -17,9 +17,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Fontes sem bloquear a renderização: se o Google Fonts estiver lento, a página abre com a fonte reserva. -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=Fraunces:ital,opsz,wght,SOFT@1,9..144,900,100&amp;family=Grenze+Gotisch:wght@400..900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Pirata+One&amp;family=Space+Mono:wght@400;700&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=Fraunces:ital,opsz,wght,SOFT@1,9..144,900,100&amp;family=Grenze+Gotisch:wght@400..900&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pirata+One&amp;family=Space+Mono:wght@400;700&amp;display=swap">
     <style>.preloader { display: none !important; }</style>
   </noscript>
   <link rel="stylesheet" href="css/base.css">
@@ -51,11 +51,10 @@
   <nav id="menu" class="menu" aria-label="Seções" hidden>
     <ol class="menu__links">
       <li><a href="#carreira"><span class="gotica">Nº 001</span> Carreira</a></li>
-      <li><a href="#galeria"><span class="gotica">Nº 002</span> Galeria</a></li>
-      <li><a href="#producoes"><span class="gotica">Nº 003</span> Produções</a></li>
-      <li><a href="#sets"><span class="gotica">Nº 004</span> Sets</a></li>
-      <li><a href="#lineup"><span class="gotica">Nº 005</span> Line-up</a></li>
-      <li><a href="#contrate"><span class="gotica">Nº 006</span> Contrate</a></li>
+      <li><a href="#producoes"><span class="gotica">Nº 002</span> Produções</a></li>
+      <li><a href="#sets"><span class="gotica">Nº 003</span> Sets</a></li>
+      <li><a href="#lineup"><span class="gotica">Nº 004</span> Line-up</a></li>
+      <li><a href="#contrate"><span class="gotica">Nº 005</span> Contrate</a></li>
     </ol>
     <div class="menu__rodape rotulo">
       <a href="https://wa.me/5551980407711" target="_blank" rel="noopener">WhatsApp</a>
@@ -103,7 +102,7 @@
       </div>
     </section>
 
-    <section id="carreira" class="carreira" aria-labelledby="t-carreira">
+    <section id="carreira" class="carreira chamas-topo" data-tema="claro" aria-labelledby="t-carreira">
       <h2 id="t-carreira" class="rotulo"><span class="gotica">Nº 001</span> — Carreira</h2>
       <p class="carreira__abertura titulo" data-revelar>Um DJ de funk que explora as vertentes mais agressivas e eufóricas.</p>
       <div class="carreira__grade">
@@ -119,7 +118,7 @@
       </div>
     </section>
 
-    <section id="numeros" class="numeros" aria-labelledby="t-numeros">
+    <section id="numeros" class="numeros chamas-topo" aria-labelledby="t-numeros">
       <h2 id="t-numeros" class="visualmente-oculto">Números</h2>
       <ul class="numeros__lista">
         <li class="numero"><span class="numero__valor titulo" data-contar="288" data-sufixo=" mil+">288 mil+</span><span class="numero__rotulo rotulo">plays em sets online</span></li>
@@ -131,19 +130,8 @@
       </ul>
     </section>
 
-    <section id="galeria" class="galeria" aria-labelledby="t-galeria">
-      <div class="galeria__palco">
-        <div class="galeria__itens"></div>
-        <div class="galeria__nevoa" aria-hidden="true"></div>
-        <div class="galeria__legenda">
-          <h2 id="t-galeria" class="rotulo"><span class="gotica">Nº 002</span> — Galeria</h2>
-          <p class="rotulo">Fotos @clicksbylt</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="producoes" class="producoes" aria-labelledby="t-producoes">
-      <p class="rotulo"><span class="gotica">Nº 003</span> — Produções</p>
+    <section id="producoes" class="producoes reticula chamas-topo" data-tema="claro" aria-labelledby="t-producoes">
+      <p class="rotulo"><span class="gotica">Nº 002</span> — Produções</p>
       <h2 id="t-producoes" class="producoes__titulo titulo">Suas produções e impactos na cena</h2>
       <p class="producoes__intro" data-aparecer>Brunin Tks é responsável por alguns dos projetos mais relevantes da cena underground do sul do país, assinando a criação e direção de festas como Savage, Boiler Baile, Sonora Breck e Sinistro DNB. Seus eventos se destacam pela identidade forte, curadoria afiada e conexão direta com a cultura de rua, transitando entre o funk, o rap e a música eletrônica.</p>
 
@@ -202,9 +190,9 @@
       <img class="producoes__flutuante" alt="" aria-hidden="true">
     </section>
 
-    <section id="sets" class="sets" aria-labelledby="t-sets">
+    <section id="sets" class="sets chamas-topo" aria-labelledby="t-sets">
       <div class="sets__topo">
-        <p class="rotulo"><span class="gotica">Nº 004</span> — Sets</p>
+        <p class="rotulo"><span class="gotica">Nº 003</span> — Sets</p>
         <h2 id="t-sets" class="sets__titulo titulo">Sets que marcaram a trajetória</h2>
         <p class="sets__intro" data-aparecer>Dos bailes que viraram memória aos sets que rodaram o Brasil e a Europa, cada apresentação representa um avanço na sua caminhada. Seja em vídeo ou nas plataformas, é onde sua identidade se transformou em som e conexão real com o público.</p>
       </div>
@@ -311,9 +299,9 @@
       </div>
     </section>
 
-    <section id="lineup" class="lineup" aria-labelledby="t-lineup">
+    <section id="lineup" class="lineup chamas-topo" data-tema="claro" aria-labelledby="t-lineup">
       <div class="lineup__topo">
-        <p class="rotulo"><span class="gotica">Nº 005</span> — Line-up</p>
+        <p class="rotulo"><span class="gotica">Nº 004</span> — Line-up</p>
         <h2 id="t-lineup" class="lineup__titulo titulo">Shows que já compôs o line</h2>
         <p class="lineup__intro" data-aparecer>Brunin Tks já dividiu line-ups com nomes de destaque do cenário nacional e com artistas e DJs relevantes do circuito underground, reforçando sua presença tanto em grandes palcos quanto nos principais movimentos da cena alternativa.</p>
       </div>
@@ -330,7 +318,7 @@
       <svg class="estrela" style="right:8%;top:12%" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 0C21 13 27 19 40 20 27 21 21 27 20 40 19 27 13 21 0 20 13 19 19 13 20 0Z"/></svg>
     </section>
 
-    <section id="assinatura" class="assinatura" aria-labelledby="t-assinatura">
+    <section id="assinatura" class="assinatura reticula chamas-topo" data-tema="claro" aria-labelledby="t-assinatura">
       <div class="assinatura__palco">
         <svg class="assinatura__svg assinatura__svg--paisagem" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <path class="assinatura__traco" pathLength="1" d="M90 380C180 120 300 90 330 250S520 420 560 210 700 90 740 160"/>
@@ -343,8 +331,8 @@
       </div>
     </section>
 
-    <section id="contrate" class="contrate" aria-labelledby="t-contrate">
-      <p class="contrate__num"><span class="gotica">Nº 006</span></p>
+    <section id="contrate" class="contrate chamas-topo" data-tema="claro" aria-labelledby="t-contrate">
+      <p class="contrate__num"><span class="gotica">Nº 005</span></p>
       <h2 id="t-contrate" class="contrate__titulo titulo">Contrate</h2>
       <img class="contrate__logo" src="assets/logo/logo-preto.png" alt="" width="1658" height="628" loading="lazy" decoding="async">
       <ul class="contato">
