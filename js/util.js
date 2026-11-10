@@ -8,3 +8,8 @@ const formatoPOA = new Intl.DateTimeFormat('pt-BR', {
 export function horaPOA(data) {
   return formatoPOA.format(data);
 }
+
+/** Versão do vídeo do hero conforme a largura da tela (> 820px = desktop). */
+export function escolherHero(largura) {
+  return largura > 820 ? 'assets/video/hero-720.mp4' : 'assets/video/hero-540.mp4';
+}

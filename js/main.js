@@ -1,6 +1,8 @@
 // Brunin Tks — monta o contexto (GSAP, ScrollTrigger, Lenis) e inicia cada seção.
 /* global gsap, ScrollTrigger, Lenis */
 import { iniciarPreloader, iniciarHeader } from './interface.js';
+import { observarVideos } from './videos.js';
+import { iniciarHero, iniciarLetreiros, iniciarEstrelas } from './animacoes.js';
 
 const raiz = document.documentElement;
 const menosMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -23,6 +25,10 @@ raiz.dataset.lenis = lenis ? 'on' : 'off';
 const ctx = { gsap, ScrollTrigger, lenis, menosMovimento, celular };
 
 iniciarHeader(ctx);
+iniciarHero(ctx);
+iniciarLetreiros(ctx);
+iniciarEstrelas(ctx);
+observarVideos(document, ctx);
 
 await iniciarPreloader(ctx);
 ScrollTrigger.refresh();
