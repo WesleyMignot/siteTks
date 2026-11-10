@@ -16,6 +16,26 @@ test('line-up com todos os nomes', async () => {
   for (const n of [...NACIONAIS, ...UNDER, 'Planeta Atlântida', 'Relativa']) assert.ok(t.includes(n), n);
 });
 
+const opacNomes = p => p.$$eval('.cartaz__nome', l => l.map(e => +getComputedStyle(e).opacity));
+test('cartaz: nomes acendem com o scroll', async () => {
+  const { page } = await abrir(amb);
+  await page.evaluate(() => { const c = document.querySelector('.cartaz'); scrollTo(0, c.getBoundingClientRect().top + scrollY - innerHeight * 0.85); });
+  await new Promise(r => setTimeout(r, 500));
+  assert.ok((await opacNomes(page))[0] < 0.5);
+  await rolarPara(page, '.cartaz', 200);
+  await new Promise(r => setTimeout(r, 500));
+  const fim = await opacNomes(page);
+  assert.equal(fim.length, 20); assert.ok(fim.every(o => o > 0.9));
+});
+
+test('cartaz: 7 nacionais e 13 do underground, separados por morcegos', async () => {
+  const { page } = await abrir(amb);
+  assert.deepEqual(await page.$$eval('.cartaz__nacionais .cartaz__nome', l => l.map(e => e.textContent.trim())), NACIONAIS);
+  assert.deepEqual(await page.$$eval('.cartaz__under .cartaz__nome', l => l.map(e => e.textContent.trim())), UNDER);
+  assert.equal(await page.$$eval('.cartaz .div-morcego svg.morcego--div', l => l.length), 6 + 12);
+  assert.equal(await page.$('#lineup .letreiro'), null);
+});
+
 test('assinatura desenha o traço com o scroll', async () => {
   const { page } = await abrir(amb);
   const off = () => page.$eval('.assinatura__traco', p => parseFloat(getComputedStyle(p).strokeDashoffset));

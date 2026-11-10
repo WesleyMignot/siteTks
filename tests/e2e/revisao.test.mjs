@@ -59,14 +59,13 @@ test('menu pelo teclado: depois de ir ao Contrate, o próximo Tab continua no Co
 });
 
 // #4 — movimento reduzido não pode esconder nomes do line-up
-test('movimento reduzido: todos os nomes do line-up cabem na tela', async () => {
+test('movimento reduzido: cartaz todo aceso e dentro da tela', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
-  const { direitas, largura } = await page.evaluate(() => ({
-    direitas: [...document.querySelectorAll('#lineup .letreiro__trilho > span:not([aria-hidden])')]
-      .map(s => s.getBoundingClientRect().right),
-    largura: innerWidth,
+  const { ops, dentro } = await page.evaluate(() => ({
+    ops: [...document.querySelectorAll('.cartaz__nome')].map(e => +getComputedStyle(e).opacity),
+    dentro: [...document.querySelectorAll('.cartaz__nome')].every(e => e.getBoundingClientRect().right <= innerWidth + 1),
   }));
-  assert.ok(direitas.length === 2 && direitas.every(r => r <= largura + 1), JSON.stringify(direitas));
+  assert.ok(ops.length === 20 && ops.every(o => o > 0.9) && dentro);
 });
 
 // #5 — Produções acompanha a mudança de largura (iPad girando)

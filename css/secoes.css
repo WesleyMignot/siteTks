@@ -228,24 +228,26 @@
 .lineup__topo, .lineup__palcos { padding-inline: var(--gutter); }
 .lineup__titulo { font-size: clamp(40px, 6vw, 96px); max-width: 14ch; margin: 28px 0 24px; }
 .lineup__intro { max-width: 72ch; font-size: 13px; font-weight: 500; text-transform: uppercase; line-height: 1.6; color: var(--creme-60); }
-.letreiro--nacional {
-  margin-top: clamp(48px, 6vw, 96px);
-  font-family: var(--fonte-titulo); font-weight: 400;
-  font-size: clamp(48px, 9vw, 140px); line-height: 1.08;
+/* Cartaz de festival: nomes centralizados, morcegos de separador; acendem em sequência (iniciarCartaz). */
+.cartaz { margin-top: clamp(48px, 6vw, 96px); padding-inline: var(--gutter); text-align: center; }
+.cartaz__rotulo { margin-bottom: clamp(16px, 2vw, 28px); }
+.cartaz__nacionais {
+  font-family: var(--fonte-titulo); font-weight: 400; font-size: clamp(36px, 6vw, 96px); line-height: 1.05;
+  max-width: 1200px; margin-inline: auto;
 }
-.letreiro--under {
-  font-weight: 800; text-transform: uppercase; font-size: clamp(30px, 5.4vw, 84px); line-height: 1.15;
-  color: transparent; -webkit-text-stroke: 1px currentColor;
+.cartaz__under {
+  max-width: 64ch; margin: clamp(20px, 3vw, 40px) auto 0;
+  font-weight: 700; font-size: clamp(13px, 1.4vw, 18px); line-height: 2; text-transform: uppercase; letter-spacing: .08em;
 }
-.lineup__palcos { margin-top: clamp(48px, 6vw, 96px); }
-/* movimento reduzido: letreiros parados viram texto corrido, para nenhum nome ficar fora da tela */
-.menos-movimento .lineup .letreiro { white-space: normal; }
-.menos-movimento .lineup .letreiro__trilho { display: block; width: auto; padding-inline: var(--gutter); }
-.menos-movimento .lineup .letreiro__trilho > span[aria-hidden] { display: none; }
+/* nome + morcego seguinte não se separam: o morcego nunca abre uma linha */
+.cartaz__nome, .cartaz__par { white-space: nowrap; }
+.cartaz__nacionais .morcego--div { height: .42em; }
+.anima-cartaz .cartaz__nome { opacity: .18; }
+.lineup__palcos { margin-top: clamp(48px, 6vw, 96px); text-align: center; }
 .lineup__palcos h3 { color: var(--creme-60); margin-bottom: 14px; }
-.lineup__palcos ul { display: flex; flex-wrap: wrap; gap: 10px; }
+.lineup__palcos ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .lineup__palcos li {
-  padding: 8px 16px; border: 1px solid rgba(241, 226, 196, .3); border-radius: 99px;
+  padding: 8px 16px; border: 2px solid var(--preto); border-radius: 99px;
   font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
 }
 .lineup__palcos small { font-size: 1em; color: var(--creme-60); font-weight: 500; }

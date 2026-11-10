@@ -51,6 +51,16 @@ export function iniciarHero({ gsap, menosMovimento }) {
     .set({}, {}, 1); // timeline com duração 1 = progresso do scroll
 }
 
+/** Line-up em cartaz: os 20 nomes acendem em sequência com o scroll. Reduzido/estático: todos acesos (CSS). */
+export function iniciarCartaz({ gsap, menosMovimento }) {
+  if (menosMovimento) return;
+  document.documentElement.classList.add('anima-cartaz');
+  gsap.to('.cartaz__nome', {
+    opacity: 1, stagger: 0.05, ease: 'none',
+    scrollTrigger: { trigger: '.cartaz', start: 'top 75%', end: 'bottom 55%', scrub: true },
+  });
+}
+
 /** Letreiros infinitos (.letreiro__trilho com o conteúdo duplicado). Aceleram com o scroll. */
 export function iniciarLetreiros({ gsap, ScrollTrigger, menosMovimento }) {
   if (menosMovimento) return;

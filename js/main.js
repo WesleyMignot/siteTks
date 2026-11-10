@@ -6,7 +6,7 @@ import { observarVideos } from './videos.js';
 import { iniciarSets } from './sets.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
-  iniciarProducoes, iniciarAssinatura, iniciarDivisores,
+  iniciarProducoes, iniciarAssinatura, iniciarDivisores, iniciarCartaz,
 } from './animacoes.js';
 
 const CELULAR = '(max-width: 820px)';
@@ -44,6 +44,7 @@ seguro('header', () => iniciarHeader(ctx));
 seguro('hero', () => iniciarHero(ctx));
 seguro('divisores', () => iniciarDivisores()); // antes dos letreiros: muda a largura do trilho
 seguro('letreiros', () => iniciarLetreiros(ctx));
+seguro('cartaz', () => iniciarCartaz(ctx)); // depois dos divisores: os morcegos mudam a quebra das linhas
 seguro('reveals', () => iniciarReveals(ctx));
 seguro('contadores', () => iniciarContadores(ctx));
 seguro('fotos', () => iniciarFotosDuplas());
