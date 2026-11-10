@@ -84,6 +84,33 @@ test('contrate: contatos exatos e PDF disponível', async () => {
   assert.equal(await page.evaluate(() => fetch('assets/presskit.pdf').then(r => r.status)), 200);
 });
 
+test('contrate: cada link tem ícone escondido do leitor de tela', async () => {
+  const { page } = await abrir(amb);
+  assert.ok(await page.$$eval('#contrate .contato a', l => l.length === 5 && l.every(a => {
+    const s = a.querySelector('svg.contato__icone'); return s && s.getAttribute('aria-hidden') === 'true'; })));
+});
+
+test('contrate: no hover a linha se enche de preto e o texto fica creme', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#contrate', 10);
+  const link = (await page.$$('#contrate .contato a'))[2];
+  await link.hover();
+  await new Promise(r => setTimeout(r, 800));
+  const { fundo, cor } = await link.evaluate(a => ({
+    fundo: getComputedStyle(a, '::before').transform, cor: getComputedStyle(a).color }));
+  assert.equal(fundo, 'matrix(1, 0, 0, 1, 0, 0)');
+  assert.equal(cor, 'rgb(241, 226, 196)');
+});
+
+test('contrate no celular: rótulo acima do valor e nada vaza da tela', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  const r = await page.$$eval('#contrate .contato a', l => l.map(a => {
+    const rot = a.querySelector('.contato__rotulo').getBoundingClientRect(), val = a.querySelector('.contato__valor').getBoundingClientRect();
+    return { acima: rot.bottom <= val.top + 1, dentro: val.right <= innerWidth && a.getBoundingClientRect().right <= innerWidth };
+  }));
+  assert.ok(r.every(x => x.acima && x.dentro), JSON.stringify(r));
+});
+
 test('header fica escuro sobre o Contrate', async () => {
   const { page } = await abrir(amb);
   await rolarPara(page, '#contrate', 10);
