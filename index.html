@@ -28,7 +28,37 @@
 <body>
   <div class="grao" aria-hidden="true"></div>
 
-  <header class="header"></header>
+  <div id="preloader" class="preloader" aria-hidden="true">
+    <svg class="estrela preloader__estrela" viewBox="0 0 40 40"><path d="M20 0C21 13 27 19 40 20 27 21 21 27 20 40 19 27 13 21 0 20 13 19 19 13 20 0Z"/></svg>
+    <span class="preloader__numero">000</span>
+    <div class="preloader__cortina"></div>
+  </div>
+
+  <header class="header">
+    <a class="header__logo" href="#hero" aria-label="Brunin Tks — voltar ao início">
+      <img src="assets/logo/logo-creme.png" alt="" width="69" height="26">
+    </a>
+    <p class="relogio" aria-label="Hora agora em Porto Alegre">POA <span class="relogio__h">00</span><span class="relogio__dp">:</span><span class="relogio__m">00</span></p>
+    <button id="menu-botao" class="header__botao" type="button" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <nav id="menu" class="menu" aria-label="Seções" hidden>
+    <ol class="menu__links">
+      <li><a href="#carreira"><span class="gotica">Nº 001</span> Carreira</a></li>
+      <li><a href="#galeria"><span class="gotica">Nº 002</span> Galeria</a></li>
+      <li><a href="#producoes"><span class="gotica">Nº 003</span> Produções</a></li>
+      <li><a href="#sets"><span class="gotica">Nº 004</span> Sets</a></li>
+      <li><a href="#lineup"><span class="gotica">Nº 005</span> Line-up</a></li>
+      <li><a href="#contrate"><span class="gotica">Nº 006</span> Contrate</a></li>
+    </ol>
+    <div class="menu__rodape rotulo">
+      <a href="https://wa.me/5551980407711" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:contato.bruninn@gmail.com">E-mail</a>
+      <a href="https://www.instagram.com/djbrunintks" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </nav>
 
   <main>
     <section id="hero" aria-labelledby="t-hero">
