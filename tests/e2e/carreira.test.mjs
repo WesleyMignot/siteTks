@@ -26,3 +26,9 @@ test('movimento reduzido: valores finais sem animar', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
   assert.equal(await page.$eval('#numeros .numero__valor', e => e.textContent.trim()), '288 mil+');
 });
+
+test('Carreira: foto em multiply sobre o vermelho', async () => {
+  const { page } = await abrir(amb);
+  assert.equal(await page.$eval('.carreira__foto .tks', e => getComputedStyle(e).mixBlendMode), 'multiply');
+  assert.match(await page.$eval('.carreira__foto .tks', e => e.getAttribute('src')), /foto-22-tks/);
+});

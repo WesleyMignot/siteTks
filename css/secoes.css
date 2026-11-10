@@ -299,3 +299,11 @@
 #assinatura { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); }
 #contrate { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); --chamas-giro: scaleY(-1); }
 .producoes__titulo, .sets__titulo, .lineup__titulo { font-size: clamp(48px, 7vw, 112px); }
+
+/* ---------- carreira e números (rodada 2) ---------- */
+.carreira__grade { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); }
+.carreira__foto { order: 2; }
+.carreira__foto .tks { mix-blend-mode: multiply; }
+.carreira__texto { font-size: 14px; line-height: 1.7; }
+.numero__valor { font-size: clamp(56px, 8vw, 128px); }
+@media (max-width: 820px) { .carreira__grade { grid-template-columns: 1fr; } }
