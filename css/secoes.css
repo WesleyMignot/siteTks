@@ -117,7 +117,8 @@
 
 /* ---------- produções ---------- */
 /* isolation na seção: o multiply da foto apagada mistura com o creme e a retícula */
-.producoes { position: relative; isolation: isolate; padding: clamp(80px, 12vw, 180px) var(--gutter); overflow: hidden; }
+/* overflow-x: clip (não hidden): a revoada da virada sai para cima da seção */
+.producoes { position: relative; isolation: isolate; padding: clamp(80px, 12vw, 180px) var(--gutter); overflow-x: clip; }
 .producoes__titulo { font-size: clamp(40px, 6vw, 96px); max-width: 14ch; margin: 28px 0 24px; }
 .producoes__intro, .producoes__fecho, .producao__painel p {
   max-width: 72ch; font-size: 13px; font-weight: 500; text-transform: uppercase; line-height: 1.6;
@@ -332,3 +333,10 @@
 .carreira__texto { font-size: 14px; line-height: 1.7; }
 .numero__valor { font-size: clamp(56px, 8vw, 128px); }
 @media (max-width: 820px) { .carreira__grade { grid-template-columns: 1fr; } }
+
+/* ---------- revoadas nas viradas (js/revoadas.js) ---------- */
+.revoada { position: absolute; left: 0; right: 0; top: -50vh; height: 100vh; overflow: hidden; pointer-events: none; z-index: 6; }
+.morcego--revoada { position: absolute; left: 0; height: auto; }
+/* cor que contrasta com os dois lados da virada: preto/creme → vermelho; vermelho/creme → preto */
+#producoes .revoada, #sets .revoada { color: var(--vermelho); }
+#assinatura .revoada { color: var(--preto); }

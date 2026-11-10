@@ -9,6 +9,7 @@ import {
   iniciarProducoes, iniciarDivisores, iniciarCartaz,
 } from './animacoes.js';
 import { iniciarAssinatura } from './assinatura.js';
+import { iniciarRevoadas } from './revoadas.js';
 
 const CELULAR = '(max-width: 820px)';
 const raiz = document.documentElement;
@@ -52,6 +53,7 @@ seguro('fotos', () => iniciarFotosDuplas());
 seguro('producoes', () => iniciarProducoes(ctx));
 seguro('sets', () => iniciarSets(ctx));
 seguro('assinatura', () => iniciarAssinatura(ctx));
+seguro('revoadas', () => iniciarRevoadas(ctx));
 
 seguro('estrelas', () => iniciarEstrelas(ctx));
 seguro('videos', () => observarVideos(document, ctx));
