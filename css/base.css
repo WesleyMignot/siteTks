@@ -1,0 +1,89 @@
+/* ==========================================================================
+   Brunin Tks — base: tokens, reset, tipografia, grão, estrelas, botões,
+   preloader, header e menu.
+   ========================================================================== */
+
+:root {
+  --preto: #0F1211;
+  --creme: #F1E2C4;
+  --vermelho: #E3302F;
+  --brasa: #E2512B;
+  --sangue: #5E1D19;
+  --creme-60: rgba(241, 226, 196, .6);
+
+  --fonte-titulo: "Fraunces", "Cooper Black", Georgia, serif;
+  --fonte-texto: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --fonte-gotica: "Grenze Gotisch", "UnifrakturCook", "Old English Text MT", serif;
+
+  --gutter: clamp(16px, 2.2vw, 32px);
+  --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--preto);
+  color: var(--creme);
+  font-family: var(--fonte-texto);
+  font-stretch: 125%;
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+ul, ol { list-style: none; }
+
+:focus-visible { outline: 2px solid var(--creme); outline-offset: 3px; }
+#contrate :focus-visible { outline-color: var(--preto); }
+
+.visualmente-oculto {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---------- tipografia ---------- */
+.titulo {
+  font-family: var(--fonte-titulo);
+  font-style: italic;
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100;
+  line-height: .95;
+  letter-spacing: -.01em;
+}
+.gotica { font-family: var(--fonte-gotica); font-weight: 800; }
+.caixa-alta { text-transform: uppercase; }
+.rotulo {
+  font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+}
+.rotulo .gotica { font-size: 1.6em; letter-spacing: 0; text-transform: none; margin-right: .2em; }
+
+/* ---------- grão ---------- */
+.grao {
+  position: fixed; inset: -50%; z-index: 90; pointer-events: none;
+  background: var(--grao); opacity: .18; mix-blend-mode: overlay;
+  animation: grao .6s steps(4) infinite;
+}
+@keyframes grao {
+  0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); } 75% { transform: translate(-1%, 3%); }
+}
+.menos-movimento .grao { animation: none; }
+
+/* ---------- estrelas ---------- */
+.estrela { position: absolute; width: clamp(18px, 2.4vw, 34px); height: auto; fill: var(--creme); pointer-events: none; }
+
+/* ---------- botões ---------- */
+.botao {
+  display: inline-flex; align-items: center; gap: .5em;
+  padding: 11px 20px; border-radius: 99px;
+  background: var(--creme); color: var(--preto);
+  font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  transition: background .25s, color .25s;
+}
+.botao:hover { background: var(--vermelho); color: var(--preto); }
