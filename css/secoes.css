@@ -53,3 +53,43 @@
 
 /* ---------- contrate (tela cheia; estilo completo na seção própria) ---------- */
 #contrate { min-height: 100svh; }
+
+/* ---------- foto dupla: versão tratada + cor no hover/toque ---------- */
+.foto-dupla { position: relative; overflow: hidden; }
+.foto-dupla img { width: 100%; height: 100%; object-fit: cover; }
+.foto-dupla .cor { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; }
+.foto-dupla:hover .cor, .foto-dupla--cor .cor { opacity: 1; }
+@media (hover: none) { .foto-dupla:hover .cor { opacity: 0; } .foto-dupla--cor .cor { opacity: 1; } }
+
+/* ---------- seções: espaçamento padrão ---------- */
+.carreira, .numeros { padding: clamp(80px, 12vw, 180px) var(--gutter); }
+
+/* ---------- carreira ---------- */
+.carreira__abertura { font-size: clamp(36px, 6vw, 96px); max-width: 15ch; margin: 28px 0 clamp(48px, 7vw, 110px); }
+.carreira__grade { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
+.carreira__foto { aspect-ratio: 2 / 3; border-radius: 4px; }
+.carreira__texto {
+  columns: 2; column-gap: clamp(24px, 3vw, 48px);
+  font-size: 13px; font-weight: 500; text-transform: uppercase; line-height: 1.6;
+}
+.carreira__texto p + p { margin-top: 1.2em; }
+.palavra { display: inline-block; }
+
+/* ---------- números ---------- */
+.numeros { position: relative; isolation: isolate; border-block: 1px solid rgba(241, 226, 196, .15); }
+.numeros::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: url("../assets/recortes/tex-chamas.webp") center / cover;
+  opacity: .12; mix-blend-mode: luminosity;
+}
+.numeros__lista { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(32px, 5vw, 72px) var(--gutter); }
+.numero { display: flex; flex-direction: column; gap: 10px; }
+.numero__valor { font-size: clamp(48px, 7vw, 112px); font-variant-numeric: tabular-nums; }
+.numero__rotulo { color: var(--creme-60); max-width: 24ch; }
+
+@media (max-width: 820px) {
+  .carreira__grade { grid-template-columns: 1fr; }
+  .carreira__foto { max-width: 420px; }
+  .carreira__texto { columns: 1; }
+  .numeros__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

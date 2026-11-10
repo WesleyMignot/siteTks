@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { horaPOA, escolherHero } from '../../js/util.js';
+import { horaPOA, escolherHero, formatarContagem } from '../../js/util.js';
 
 test('horaPOA', () => {
   assert.equal(horaPOA(new Date('2026-11-10T01:10:00Z')), '22:10');
@@ -11,4 +11,10 @@ test('escolherHero', () => {
   assert.equal(escolherHero(1440), 'assets/video/hero-720.mp4');
   assert.equal(escolherHero(820), 'assets/video/hero-540.mp4');
   assert.equal(escolherHero(390), 'assets/video/hero-540.mp4');
+});
+
+test('formatarContagem', () => {
+  assert.equal(formatarContagem(2000, { milhar: true }), '2.000');
+  assert.equal(formatarContagem(287.6), '288');
+  assert.equal(formatarContagem(2017), '2017');
 });

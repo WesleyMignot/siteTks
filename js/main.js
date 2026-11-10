@@ -2,7 +2,9 @@
 /* global gsap, ScrollTrigger, Lenis */
 import { iniciarPreloader, iniciarHeader } from './interface.js';
 import { observarVideos } from './videos.js';
-import { iniciarHero, iniciarLetreiros, iniciarEstrelas } from './animacoes.js';
+import {
+  iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
+} from './animacoes.js';
 
 const raiz = document.documentElement;
 const menosMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,6 +29,9 @@ const ctx = { gsap, ScrollTrigger, lenis, menosMovimento, celular };
 iniciarHeader(ctx);
 iniciarHero(ctx);
 iniciarLetreiros(ctx);
+iniciarReveals(ctx);
+iniciarContadores(ctx);
+iniciarFotosDuplas();
 iniciarEstrelas(ctx);
 observarVideos(document, ctx);
 

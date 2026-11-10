@@ -113,6 +113,11 @@ ul, ol { list-style: none; }
   pointer-events: none; transition: color .3s;
 }
 .header > * { pointer-events: auto; }
+.header::before {
+  content: ""; position: absolute; inset: 0 0 -24px; z-index: -1; pointer-events: none;
+  background: linear-gradient(rgba(15, 18, 17, .85), rgba(15, 18, 17, 0)); transition: opacity .3s;
+}
+.header--escuro::before, .menu-aberto .header::before { opacity: 0; }
 .header__logo { justify-self: start; }
 .header__logo img { height: 26px; width: auto; transition: filter .3s; }
 .relogio { justify-self: center; font-variant-numeric: tabular-nums; }

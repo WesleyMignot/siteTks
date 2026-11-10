@@ -13,3 +13,9 @@ export function horaPOA(data) {
 export function escolherHero(largura) {
   return largura > 820 ? 'assets/video/hero-720.mp4' : 'assets/video/hero-540.mp4';
 }
+
+/** Valor de contador arredondado; com `milhar`, usa o separador pt-BR (2.000). */
+export function formatarContagem(valor, { milhar = false } = {}) {
+  const n = Math.round(valor);
+  return milhar ? n.toLocaleString('pt-BR') : String(n);
+}
