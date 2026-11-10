@@ -1,7 +1,7 @@
 // Sets: pilha de cortinas fixa na tela; cada set entra sobre o anterior e só o ativo toca seu clipe.
 import { tocar, pausar } from './videos.js';
 
-export function iniciarSets({ gsap, menosMovimento }) {
+export function iniciarSets({ gsap, lenis, menosMovimento }) {
   const pilha = document.querySelector('.sets__pilha');
   const sets = [...pilha.querySelectorAll('.set')];
   const videos = sets.map(s => s.querySelector('.set__video'));
@@ -33,4 +33,14 @@ export function iniciarSets({ gsap, menosMovimento }) {
     tl.fromTo(sets[i], { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)' })
       .to(videos[i - 1], { yPercent: -15 }, '<');
   }
+
+  // Teclado: focar o link de um set ainda coberto rola até o ponto em que aquele set está à mostra.
+  pilha.addEventListener('focusin', e => {
+    const i = sets.indexOf(e.target.closest('.set'));
+    if (i < 0) return;
+    const topo = pilha.getBoundingClientRect().top + window.scrollY;
+    const y = topo + ((pilha.offsetHeight - innerHeight) * i) / (total - 1);
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else window.scrollTo(0, y);
+  });
 }

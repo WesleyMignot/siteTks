@@ -11,11 +11,20 @@ function carregarImagem(src) {
   });
 }
 
+/** Esconde o preloader e marca a página como utilizável (também usado se algo falhar). */
+export function liberarPagina({ lenis }) {
+  document.getElementById('preloader').style.display = 'none';
+  lenis?.start();
+  document.body.classList.add('pronto');
+}
+
 /** Mostra o contador 000→100, sobe a cortina vermelha e libera a página (body.pronto). */
-export async function iniciarPreloader({ gsap, lenis, menosMovimento }) {
+export async function iniciarPreloader(ctx) {
+  const { gsap, lenis, menosMovimento } = ctx;
   const el = document.getElementById('preloader');
   const numero = el.querySelector('.preloader__numero');
   const cortina = el.querySelector('.preloader__cortina');
+  if (!gsap) { liberarPagina(ctx); return; } // modo estático: sem animação de entrada
   const carregou = Promise.race([
     Promise.all([document.fonts.ready, carregarImagem('assets/video/hero.jpg')]),
     espera(6000),
@@ -54,10 +63,14 @@ function iniciarMenu({ gsap, lenis, menosMovimento }) {
   const links = [...menu.querySelectorAll('.menu__links a')];
   const aberto = () => botao.getAttribute('aria-expanded') === 'true';
 
+  // Com o menu aberto, o conteúdo atrás fica inerte: Tab não escapa para o que está escondido.
+  const atras = [document.querySelector('main'), document.querySelector('footer')];
+
   function abrir() {
     botao.setAttribute('aria-expanded', 'true');
     botao.setAttribute('aria-label', 'Fechar menu');
     menu.hidden = false;
+    atras.forEach(el => { el.inert = true; });
     document.body.classList.add('menu-aberto');
     lenis?.stop();
     if (!menosMovimento) {
@@ -71,6 +84,7 @@ function iniciarMenu({ gsap, lenis, menosMovimento }) {
     botao.setAttribute('aria-expanded', 'false');
     botao.setAttribute('aria-label', 'Abrir menu');
     menu.hidden = true;
+    atras.forEach(el => { el.inert = false; });
     document.body.classList.remove('menu-aberto');
     lenis?.start();
     if (devolverFoco) botao.focus();
@@ -89,6 +103,9 @@ function iniciarMenu({ gsap, lenis, menosMovimento }) {
     if (aberto()) fechar({ devolverFoco: false });
     if (lenis) lenis.scrollTo(alvo, { duration: 1.4 });
     else alvo.scrollIntoView();
+    // O foco vai junto: o próximo Tab continua na seção de destino, não volta ao topo.
+    if (!alvo.hasAttribute('tabindex')) alvo.tabIndex = -1;
+    alvo.focus({ preventScroll: true });
   });
 }
 
@@ -96,7 +113,7 @@ function iniciarMenu({ gsap, lenis, menosMovimento }) {
 export function iniciarHeader(ctx) {
   iniciarRelogio();
   iniciarMenu(ctx);
-  ctx.ScrollTrigger.create({
+  ctx.ScrollTrigger?.create({
     trigger: '#contrate',
     start: 'top 60px',
     end: 'bottom top',

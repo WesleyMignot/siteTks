@@ -42,15 +42,24 @@ export async function iniciarAmbiente() {
   };
 }
 
-export async function abrir(amb, { largura = 1440, altura = 900, menosMovimento = false, bloquear = [], antes } = {}) {
+export async function abrir(amb, {
+  largura = 1440, altura = 900, menosMovimento = false, bloquear = [], atrasar = [], antes,
+  esperarPronto = true, semJs = false,
+} = {}) {
   const page = await amb.browser.newPage();
   const erros = [];
   await page.setViewport({ width: largura, height: altura });
   if (menosMovimento) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  if (semJs) await page.setJavaScriptEnabled(false);
   const bloqueada = u => bloquear.some(re => re.test(u));
-  if (bloquear.length) {
+  if (bloquear.length || atrasar.length) {
     await page.setRequestInterception(true);
-    page.on('request', r => (bloqueada(r.url()) ? r.abort() : r.continue()));
+    page.on('request', r => {
+      if (bloqueada(r.url())) { r.abort(); return; }
+      const atraso = atrasar.find(a => a.re.test(r.url()));
+      if (atraso) setTimeout(() => r.continue().catch(() => {}), atraso.ms);
+      else r.continue();
+    });
   }
   page.on('console', m => {
     if (m.type() !== 'error') return;
@@ -62,7 +71,7 @@ export async function abrir(amb, { largura = 1440, altura = 900, menosMovimento 
   page.on('response', r => { if (r.status() >= 400 && !bloqueada(r.url())) erros.push(`${r.status()} ${r.url()}`); });
   if (antes) await antes(page);
   await page.goto(`${amb.url}/index.html`, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => document.body?.classList.contains('pronto'), { timeout: 10_000 });
+  if (esperarPronto) await page.waitForFunction(() => document.body?.classList.contains('pronto'), { timeout: 10_000 });
   return { page, erros };
 }
 

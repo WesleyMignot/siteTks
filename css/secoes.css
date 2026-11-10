@@ -246,6 +246,10 @@
   color: transparent; -webkit-text-stroke: 1px var(--creme);
 }
 .lineup__palcos { margin-top: clamp(48px, 6vw, 96px); }
+/* movimento reduzido: letreiros parados viram texto corrido, para nenhum nome ficar fora da tela */
+.menos-movimento .lineup .letreiro { white-space: normal; }
+.menos-movimento .lineup .letreiro__trilho { display: block; width: auto; padding-inline: var(--gutter); }
+.menos-movimento .lineup .letreiro__trilho > span[aria-hidden] { display: none; }
 .lineup__palcos h3 { color: var(--creme-60); margin-bottom: 14px; }
 .lineup__palcos ul { display: flex; flex-wrap: wrap; gap: 10px; }
 .lineup__palcos li {
@@ -267,6 +271,11 @@
 .menos-movimento .assinatura { height: auto; }
 .menos-movimento .assinatura__palco { position: relative; }
 .menos-movimento .assinatura__traco { stroke-dashoffset: 0; }
+.assinatura__svg--retrato { display: none; }
+@media (orientation: portrait) and (max-width: 820px) {
+  .assinatura__svg--paisagem { display: none; }
+  .assinatura__svg--retrato { display: block; }
+}
 
 /* ---------- contrate ---------- */
 .contrate {

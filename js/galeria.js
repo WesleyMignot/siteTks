@@ -51,6 +51,14 @@ export function aparencia(z, prof, frente) {
   };
 }
 
+/**
+ * Um quadro da câmera: avança pela deriva (0.25 px/ms) mais o impulso do scroll (px/ms),
+ * que decai a cada quadro. O impulso é somado à posição, então a câmera nunca dá ré sozinha.
+ */
+export function avancarCamera({ cam, extra }, dt) {
+  return { cam: cam + (0.25 + extra) * dt, extra: extra * Math.pow(0.92, dt / 16.67) };
+}
+
 function criarItem({ tks, cor, alt }) {
   const fig = document.createElement('figure');
   fig.className = 'galeria__item foto-dupla';
@@ -92,21 +100,23 @@ export function iniciarGaleria(el, itens, { celular, menosMovimento, ScrollTrigg
   let w = palco.clientWidth;
   let h = palco.clientHeight;
   let progresso = 0;
-  let impulso = 0;
+  let camera = { cam: 0, extra: 0 };
   let raf = 0;
-  const inicio = performance.now();
+  let ultimo = performance.now();
 
   const gatilho = ScrollTrigger.create({
     trigger: el, start: 'top top', end: 'bottom bottom',
     onUpdate(self) {
       progresso = self.progress;
-      impulso = Math.max(-1200, Math.min(1200, impulso + self.getVelocity() * 0.05));
+      // velocidade do scroll (px/s) vira impulso da câmera (px/ms), limitado a ±4
+      camera.extra = Math.max(-4, Math.min(4, self.getVelocity() / 1000));
     },
   });
 
   function quadro(agora) {
-    const cam = (agora - inicio) * 0.25 + progresso * prof * 1.5 + impulso;
-    impulso *= 0.92;
+    camera = avancarCamera(camera, Math.min(50, agora - ultimo));
+    ultimo = agora;
+    const cam = camera.cam + progresso * prof * 1.5;
     for (let i = 0; i < n; i++) {
       const b = base[i];
       const z = envolverZ(b.z + cam, prof, frente);
@@ -124,6 +134,7 @@ export function iniciarGaleria(el, itens, { celular, menosMovimento, ScrollTrigg
 
   const visivel = new IntersectionObserver(([e]) => {
     cancelAnimationFrame(raf);
+    ultimo = performance.now();
     if (e.isIntersecting) raf = requestAnimationFrame(quadro);
   });
   visivel.observe(el);

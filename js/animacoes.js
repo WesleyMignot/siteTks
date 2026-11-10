@@ -74,10 +74,20 @@ export function iniciarReveals({ gsap, menosMovimento }) {
   });
 }
 
-/** [data-contar]: conta de data-de (padrão 0) até o alvo quando entra na tela. */
+/**
+ * [data-contar]: conta de data-de (padrão 0) até o alvo quando entra na tela.
+ * O número animado fica aria-hidden; o valor final vai num texto oculto para leitor de tela.
+ */
 export function iniciarContadores({ gsap, menosMovimento }) {
   if (menosMovimento) return; // o HTML já traz o valor final
   document.querySelectorAll('[data-contar]').forEach(el => {
+    const final = el.textContent;
+    const leitor = document.createElement('span');
+    leitor.className = 'visualmente-oculto';
+    leitor.textContent = final;
+    el.after(leitor);
+    el.setAttribute('aria-hidden', 'true');
+
     const alvo = Number(el.dataset.contar);
     const estado = { v: Number(el.dataset.de ?? 0) };
     const milhar = 'milhar' in el.dataset;
@@ -101,28 +111,29 @@ export function iniciarFotosDuplas() {
 }
 
 /**
- * Produções. Desktop: painéis sempre abertos e uma foto que segue o cursor sobre a linha.
- * Celular: cada linha é um acordeão (botão alterna aria-expanded + hidden no painel).
+ * Produções. Desktop: painéis abertos e uma foto que segue o cursor sobre a linha.
+ * Celular: cada linha é um acordeão. O modo acompanha a largura (ex.: iPad girando).
  */
-export function iniciarProducoes({ gsap, celular, menosMovimento }) {
+export function iniciarProducoes({ gsap, menosMovimento, CELULAR }) {
   const secao = document.getElementById('producoes');
   const linhas = [...secao.querySelectorAll('.producao')];
+  const mql = matchMedia(CELULAR);
+  const partes = linhas.map(l => [l.querySelector('.producao__botao'), l.querySelector('.producao__painel')]);
 
-  if (celular) {
-    linhas.forEach(linha => {
-      const botao = linha.querySelector('.producao__botao');
-      const painel = linha.querySelector('.producao__painel');
-      botao.setAttribute('aria-expanded', 'false');
-      painel.hidden = true;
-      botao.addEventListener('click', () => {
-        const abrir = botao.getAttribute('aria-expanded') !== 'true';
-        botao.setAttribute('aria-expanded', String(abrir));
-        painel.hidden = !abrir;
-      });
-    });
-    return;
-  }
+  const aplicarModo = () => partes.forEach(([botao, painel]) => {
+    botao.setAttribute('aria-expanded', String(!mql.matches));
+    painel.hidden = mql.matches;
+  });
+  aplicarModo();
+  mql.addEventListener('change', aplicarModo);
+  partes.forEach(([botao, painel]) => botao.addEventListener('click', () => {
+    if (!mql.matches) return; // no desktop o painel fica sempre aberto
+    const abrir = botao.getAttribute('aria-expanded') !== 'true';
+    botao.setAttribute('aria-expanded', String(abrir));
+    painel.hidden = !abrir;
+  }));
 
+  if (!gsap) return; // modo estático: sem foto flutuante
   const flut = secao.querySelector('.producoes__flutuante');
   const irX = gsap.quickTo(flut, 'x', { duration: menosMovimento ? 0 : 0.45, ease: 'power3.out' });
   const irY = gsap.quickTo(flut, 'y', { duration: menosMovimento ? 0 : 0.45, ease: 'power3.out' });
@@ -130,6 +141,7 @@ export function iniciarProducoes({ gsap, celular, menosMovimento }) {
   let ultimoX = 0;
 
   secao.addEventListener('pointermove', e => {
+    if (mql.matches) return;
     const caixa = secao.getBoundingClientRect();
     const x = e.clientX - caixa.left;
     const y = e.clientY - caixa.top;
@@ -140,6 +152,7 @@ export function iniciarProducoes({ gsap, celular, menosMovimento }) {
   });
   linhas.forEach(linha => {
     linha.addEventListener('pointerenter', () => {
+      if (mql.matches) return;
       linhas.forEach(l => l.classList.toggle('producao--ativa', l === linha));
       if (!flut.src.endsWith(linha.dataset.foto)) flut.src = linha.dataset.foto;
       gsap.to(flut, { opacity: 1, duration: 0.3 });

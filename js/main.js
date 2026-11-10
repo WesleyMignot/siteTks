@@ -1,6 +1,7 @@
 // Brunin Tks — monta o contexto (GSAP, ScrollTrigger, Lenis) e inicia cada seção.
+// Se o GSAP não carregar (CDN fora do ar), a página cai no modo estático: o conteúdo nunca fica preso.
 /* global gsap, ScrollTrigger, Lenis */
-import { iniciarPreloader, iniciarHeader } from './interface.js';
+import { iniciarPreloader, iniciarHeader, liberarPagina } from './interface.js';
 import { observarVideos } from './videos.js';
 import { iniciarGaleria } from './galeria.js';
 import { ITENS_GALERIA } from './dados.js';
@@ -10,17 +11,19 @@ import {
   iniciarProducoes, iniciarAssinatura,
 } from './animacoes.js';
 
+const CELULAR = '(max-width: 820px)';
 const raiz = document.documentElement;
-const menosMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const celular = matchMedia('(max-width: 820px)').matches;
+const temGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+const menosMovimento = !temGsap || matchMedia('(prefers-reduced-motion: reduce)').matches;
+const celular = matchMedia(CELULAR).matches;
 
 raiz.classList.toggle('menos-movimento', menosMovimento);
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
-gsap.registerPlugin(ScrollTrigger);
+if (temGsap) gsap.registerPlugin(ScrollTrigger);
 
 let lenis = null;
-if (!menosMovimento) {
+if (!menosMovimento && typeof Lenis !== 'undefined') {
   lenis = new Lenis({ lerp: 0.1 });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(t => lenis.raf(t * 1000));
@@ -28,37 +31,40 @@ if (!menosMovimento) {
 }
 raiz.dataset.lenis = lenis ? 'on' : 'off';
 
-const ctx = { gsap, ScrollTrigger, lenis, menosMovimento, celular };
+const ctx = {
+  gsap: temGsap ? gsap : null,
+  ScrollTrigger: temGsap ? ScrollTrigger : null,
+  lenis, menosMovimento, celular, CELULAR,
+};
 
-iniciarHeader(ctx);
-iniciarHero(ctx);
-iniciarLetreiros(ctx);
-iniciarReveals(ctx);
-iniciarContadores(ctx);
-iniciarFotosDuplas();
-iniciarProducoes(ctx);
-iniciarSets(ctx);
-iniciarAssinatura(ctx);
+/** Uma seção com erro não pode impedir as outras nem o fim do preloader. */
+function seguro(nome, fn) {
+  try { return fn(); } catch (e) { console.error(`[${nome}]`, e); return undefined; }
+}
+
+seguro('header', () => iniciarHeader(ctx));
+seguro('hero', () => iniciarHero(ctx));
+seguro('letreiros', () => iniciarLetreiros(ctx));
+seguro('reveals', () => iniciarReveals(ctx));
+seguro('contadores', () => iniciarContadores(ctx));
+seguro('fotos', () => iniciarFotosDuplas());
+seguro('producoes', () => iniciarProducoes(ctx));
+seguro('sets', () => iniciarSets(ctx));
+seguro('assinatura', () => iniciarAssinatura(ctx));
 
 // Galeria: recria com outro número de itens quando a tela cruza o breakpoint de celular.
 const elGaleria = document.getElementById('galeria');
-let celularGaleria = celular;
-let galeria = iniciarGaleria(elGaleria, ITENS_GALERIA, { ...ctx, celular: celularGaleria });
-let esperaResize;
-addEventListener('resize', () => {
-  clearTimeout(esperaResize);
-  esperaResize = setTimeout(() => {
-    const agora = matchMedia('(max-width: 820px)').matches;
-    if (agora === celularGaleria) return;
-    celularGaleria = agora;
-    galeria.destruir();
-    galeria = iniciarGaleria(elGaleria, ITENS_GALERIA, { ...ctx, celular: agora });
-  }, 200);
-});
-iniciarEstrelas(ctx);
-observarVideos(document, ctx);
+let galeria = seguro('galeria', () => iniciarGaleria(elGaleria, ITENS_GALERIA, ctx));
+matchMedia(CELULAR).addEventListener('change', e => seguro('galeria', () => {
+  galeria?.destruir();
+  galeria = iniciarGaleria(elGaleria, ITENS_GALERIA, { ...ctx, celular: e.matches });
+}));
 
-await iniciarPreloader(ctx);
-ScrollTrigger.refresh();
+seguro('estrelas', () => iniciarEstrelas(ctx));
+seguro('videos', () => observarVideos(document, ctx));
+
+iniciarPreloader(ctx)
+  .catch(e => { console.error('[preloader]', e); liberarPagina(ctx); })
+  .then(() => ctx.ScrollTrigger?.refresh());
 
 export default ctx;

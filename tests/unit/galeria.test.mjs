@@ -34,3 +34,17 @@ test('aparencia: fundo apagado, meio cheio, frente some', () => {
   assert.equal(frente.opacidade, 0);
   assert.ok(fundo.brilho < meio.brilho && meio.brilho < frente.brilho);
 });
+
+// #9 — a câmera não pode dar ré depois de um scroll rápido para frente
+test('avancarCamera: depois de um impulso, a câmera só avança', async () => {
+  const { avancarCamera } = await import('../../js/galeria.js');
+  let estado = { cam: 0, extra: 4 };
+  let anterior = 0;
+  for (let i = 0; i < 120; i++) {
+    estado = avancarCamera(estado, 16.67);
+    assert.ok(estado.cam >= anterior, `quadro ${i}: ${estado.cam} < ${anterior}`);
+    anterior = estado.cam;
+  }
+  assert.ok(estado.extra < 0.01);
+  assert.ok(estado.cam > 120 * 16.67 * 0.25);
+});

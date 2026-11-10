@@ -23,6 +23,13 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
+/* Lenis (antes vinha do CDN; inline para não bloquear a renderização) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
 body {
   background: var(--preto);
   color: var(--creme);
@@ -41,6 +48,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 ul, ol { list-style: none; }
 
 :focus-visible { outline: 2px solid var(--creme); outline-offset: 3px; }
+main > section:focus { outline: none; } /* seção focada pelo menu: o foco é para o Tab seguinte, não visual */
 #contrate :focus-visible { outline-color: var(--preto); }
 
 .visualmente-oculto {
@@ -93,7 +101,10 @@ ul, ol { list-style: none; }
 .preloader {
   position: fixed; inset: 0; z-index: 100; background: var(--preto);
   display: grid; place-items: center; overflow: hidden;
+  /* trava de segurança: se o JS falhar, o preloader some sozinho e libera o conteúdo */
+  animation: preloader-seguranca 0s linear 9s forwards;
 }
+@keyframes preloader-seguranca { to { visibility: hidden; pointer-events: none; } }
 .preloader__numero {
   position: absolute; left: var(--gutter); bottom: var(--gutter);
   font-size: clamp(56px, 12vw, 180px); font-weight: 800; line-height: .8; letter-spacing: -.04em;

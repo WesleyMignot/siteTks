@@ -16,8 +16,12 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%230F1211'/%3E%3Cpath d='M20 4C21 15 25 19 36 20 25 21 21 25 20 36 19 25 15 21 4 20 15 19 19 15 20 4Z' fill='%23F1E2C4'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Fraunces:ital,opsz,wght,SOFT@1,9..144,900,100&family=Grenze+Gotisch:wght@400..900&display=swap">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
+  <!-- Fontes sem bloquear a renderização: se o Google Fonts estiver lento, a página abre com a fonte reserva. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=Fraunces:ital,opsz,wght,SOFT@1,9..144,900,100&amp;family=Grenze+Gotisch:wght@400..900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=Fraunces:ital,opsz,wght,SOFT@1,9..144,900,100&amp;family=Grenze+Gotisch:wght@400..900&amp;display=swap">
+    <style>.preloader { display: none !important; }</style>
+  </noscript>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/secoes.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -328,8 +332,11 @@
 
     <section id="assinatura" class="assinatura" aria-labelledby="t-assinatura">
       <div class="assinatura__palco">
-        <svg class="assinatura__svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <svg class="assinatura__svg assinatura__svg--paisagem" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <path class="assinatura__traco" pathLength="1" d="M90 380C180 120 300 90 330 250S520 420 560 210 700 90 740 160"/>
+        </svg>
+        <svg class="assinatura__svg assinatura__svg--retrato" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <path class="assinatura__traco" pathLength="1" d="M70 690C30 470 170 400 200 520S330 690 330 430 140 170 330 110"/>
         </svg>
         <h2 id="t-assinatura" class="assinatura__nome gotica">Brunin</h2>
         <div class="assinatura__cortina" aria-hidden="true"></div>
