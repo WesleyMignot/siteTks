@@ -93,3 +93,41 @@
   .carreira__texto { columns: 1; }
   .numeros__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- galeria infinita ---------- */
+.galeria { position: relative; height: 400vh; }
+.galeria__palco {
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
+  background: var(--preto); perspective: 900px; perspective-origin: 50% 50%; isolation: isolate;
+}
+.galeria__itens { position: absolute; inset: 0; transform-style: preserve-3d; }
+.galeria__item {
+  --larg: clamp(140px, 22vw, 340px);
+  position: absolute; left: 50%; top: 50%; width: var(--larg); aspect-ratio: 2 / 3;
+  margin: calc(var(--larg) * -0.75) 0 0 calc(var(--larg) * -0.5);
+  border-radius: 3px; will-change: transform, opacity, filter; backface-visibility: hidden;
+}
+.galeria__nevoa {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 22%, rgba(94, 29, 25, .35) 55%, rgba(15, 18, 17, .92) 80%),
+    radial-gradient(40% 40% at 50% 50%, rgba(226, 81, 43, .25), transparent);
+}
+.galeria__legenda {
+  position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); z-index: 3;
+  display: flex; justify-content: space-between; gap: 16px; pointer-events: none;
+}
+.galeria__legenda p { color: var(--creme-60); }
+
+/* movimento reduzido: grade estática */
+.galeria--estatica { height: auto; }
+.galeria--estatica .galeria__palco {
+  position: relative; height: auto; overflow: visible; perspective: none;
+  padding: clamp(80px, 10vw, 140px) var(--gutter) clamp(90px, 10vw, 150px);
+}
+.galeria--estatica .galeria__itens {
+  position: static; display: grid; gap: 12px; transform-style: flat;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+.galeria--estatica .galeria__item { position: relative; left: auto; top: auto; margin: 0; width: auto; }
+.galeria--estatica .galeria__nevoa { display: none; }

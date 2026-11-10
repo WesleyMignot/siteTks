@@ -2,6 +2,8 @@
 /* global gsap, ScrollTrigger, Lenis */
 import { iniciarPreloader, iniciarHeader } from './interface.js';
 import { observarVideos } from './videos.js';
+import { iniciarGaleria } from './galeria.js';
+import { ITENS_GALERIA } from './dados.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
 } from './animacoes.js';
@@ -32,6 +34,22 @@ iniciarLetreiros(ctx);
 iniciarReveals(ctx);
 iniciarContadores(ctx);
 iniciarFotosDuplas();
+
+// Galeria: recria com outro número de itens quando a tela cruza o breakpoint de celular.
+const elGaleria = document.getElementById('galeria');
+let celularGaleria = celular;
+let galeria = iniciarGaleria(elGaleria, ITENS_GALERIA, { ...ctx, celular: celularGaleria });
+let esperaResize;
+addEventListener('resize', () => {
+  clearTimeout(esperaResize);
+  esperaResize = setTimeout(() => {
+    const agora = matchMedia('(max-width: 820px)').matches;
+    if (agora === celularGaleria) return;
+    celularGaleria = agora;
+    galeria.destruir();
+    galeria = iniciarGaleria(elGaleria, ITENS_GALERIA, { ...ctx, celular: agora });
+  }, 200);
+});
 iniciarEstrelas(ctx);
 observarVideos(document, ctx);
 
