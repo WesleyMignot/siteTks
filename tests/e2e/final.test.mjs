@@ -28,6 +28,17 @@ test('cartaz: nomes acendem com o scroll', async () => {
   assert.equal(fim.length, 20); assert.ok(fim.every(o => o > 0.9));
 });
 
+test('cartaz: leitor de tela ouve os nomes separados', async () => {
+  const { page } = await abrir(amb);
+  for (const [sel, nomes] of [['.cartaz__nacionais', NACIONAIS], ['.cartaz__under', UNDER]]) {
+    const arvore = await page.accessibility.snapshot({ root: await page.$(sel), interestingOnly: false });
+    const textos = [];
+    (function andar(n) { if (n.role === 'StaticText') textos.push(n.name); (n.children ?? []).forEach(andar); })(arvore);
+    const lido = textos.join('').replace(/\s+/g, ' ').trim();
+    assert.equal(lido.toLowerCase(), nomes.join(', ').toLowerCase(), sel); // o under tem text-transform: uppercase
+  }
+});
+
 test('cartaz: 7 nacionais e 13 do underground, separados por morcegos', async () => {
   const { page } = await abrir(amb);
   assert.deepEqual(await page.$$eval('.cartaz__nacionais .cartaz__nome', l => l.map(e => e.textContent.trim())), NACIONAIS);
