@@ -68,11 +68,32 @@ test('assinatura: girar a tela no fim mantém o texto formado', async () => {
   const { page } = await abrir(amb);
   await rolarPara(page, '#assinatura', 3 * 900 - 900);
   await page.setViewport({ width: 900, height: 1200 });
-  await new Promise(r => setTimeout(r, 900));
-  await rolarPara(page, '#assinatura', 3 * 1200 - 1200);
-  await new Promise(r => setTimeout(r, 400));
+  await new Promise(r => setTimeout(r, 1200)); // sem rolar de novo: o lugar tem que ser mantido
   assert.ok(await escuros(page) > 3000);
 });
+const progresso = (page, sel) => page.$eval(sel, e => { const r = e.getBoundingClientRect(); return -r.top / (r.height - innerHeight); });
+test('girar o celular no meio da assinatura mantém o lugar (retrato → paisagem → retrato)', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  await rolarPara(page, '#assinatura', Math.round(0.95 * 2 * 844));
+  await new Promise(r => setTimeout(r, 300));
+  await page.setViewport({ width: 844, height: 390 });
+  await new Promise(r => setTimeout(r, 1200));
+  const deitado = await progresso(page, '#assinatura');
+  await page.setViewport({ width: 390, height: 844 });
+  await new Promise(r => setTimeout(r, 1200));
+  const empe = await progresso(page, '#assinatura');
+  assert.ok(deitado > 0.88 && deitado < 1.01 && empe > 0.88 && empe < 1.01, `${deitado} ${empe}`);
+});
+test('redimensionar no meio da pilha dos sets mantém o mesmo set na tela', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '.sets__pilha', 2 * 900 + 60);
+  await new Promise(r => setTimeout(r, 600));
+  assert.equal(await page.$eval('.sets__contador', e => e.textContent.trim()), '03 / 08');
+  await page.setViewport({ width: 1200, height: 800 });
+  await new Promise(r => setTimeout(r, 1200));
+  assert.equal(await page.$eval('.sets__contador', e => e.textContent.trim()), '03 / 08');
+});
+
 test('assinatura no modo reduzido: estado final sem scroll', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
   await rolarPara(page, '#assinatura');

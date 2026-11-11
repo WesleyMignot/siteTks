@@ -10,6 +10,7 @@ import {
 } from './animacoes.js';
 import { iniciarAssinatura } from './assinatura.js';
 import { iniciarRevoadas } from './revoadas.js';
+import { iniciarAncora } from './ancora.js';
 
 const CELULAR = '(max-width: 820px)';
 const raiz = document.documentElement;
@@ -54,6 +55,7 @@ seguro('producoes', () => iniciarProducoes(ctx));
 seguro('sets', () => iniciarSets(ctx));
 seguro('assinatura', () => iniciarAssinatura(ctx));
 seguro('revoadas', () => iniciarRevoadas(ctx));
+seguro('ancora', () => iniciarAncora(ctx)); // girar/redimensionar não tira o visitante do lugar
 
 seguro('estrelas', () => iniciarEstrelas(ctx));
 seguro('videos', () => observarVideos(document, ctx));
