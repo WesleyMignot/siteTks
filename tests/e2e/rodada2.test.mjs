@@ -89,3 +89,46 @@ test('pular pelo menu do topo ao Contrate deixa tudo no estado final coerente', 
   const ins = await page.$eval('.hero__janela', e => (getComputedStyle(e).clipPath.match(/-?[\d.]+px/g) ?? []).map(parseFloat));
   assert.ok(ins.slice(0, 4).every(v => Math.abs(v) < 1)); // passou do hero: janela aberta
 });
+
+// Fração de pixels de uma linha da tela que destoam da cor de fundo `bg` (soma das diferenças RGB > 80).
+async function fracaoTinta(page, y, bg) {
+  const b64 = await page.screenshot({ encoding: 'base64', clip: { x: 0, y, width: 1440, height: 1 } });
+  return page.evaluate(async (src, bg) => {
+    const img = new Image(); img.src = 'data:image/png;base64,' + src; await img.decode();
+    const c = document.createElement('canvas'); c.width = img.width; c.height = 1;
+    const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, c.width, 1).data; let n = 0;
+    for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - bg[0]) + Math.abs(d[i + 1] - bg[1]) + Math.abs(d[i + 2] - bg[2]) > 80) n++;
+    return n / c.width;
+  }, b64, bg);
+}
+
+test('faixa de chamas cobre a emenda e some suave embaixo (inclusive as viradas)', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  for (const id of ['#sets', '#contrate', '#lineup']) {
+    await rolarPara(page, id, -400);
+    const bg = await page.$eval(id, e => getComputedStyle(e).backgroundColor.match(/\d+/g).slice(0, 3).map(Number));
+    const topo = await page.$eval(id, e => Math.round(e.getBoundingClientRect().top + scrollY)); // clip do screenshot é em coordenadas do documento
+    const naEmenda = await fracaoTinta(page, topo + 6, bg);
+    const noFim = await fracaoTinta(page, topo + 96, bg);
+    assert.ok(naEmenda > 0.08 && noFim < 0.03, `${id}: emenda ${naEmenda.toFixed(3)}, fim ${noFim.toFixed(3)}`);
+  }
+});
+
+test('texturas de chamas emendam sem corte quando se repetem na horizontal', async () => {
+  const { page } = await abrir(amb);
+  const r = await page.evaluate(async () => {
+    const out = {};
+    for (const n of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme']) {
+      const img = new Image(); img.src = `assets/texturas/${n}.webp`; await img.decode();
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+      const a = g.getImageData(0, 0, 1, c.height).data, b = g.getImageData(c.width - 1, 0, 1, c.height).data;
+      let ruins = 0;
+      for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 120) ruins++;
+      out[n] = ruins / c.height;
+    }
+    return out;
+  });
+  assert.ok(Object.values(r).every(f => f < 0.05), JSON.stringify(r));
+});

@@ -320,10 +320,10 @@
 #carreira { background: var(--vermelho); --chamas: url("../assets/texturas/preto-no-vermelho.webp"); }
 #numeros { --chamas: url("../assets/texturas/vermelho-no-preto.webp"); }
 #producoes { --chamas: url("../assets/texturas/creme-no-preto.webp"); }
-#sets { background: var(--preto); --chamas: url("../assets/texturas/creme-no-preto.webp"); --chamas-giro: scaleY(-1); }
+#sets { background: var(--preto); --chamas: url("../assets/texturas/creme-no-preto.webp"); --chamas-giro: scaleY(-1); --chamas-sentido: to top; }
 #lineup { background: var(--vermelho); --chamas: url("../assets/texturas/preto-no-vermelho.webp"); }
 #assinatura { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); }
-#contrate { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); --chamas-giro: scaleY(-1); }
+#contrate { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); --chamas-giro: scaleY(-1); --chamas-sentido: to top; }
 .producoes__titulo, .sets__titulo, .lineup__titulo { font-size: clamp(48px, 7vw, 112px); }
 
 /* ---------- carreira e números (rodada 2) ---------- */
