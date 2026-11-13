@@ -2,7 +2,7 @@
 // Sets) e os morcegos da Assinatura (cena registrada por js/assinatura.js). Só roda rAF enquanto alguma
 // cena está ativa; fora disso fica limpo e parado. Não existe no movimento reduzido nem no modo estático.
 import { criarRng } from './util.js';
-import { desenharMorcego } from './morcego.js';
+import { criarCarimbos } from './morcego.js';
 
 /** Faixa da virada: cada morcego com lugar na faixa, ritmo, onda e batida próprios (determinístico pela semente). */
 export function criarFaixa(n, semente) {
@@ -75,7 +75,18 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
 
   // faixas das viradas: o avanço u acompanha o topo da seção atravessando a tela
   const celular = matchMedia(CELULAR).matches;
-  const cor = getComputedStyle(document.documentElement).getPropertyValue('--vermelho').trim() || '#E8392F';
+  const raiz = getComputedStyle(document.documentElement);
+  const cor = raiz.getPropertyValue('--vermelho').trim() || '#E8392F';
+  const preto = raiz.getPropertyValue('--preto').trim() || '#0F1211';
+  // morcegos vermelhos com contorno preto fino (separa um do outro na faixa), já desenhados em carimbos
+  const carimbos = criarCarimbos({ cor, contorno: preto });
+  // cria os carimbos antes da 1ª virada, um tamanho por vez, quando o navegador está ocioso (os quadros
+  // consecutivos ficam a menos de √2 um do outro: nenhum tamanho de referência fica de fora)
+  const ocioso = window.requestIdleCallback ?? (f => setTimeout(f, 200));
+  const tams = [0.7, 0.95, 1.3, 1.6].map(k => k * Math.max(0.8, W / 900));
+  let k = 0;
+  const aquecer = () => { carimbos.aquecer(tams[k], tams[k]); if (++k < tams.length) ocioso(aquecer); };
+  ocioso(aquecer);
   ['#producoes', '#sets'].forEach((seletor, i) => {
     const secao = document.querySelector(seletor);
     if (!secao) return;
@@ -90,13 +101,12 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
     registrar({
       ativa: () => u > 0 && u < 1,
       desenhar(g, W, H, t) {
-        g.fillStyle = cor;
         const esc = Math.max(0.8, W / 900);
         let n = 0;
         for (const m of bando) {
           const p = posicaoFaixa(m, u, t, W, H, fase);
           if (p.x < -120 || p.x > W + 120 || p.y < -120 || p.y > H + 120) continue; // fora da tela
-          desenharMorcego(g, p.x, p.y, m.tam * esc, t * m.bate + m.fase, p.giro);
+          carimbos.desenhar(g, p.x, p.y, m.tam * esc, t * m.bate + m.fase, p.giro);
           n++;
         }
         return n;

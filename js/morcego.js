@@ -67,15 +67,65 @@ export function quadro(fase) {
 }
 
 let formas = null; // Path2D só existe no navegador: cache criado no primeiro desenho
-/** Desenha um morcego no canvas (cor = fillStyle atual). `tam` = escala do contorno (56 de envergadura). */
-export function desenharMorcego(g, x, y, tam, fase, giro = 0, espelho = 1) {
+/**
+ * Desenha um morcego no canvas (cor = fillStyle atual). `tam` = escala do contorno (56 de envergadura).
+ * `contorno` > 0: linha em volta (cor = strokeStyle atual) com essa espessura em px de tela, qualquer tamanho.
+ */
+export function desenharMorcego(g, x, y, tam, fase, giro = 0, espelho = 1, contorno = 0) {
   formas ??= QUADROS_D.map(d => new Path2D(d));
+  const forma = formas[quadro(fase)];
   g.save();
   g.translate(x, y);
   if (giro) g.rotate(giro);
   g.scale(tam * espelho, tam);
-  g.fill(formas[quadro(fase)]);
+  g.fill(forma);
+  if (contorno > 0) { g.lineWidth = contorno / tam; g.stroke(forma); }
   g.restore();
+}
+
+// tamanhos de referência dos carimbos (passo ~√2): desenha-se no menor ≥ tam e reduz até ~0,7×
+const BALDES = [0.6, 0.85, 1.2, 1.7, 2.4, 3.4, 4.8];
+const [VX, VY, VW, VH] = VIEWBOX.split(' ').map(Number);
+const telaPadrao = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
+
+/**
+ * Carimbos: os 32 quadros já desenhados (cor + contorno de `linha` px) em bitmaps, por tamanho de referência,
+ * criados sob demanda e reaproveitados. No canvas pintado na CPU (Safari) o contorno desenhado na hora custa
+ * ~4× o quadro; o carimbo sai mais barato até que o preenchimento. `desenhar` tem os mesmos argumentos de
+ * desenharMorcego; `aquecer(min, max)` cria antes os quadros dos tamanhos que vão aparecer.
+ */
+export function criarCarimbos({ cor, contorno, linha = 1, criarTela = telaPadrao }) {
+  const cache = new Map();
+  const balde = tam => BALDES.find(b => b >= tam) ?? BALDES[BALDES.length - 1];
+  const carimbo = (f, ref) => {
+    const chave = `${f}:${ref}`;
+    let c = cache.get(chave);
+    if (!c) {
+      const folga = linha + 1, ox = -VX * ref + folga, oy = -VY * ref + folga;
+      const tela = criarTela(Math.ceil(VW * ref + 2 * folga), Math.ceil(VH * ref + 2 * folga));
+      const x = tela.getContext('2d');
+      x.fillStyle = cor; x.strokeStyle = contorno; x.lineJoin = 'round';
+      desenharMorcego(x, ox, oy, ref, (f + 0.5) / QUADROS * 2 * Math.PI, 0, 1, linha);
+      c = { tela, ox, oy };
+      cache.set(chave, c);
+    }
+    return c;
+  };
+  return {
+    desenhar(g, x, y, tam, fase, giro = 0, espelho = 1) {
+      const ref = balde(tam), c = carimbo(quadro(fase), ref), e = tam / ref;
+      g.save();
+      g.translate(x, y);
+      if (giro) g.rotate(giro);
+      g.scale(e * espelho, e);
+      g.drawImage(c.tela, -c.ox, -c.oy);
+      g.restore();
+    },
+    aquecer(min, max) {
+      const a = balde(min), z = balde(max);
+      for (const b of BALDES) if (b >= a && b <= z) for (let f = 0; f < QUADROS; f++) carimbo(f, b);
+    },
+  };
 }
 
 const SVG = 'http://www.w3.org/2000/svg';

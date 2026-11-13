@@ -18,7 +18,7 @@ Pedidos do Wesley sobre a rodada 3:
 | Card do hero | Opção A: o vídeo fica inteiro do card até o fim. No fim, tem a altura da tela, encostado à direita, e o resto da janela fica preto. No celular, onde ele é mais largo que a tela, fica centralizado e corta só as laterais. |
 | Trecho da janela | Reel `DW9lHDGkSo6`, de 0 a 10 s (hoje: 20,5–29,5 s). O pôster sai do mesmo trecho. |
 | Viradas | Opção A: uma faixa cheia e ondulada, com **170** morcegos no desktop e **90** no celular. No pico ela cobre a largura toda e desacelera um pouco no meio. |
-| Contorno | Linha preta (`--preto`) de **1 px de tela** em volta de cada morcego dos canvases (viradas e Assinatura, voando e pousados, inclusive o estado final parado). Os morcegos pequenos em SVG que separam textos ficam sem contorno. |
+| Contorno | Linha preta (`--preto`) de **1 px de tela** em volta de cada morcego **vermelho** — os das faixas das viradas. Os da Assinatura são pretos (formam o nome preto sobre o vermelho): contorno preto neles não apareceria, então ficam como estão (decisão da execução). Os morcegos pequenos em SVG que separam textos ficam sem contorno. |
 | Rodapé | `© 2026 Brunin Tks · Site por M. Wesley`, sem link. O alt da foto da Carreira mantém "Foto @clicksbylt". |
 
 ## 3. Card do hero
@@ -106,13 +106,14 @@ Propriedades que os testes fixam:
 - `desenharMorcego(g, x, y, tam, fase, giro = 0, espelho = 1, contorno = 0)`:
   - com `contorno > 0`, depois do `fill` faz `stroke` do mesmo `Path2D`, com `lineWidth = contorno / tam`, o que dá a espessura em px de tela;
   - a cor é o `strokeStyle` atual, definido por quem chama.
-- O céu (viradas) e a Assinatura (voo, pousados e `desenharFinal`) definem:
-  - `strokeStyle` = `--preto`;
-  - `lineJoin = 'round'`;
-  - `contorno = 1`.
+- Só as faixas das viradas usam o contorno (vermelho com linha `--preto`). A Assinatura não muda: seus morcegos são pretos.
 - **Desempenho.** Medir o tempo de desenho da cena da Assinatura na chegada (P ≈ 0,25, 1440 × 900), com e sem contorno, no Chrome headless com a CPU 4× mais lenta.
   - Se o contorno somar mais de 50% ao tempo, a solução é pré-desenhar os quadros contornados em bitmaps e reaproveitá-los.
   - Fica registrado como decisão no ledger.
+  - **Resultado (execução):** medido nas faixas, num canvas pintado na CPU com a CPU 4× mais lenta. Sem contorno: 24 a 52 ms por quadro. Contorno desenhado na hora: 184 ms. Carimbos: 13 a 18 ms.
+  - Por isso entram os **carimbos**, `criarCarimbos({ cor, contorno, linha })` em `js/morcego.js`:
+    - são os 32 quadros já desenhados por tamanho de referência, em passos de cerca de √2;
+    - são criados sob demanda e "aquecidos" quando o navegador está ocioso.
 
 ## 6. Rodapé
 
@@ -134,6 +135,7 @@ Propriedades que os testes fixam:
   - faixa no meio da altura;
   - determinismo.
 - `desenharMorcego` com e sem contorno (contexto falso): faz `stroke` só com contorno, e com `lineWidth = contorno / tam`.
+- Carimbos: um bitmap por quadro e tamanho, contorno de 1 px no tamanho de referência e `aquecer`.
 - Rodapé e alt da foto em `index.html`.
 
 **E2E:**
@@ -142,7 +144,7 @@ Propriedades que os testes fixam:
 - **Fim do pin, celular:** altura 844 ±1, centro em x 195 ±1.
 - **Trecho:** a janela dura 10 s ±0,3.
 - **Faixa:** no pico ela desenha ≥ 100 morcegos no desktop e ≤ 95 no celular.
-- **Contorno:** há pixels quase pretos e opacos no céu na virada e no palco da Assinatura no movimento reduzido.
+- **Contorno:** há pixels quase pretos e opacos no céu na virada.
 - **Varredura de prints** (`responsivo`): atualizada.
 
 ## 9. Fora do escopo e riscos
