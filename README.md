@@ -35,7 +35,7 @@ python tools/tratar-fotos.py          # foto da Carreira, fotos das Produções,
                                       # (ou só uma etapa: fotos | producoes | og | pdf)
 bash tools/cortar-video.sh            # vídeo de fundo do hero, do 2 REELS.mp4 (precisa de ffmpeg)
 bash tools/baixar-reels.sh baixar     # reels do Instagram → bruto/reels/ + folhas de quadros
-bash tools/baixar-reels.sh cortar     # janela do hero (720/540) e fundo dos sets 6–8
+bash tools/baixar-reels.sh cortar     # janela do hero (720/540, os 10 s iniciais) e fundo dos sets 6–8
 bash tools/baixar-sets.sh baixar      # vídeos dos sets no YouTube → bruto/sets/
 bash tools/baixar-sets.sh cortar      # trechos de 4 s dos sets 1–5
 python tools/gerar-texturas.py        # faixas de chamas (repetem sem emenda)
@@ -46,10 +46,14 @@ No Windows, rode os scripts de download com `PY=<caminho do python.exe>`: o atal
 
 ## Como os morcegos funcionam
 
-- `js/morcego.js`: a silhueta (contorno do `morcego_ref`) com as asas articuladas; a batida tem 32 quadros pré-calculados, usados nos divisores (SVG) e nos canvases.
-- `js/ceu.js`: um canvas fixo por cima da página desenha as nuvens das viradas (Produções e Sets) e os morcegos da Assinatura. Só anima quando alguma cena está na tela.
+- `js/morcego.js`: a silhueta (contorno do `morcego_ref`) com as asas articuladas; a batida tem 32 quadros pré-calculados, usados nos divisores (SVG) e nos canvases. Os morcegos vermelhos das viradas levam um contorno preto de 1 px, já desenhado em "carimbos" (bitmaps por quadro e tamanho, `criarCarimbos`): desenhar o contorno na hora custava ~4× o quadro no Safari.
+- `js/ceu.js`: um canvas fixo por cima da página desenha as faixas das viradas (Produções e Sets) e os morcegos da Assinatura. Na virada, uma faixa ondulada (1,6× a largura da tela) atravessa da esquerda para a direita e, no pico, cobre a largura inteira. Só anima quando alguma cena está na tela.
 - `js/assinatura.js`: a chegada pelos quatro lados e o "Brunin" formado; o palco desenha só a tinta das letras.
 - Movimento reduzido ou sem GSAP: sem céu; a assinatura aparece pronta, com os pousados parados.
+
+## Card do hero
+
+O card mostra o reel inteiro (9:16) desde o começo. Na rolagem, a janela abre até a tela toda e o vídeo cresce junto: só `transform`, do retângulo do card até o final (`fimDaJanela` em `js/util.js`), com a altura da tela, encostado à direita no computador e centralizado no celular. As bordas do vídeo esfumam no preto da janela.
 
 ## Publicar
 

@@ -7,6 +7,15 @@ before(async () => { amb = await iniciarAmbiente(); });
 after(async () => { await amb.fechar(); });
 const espera = ms => new Promise(r => setTimeout(r, ms));
 const insets = p => p.$eval('.hero__janela', e => (getComputedStyle(e).clipPath.match(/-?[\d.]+px/g) ?? []).map(parseFloat));
+const videoJanela = p => p.$eval('.hero__janela video', v => {
+  const m = new DOMMatrix(getComputedStyle(v).transform), r = v.getBoundingClientRect();
+  return { escala: Math.hypot(m.a, m.b), w: v.offsetWidth, h: v.offsetHeight,
+    cx: r.left + r.width / 2, cy: r.top + r.height / 2, direita: r.right, altura: r.height,
+    borda: getComputedStyle(v).getPropertyValue('--borda').trim() };
+});
+const cardRef = p => p.$eval('.hero__card-ref', e => {
+  const r = e.getBoundingClientRect(); return { w: r.width, cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+});
 
 test('desktop: hero-720 tocando', async () => {
   const { page } = await abrir(amb);
@@ -99,10 +108,53 @@ test('autoplay recusado no card: pôster fica e nenhum erro', async () => {
   await espera(500);
   assert.ok(await page.$eval('.hero__janela video', v => v.poster.endsWith('janela-720.jpg')));
   assert.deepEqual(erros, []);
+  // a caixa do vídeo vem do CSS (aspect-ratio), não dos metadados: o pôster preenche o card certinho
+  const v = await videoJanela(page), c = await cardRef(page);
+  assert.ok(Math.abs(v.escala * v.w - c.w) < 1, JSON.stringify({ v, c }));
 });
 
 test('movimento reduzido: card parado no pôster', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
   await espera(500);
   assert.ok(await page.$eval('.hero__janela video', v => v.paused));
+});
+
+test('janela: trecho de 10 s do começo do reel', async () => {
+  const { page } = await abrir(amb);
+  await page.waitForFunction(() => document.querySelector('.hero__janela video').readyState >= 1);
+  const d = await page.$eval('.hero__janela video', v => v.duration);
+  assert.ok(Math.abs(d - 10) < 0.3, String(d));
+});
+
+test('topo: o card mostra o vídeo inteiro', async () => {
+  const { page } = await abrir(amb);
+  const v = await videoJanela(page), c = await cardRef(page);
+  assert.ok(Math.abs(v.escala * v.w - c.w) < 1, JSON.stringify({ v, c }));
+  assert.ok(Math.hypot(v.cx - c.cx, v.cy - c.cy) < 2, JSON.stringify({ v, c }));
+  assert.equal(v.borda, '0%');
+});
+
+test('fim do pin: vídeo inteiro com a altura da tela, encostado à direita', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#hero', 2.5 * 900 - 900);
+  const v = await videoJanela(page);
+  assert.ok(Math.abs(v.altura - 900) < 1 && Math.abs(v.direita - 1440) < 1 && Math.abs(v.w - 506.25) < 1, JSON.stringify(v));
+  assert.equal(v.borda, '14%');
+});
+
+test('celular, fim do pin: vídeo centralizado com a altura da tela', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  await rolarPara(page, '#hero', 2.5 * 844 - 844);
+  const v = await videoJanela(page);
+  // 9:16 com a altura da tela é mais largo que o celular: centralizado, corta só as laterais
+  assert.ok(Math.abs(v.altura - 844) < 1 && Math.abs(v.cx - 195) < 1 && Math.abs(v.w - 474.75) < 1, JSON.stringify(v));
+});
+
+test('girar no fim do pin: o vídeo recalcula', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#hero', 2.5 * 900 - 900);
+  await page.setViewport({ width: 900, height: 1200 });
+  await espera(1500);
+  const v = await videoJanela(page);
+  assert.ok(Math.abs(v.altura - 1200) < 1 && Math.abs(v.direita - 900) < 1 && Math.abs(v.w - 675) < 1, JSON.stringify(v));
 });

@@ -205,3 +205,17 @@ test('header fica escuro sobre o Contrate', async () => {
   await rolarPara(page, '#contrate', 10);
   assert.ok(await page.$eval('header', h => h.classList.contains('header--escuro')));
 });
+
+// pixels quase pretos e opacos num canvas (o contorno; os morcegos das viradas são vermelhos)
+const pretos = (p, sel) => p.$eval(sel, c => {
+  const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0;
+  for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200 && d[i] < 60 && d[i + 1] < 60 && d[i + 2] < 60) n++;
+  return n;
+});
+test('contorno: morcegos da virada com linha preta', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#sets', -450);
+  await new Promise(r => setTimeout(r, 300));
+  const n = await pretos(page, '.ceu');
+  assert.ok(n > 500, String(n));
+});

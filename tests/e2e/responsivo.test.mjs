@@ -28,7 +28,7 @@ for (const [largura, altura] of [[390, 844], [1440, 900]]) {
       await rolarPara(page, s, s === '#assinatura' ? 2.5 * altura : 0); // assinatura (350vh): estado final (P = 1)
       await tela(s.slice(1));
     }
-    // extras: hero no meio do pin; nuvem da virada para os Sets; assinatura na chegada (P 0,25) e formando (P 0,7)
+    // extras: hero no meio do pin; faixa da virada para os Sets; assinatura na chegada (P 0,25) e formando (P 0,7)
     // (P vai do topo da assinatura no fundo da tela até o fim da seção: deslocamento = 3,5·altura·P − altura)
     const assinatura = P => Math.round(3.5 * altura * P - altura);
     await rolarPara(page, '#hero', Math.round(0.4 * 1.5 * altura)); await tela('hero-0.4');

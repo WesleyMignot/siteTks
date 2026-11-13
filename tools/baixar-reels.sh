@@ -16,13 +16,13 @@ IDS="DW9lHDGkSo6 DRuX77XEWlI DG_97MaOjeD DO1bP5kEUF_"
 
 # nome  id  início(s)  duração(s)  largura  crf  [giro]   — trechos escolhidos olhando bruto/reels/<id>-folha.jpg
 # giro: valor do transpose do ffmpeg (2 = 90° anti-horário) para reel gravado deitado
-#  janela      DW9lHDGkSo6 20,5–29,5 s: palco com fumaça e público (os 20 s iniciais são quase só preto)
+#  janela      DW9lHDGkSo6 0–10 s: o DJ iluminado num palco escuro (P&B); aparece inteiro dentro do card do hero
 #  set 6 (Modelo Brasileño) DO1bP5kEUF_: DJ nos CDJs, fumaça e público atrás
 #  set 7 (Rewind BR)        DRuX77XEWlI: público de mãos para cima e lasers vermelhos
 #  set 8 (Trinka)           DG_97MaOjeD: gravado deitado; endireitado vira horizontal (DJ de braços erguidos)
 TRECHOS="
-janela-720 DW9lHDGkSo6 20.5 9 720 30
-janela-540 DW9lHDGkSo6 20.5 9 540 31
+janela-720 DW9lHDGkSo6 0 10 720 30
+janela-540 DW9lHDGkSo6 0 10 540 31
 sets/reel-a DO1bP5kEUF_ 1.5 4 720 30
 sets/reel-b DRuX77XEWlI 16 4 720 32
 sets/reel-c DG_97MaOjeD 1.5 4 960 30 2

@@ -1,5 +1,5 @@
 // Animações das seções (hero, letreiros, estrelas...). Cada função recebe o ctx de main.js.
-import { escolherHero, formatarContagem, escolherJanela } from './util.js';
+import { escolherHero, formatarContagem, escolherJanela, fimDaJanela } from './util.js';
 import { tocar, pausar } from './videos.js';
 import { criarMorcegoSvg, animarDivisores } from './morcego.js';
 
@@ -38,8 +38,10 @@ export function iniciarHero({ gsap, menosMovimento }) {
   // Medidas relativas ao palco (valem mesmo se o refresh acontecer com a página rolada).
   const caixa = () => {
     const p = palco.getBoundingClientRect(), r = ref.getBoundingClientRect();
-    return { t: r.top - p.top, l: r.left - p.left, b: p.bottom - r.bottom, d: p.right - r.right, cx: r.left - p.left + r.width / 2, cy: r.top - p.top + r.height / 2 };
+    return { t: r.top - p.top, l: r.left - p.left, b: p.bottom - r.bottom, d: p.right - r.right, w: r.width, h: r.height, cx: r.left - p.left + r.width / 2, cy: r.top - p.top + r.height / 2 };
   };
+  // o vídeo (9:16) vai do retângulo do card (inteiro dentro dele) ao final, com a altura da tela
+  const fim = () => fimDaJanela(palco.clientWidth, palco.clientHeight);
   const recorte = () => { const c = caixa(); return `inset(${c.t}px ${c.d}px ${c.b}px ${c.l}px round 10px)`; };
   const origem = () => { const c = caixa(); return `${c.cx}px ${c.cy}px`; };
   const palavras = dividirPalavras(document.querySelector('.hero__frase'));
@@ -51,6 +53,9 @@ export function iniciarHero({ gsap, menosMovimento }) {
     .fromTo('.hero__janela',
       { clipPath: recorte, rotation: -4, transformOrigin: origem },
       { clipPath: 'inset(0px 0px 0px 0px round 0px)', rotation: 0, duration: 0.58, ease: 'power2.inOut' }, 0.12)
+    .fromTo('.hero__janela video',
+      { x: () => caixa().l, y: () => caixa().t, scale: () => caixa().w / fim().w, '--borda': '0%' },
+      { x: () => fim().l, y: () => fim().t, scale: 1, '--borda': '14%', duration: 0.58, ease: 'power2.inOut' }, 0.12)
     .to('.hero__logo', { scale: 1.35, opacity: 0, duration: 0.45 }, 0.12)
     .to(['.hero__topo', '.hero__base', '#hero .letreiro', '#hero .estrela'], { opacity: 0, y: 40, duration: 0.35 }, 0.12)
     .to('.hero__escuro', { opacity: 0.6, duration: 0.5 }, 0.12)

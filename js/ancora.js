@@ -1,5 +1,5 @@
 // Mantém o lugar do visitante quando a tela muda de tamanho (girar o celular, redimensionar a janela).
-// As seções altas (hero 250vh, pilha dos sets, assinatura 300vh) mudam de altura em px no resize, mas o
+// As seções altas (hero 250vh, pilha dos sets, assinatura 350vh) mudam de altura em px no resize, mas o
 // scroll continua no mesmo px: sem isto o visitante cai em outra seção.
 
 /**
