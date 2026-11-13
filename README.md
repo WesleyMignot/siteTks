@@ -57,10 +57,11 @@ O card mostra o reel inteiro (9:16) desde o começo. Na rolagem, a janela abre a
 
 ## Publicar
 
-**Antes de publicar (obrigatório):** no `<head>` do `index.html`, troque `assets/og.jpg` pelo endereço completo (ex.: `https://SEU-DOMINIO/assets/og.jpg`) em `og:image` e `twitter:image`, e acrescente `<meta property="og:url" content="https://SEU-DOMINIO/">`. WhatsApp, Instagram e X não montam a prévia do link com caminho relativo.
+O site está no **GitHub Pages**: https://wesleymignot.github.io/siteTks/
 
-O site é estático. Publique a pasta **sem** `node_modules/`, `tests/`, `docs/`, `tools/` e `.superpowers/`.
+- **Configuração:** em Settings → Pages, a fonte é "Deploy from a branch", com a branch `main` e a pasta `/ (root)`. Cada merge na `main` republica o site sozinho, em 1 ou 2 minutos.
+- **Sem Jekyll:** o arquivo vazio `.nojekyll`, na raiz, faz o Pages servir os arquivos como estão, sem processá-los com o Jekyll.
+- **Prévia do link:** `og:url`, `og:image` e `twitter:image`, no `<head>` do `index.html`, usam o endereço completo. WhatsApp, Instagram e X não montam a prévia com caminho relativo. Se o site mudar de endereço (um domínio próprio, por exemplo), troque os três e o teste `tests/unit/conteudo.test.mjs`.
+- **Arquivos publicados:** o Pages publica o repositório inteiro, incluindo `docs/`, `tests/` e as fotos originais em `assets/fotos/`. O site só usa `index.html`, `css/`, `js/` e o resto de `assets/`.
 
-- **Netlify Drop:** arraste a pasta preparada em https://app.netlify.com/drop.
-- **GitHub Pages:** suba o repositório e ative Pages a partir da branch `main`, na raiz.
-- **Vercel:** importe o repositório como projeto estático, sem comando de build.
+Para publicar em outro lugar, envie só os arquivos do site, sem `node_modules/`, `tests/`, `docs/`, `tools/` e `.superpowers/`. No Netlify Drop, por exemplo, basta arrastar a pasta em https://app.netlify.com/drop. Na Vercel, importe o repositório como projeto estático, sem comando de build.
