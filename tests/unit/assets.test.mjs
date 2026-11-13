@@ -46,9 +46,7 @@ test('clipes dos reels nos sets', () => {
 test('clipes dos sets', () => {
   for (const n of ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi'])
     assert.ok(tam(`assets/video/sets/${n}.mp4`) <= 700_000, n);
-  for (const n of ['maos', 'pista', 'cabine'])
-    assert.ok(tam(`assets/video/sets/${n}.mp4`) <= 450_000, n);
-  for (const n of ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'maos', 'pista', 'cabine'])
+  for (const n of ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi'])
     assert.ok(tam(`assets/video/sets/${n}.jpg`) > 0, n);
 });
 
@@ -60,4 +58,9 @@ test('sem imagens órfãs em assets/img', () => {
   const usado = ['index.html', 'css/base.css', 'css/secoes.css', ...readdirSync(join(RAIZ, 'js')).map(f => `js/${f}`)]
     .map(f => readFileSync(join(RAIZ, f), 'utf8')).join('\n');
   assert.deepEqual(readdirSync(join(RAIZ, 'assets/img')).filter(f => !usado.includes(f)), []);
+});
+
+test('sem clipes órfãos em assets/video/sets', () => {
+  const usados = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-a', 'reel-b', 'reel-c'];
+  assert.deepEqual(readdirSync(join(RAIZ, 'assets/video/sets')).filter(f => !usados.includes(f.replace(/\.(mp4|jpg)$/, ''))), []);
 });

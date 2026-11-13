@@ -19,7 +19,7 @@ senso 5ackC9W3BIs 1110 4
 grau 2Z2gP9W9Epo 600 4
 ataque PuYyCp85V9U 1515 4
 veneno-lab SLUUZG8-oYA 1440 4
-sensi IP9V-06-QJw 1230 4
+sensi IP9V-06-QJw 1355 4
 "
 # Recorte central de 76%: tira as marcas dos canais nos cantos (logos, "BRUNIN TKS", bandeira).
 RECORTE="crop=iw*0.76:ih*0.76"
