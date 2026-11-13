@@ -1,34 +1,34 @@
-// Céu: um canvas fixo, do tamanho da tela, que desenha as nuvens de morcegos das viradas (Produções e
+// Céu: um canvas fixo, do tamanho da tela, que desenha as faixas de morcegos das viradas (Produções e
 // Sets) e os morcegos da Assinatura (cena registrada por js/assinatura.js). Só roda rAF enquanto alguma
 // cena está ativa; fora disso fica limpo e parado. Não existe no movimento reduzido nem no modo estático.
 import { criarRng } from './util.js';
 import { desenharMorcego } from './morcego.js';
 
-/** Bando da virada: cada morcego com deslocamento, onda e batida próprios (determinístico pela semente). */
-export function criarNuvem(n, semente) {
+/** Faixa da virada: cada morcego com lugar na faixa, ritmo, onda e batida próprios (determinístico pela semente). */
+export function criarFaixa(n, semente) {
   const r = criarRng(semente);
-  return Array.from({ length: n }, () => ({
-    du: (r() - 0.5) * 0.34, dy: (r() - 0.5) * 0.42,
-    a1: 0.08 + r() * 0.16, f1: 1.5 + r() * 2.5, p1: r() * 6.3,
-    a2: 0.02 + r() * 0.05, f2: 0.6 + r() * 1.2, p2: r() * 6.3,
+  return Array.from({ length: n }, (_, i) => ({
+    q: (i + r()) / n,        // lugar ao longo da faixa, espalhado por igual (sem buracos no pico)
+    dy: r() + r() - 1,       // -1..1, mais gente no meio da espessura
+    j: (r() - 0.5) * 0.12,   // ritmo próprio: uns adiantam, outros atrasam
+    a2: 0.006 + r() * 0.014, f2: 0.8 + r() * 1.4, p2: r() * 6.3,
     tam: 0.7 + r() * 0.9, bate: 9 + r() * 6, fase: r() * 6.3,
   }));
 }
 
 /**
- * Posição de um morcego da nuvem no progresso u da virada (0 = topo da seção no fundo da tela,
- * 1 = no topo) e no tempo t. Em u 0 e 1 o bando inteiro está fora da tela. O giro segue o voo.
+ * Posição de um morcego da faixa no progresso u da virada (0 = topo da seção no fundo da tela, 1 = no topo) e
+ * no tempo t. A faixa (1,6 × a largura) corre da esquerda para a direita por uma onda fixa na tela; em u 0 e 1
+ * está toda fora, e no pico cobre a largura inteira (desacelera um pouco no meio para o pico durar mais).
+ * Onda e espessura seguem o menor lado: no celular em pé a faixa não fica íngreme.
  */
-export function posicaoNuvem(m, u, t, W, H) {
-  const S = Math.max(W, 0.9 * H); // espalhamento pelo maior lado: no celular em pé a nuvem não vira coluna
-  const em = v => ({
-    x: W * (-0.45 + 1.9 * v) + S * m.du,
-    y: H * (0.62 - 0.32 * (v + m.du) + 0.6 * m.dy)
-      + H * m.a1 * Math.sin((v + m.du) * Math.PI * m.f1 + m.p1)
-      + H * m.a2 * Math.sin(t * m.f2 + m.p2),
-  });
-  const a = em(u), b = em(u + 0.01);
-  return { x: a.x, y: a.y, giro: Math.atan2(b.y - a.y, b.x - a.x) * 0.45 };
+export function posicaoFaixa(m, u, t, W, H, fase = 0.6) {
+  const L = 1.6 * W, M = 140, B = Math.min(W, H);
+  const e = u + 0.4 * Math.sin(2 * Math.PI * u) / (2 * Math.PI);
+  const x = -M - m.q * L + e * (W + L + 2 * M) + m.j * W * (e - 0.5);
+  const centro = xx => 0.48 * H + 0.07 * B * Math.sin(xx / W * 1.6 * Math.PI + fase);
+  const y = centro(x) + m.dy * 0.11 * B + m.a2 * B * Math.sin(t * m.f2 + m.p2);
+  return { x, y, giro: Math.atan2(centro(x + 10) - centro(x), 10) * 0.45 };
 }
 
 /**
@@ -73,13 +73,14 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
   tela.dataset.desenhados = '0';
   addEventListener('resize', () => { medir(); acordar(); });
 
-  // nuvens das viradas: o avanço u acompanha o topo da seção atravessando a tela
+  // faixas das viradas: o avanço u acompanha o topo da seção atravessando a tela
   const celular = matchMedia(CELULAR).matches;
   const cor = getComputedStyle(document.documentElement).getPropertyValue('--vermelho').trim() || '#E8392F';
   ['#producoes', '#sets'].forEach((seletor, i) => {
     const secao = document.querySelector(seletor);
     if (!secao) return;
-    const bando = criarNuvem(celular ? 40 : 90, 101 + i * 17);
+    const bando = criarFaixa(celular ? 90 : 170, 101 + i * 17);
+    const fase = i ? 2.7 : 0.6; // ondas diferentes nas duas viradas
     let u = 0;
     ScrollTrigger.create({
       trigger: secao, start: 'top bottom', end: 'top top',
@@ -93,7 +94,7 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
         const esc = Math.max(0.8, W / 900);
         let n = 0;
         for (const m of bando) {
-          const p = posicaoNuvem(m, u, t, W, H);
+          const p = posicaoFaixa(m, u, t, W, H, fase);
           if (p.x < -120 || p.x > W + 120 || p.y < -120 || p.y > H + 120) continue; // fora da tela
           desenharMorcego(g, p.x, p.y, m.tam * esc, t * m.bate + m.fase, p.giro);
           n++;

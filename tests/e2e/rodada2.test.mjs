@@ -56,19 +56,19 @@ test('menu com 5 seções numeradas', async () => {
     ['#carreira', '#producoes', '#sets', '#lineup', '#contrate']);
 });
 
-test('céu: nuvem cheia na virada para os Sets', async () => {
+test('céu: faixa cheia na virada para os Sets', async () => {
   const { page } = await abrir(amb);
   await rolarPara(page, '#sets', -450); await new Promise(r => setTimeout(r, 300));
-  assert.ok(await page.$eval('.ceu', c => +c.dataset.desenhados) >= 60);
+  assert.ok(await page.$eval('.ceu', c => +c.dataset.desenhados) >= 100);
 });
 
-test('céu no celular: nuvem menor, sem rolagem lateral e DPR no máximo 2', async () => {
+test('céu no celular: faixa menor, sem rolagem lateral e DPR no máximo 2', async () => {
   const { page } = await abrir(amb, { largura: 390, altura: 844 });
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 3 });
   await new Promise(r => setTimeout(r, 400));
   await rolarPara(page, '#sets', -420); await new Promise(r => setTimeout(r, 300));
   const r = await page.$eval('.ceu', c => ({ n: +c.dataset.desenhados, w: c.width, iw: innerWidth }));
-  assert.ok(r.n > 0 && r.n <= 45 && r.w <= 2 * r.iw, JSON.stringify(r));
+  assert.ok(r.n > 0 && r.n <= 95 && r.w <= 2 * r.iw, JSON.stringify(r));
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
 });
 
