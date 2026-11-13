@@ -106,3 +106,10 @@ test('movimento reduzido: card parado no pôster', async () => {
   await espera(500);
   assert.ok(await page.$eval('.hero__janela video', v => v.paused));
 });
+
+test('janela: trecho de 10 s do começo do reel', async () => {
+  const { page } = await abrir(amb);
+  await page.waitForFunction(() => document.querySelector('.hero__janela video').readyState >= 1);
+  const d = await page.$eval('.hero__janela video', v => v.duration);
+  assert.ok(Math.abs(d - 10) < 0.3, String(d));
+});
