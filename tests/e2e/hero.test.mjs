@@ -77,3 +77,32 @@ test('autoplay recusado não gera erro', async () => {
   assert.deepEqual(erros, []);
   assert.ok(await page.$eval('.hero__video', v => v.poster.endsWith('hero.jpg')));
 });
+
+test('card do hero toca o reel novo antes do scroll', async () => {
+  const { page } = await abrir(amb);
+  const t = () => page.$eval('.hero__janela video', v => v.currentTime);
+  const a = await t(); await espera(900);
+  assert.ok(await t() > a, 'o vídeo do card avança sem scroll');
+  assert.ok(await page.$eval('.hero__janela video', v => v.currentSrc.endsWith('janela-720.mp4')));
+  assert.equal(await page.$('.hero__etiqueta'), null);
+});
+
+test('celular usa a janela de 540', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  await espera(300);
+  assert.ok(await page.$eval('.hero__janela video', v => v.currentSrc.endsWith('janela-540.mp4')));
+});
+
+test('autoplay recusado no card: pôster fica e nenhum erro', async () => {
+  const { page, erros } = await abrir(amb, { antes: p => p.evaluateOnNewDocument(() => {
+    HTMLMediaElement.prototype.play = () => Promise.reject(new DOMException('bloqueado', 'NotAllowedError')); }) });
+  await espera(500);
+  assert.ok(await page.$eval('.hero__janela video', v => v.poster.endsWith('janela-720.jpg')));
+  assert.deepEqual(erros, []);
+});
+
+test('movimento reduzido: card parado no pôster', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  await espera(500);
+  assert.ok(await page.$eval('.hero__janela video', v => v.paused));
+});

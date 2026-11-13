@@ -1,5 +1,6 @@
 // Animações das seções (hero, letreiros, estrelas...). Cada função recebe o ctx de main.js.
-import { escolherHero, formatarContagem } from './util.js';
+import { escolherHero, formatarContagem, escolherJanela } from './util.js';
+import { tocar, pausar } from './videos.js';
 import { criarMorcegoSvg, animarDivisores } from './morcego.js';
 
 /** Divide o texto de `el` em <span class="palavra"> (para revelar palavra por palavra). */
@@ -16,13 +17,21 @@ export function dividirPalavras(el) {
 }
 
 /**
- * Hero: o card do Boiler Baile (.hero__janela recortada por clip-path no retângulo de .hero__card-ref)
- * cresce com o scroll até cobrir a tela e vira a abertura da Carreira.
+ * Hero: o card (.hero__janela recortada por clip-path no retângulo de .hero__card-ref) toca o reel da
+ * janela desde o início e cresce com o scroll até cobrir a tela, virando a abertura da Carreira.
  */
 export function iniciarHero({ gsap, menosMovimento }) {
   if (menosMovimento) return; // reduzido/estático: card pequeno com pôster, frase na própria Carreira
   document.querySelector('.hero__video').src = escolherHero(innerWidth);
   document.documentElement.classList.add('anima-hero');
+
+  // o card toca desde o início. Não usa o observador geral (15% de área visível): recortado no tamanho
+  // do card, o vídeo de tela cheia nunca passava disso e ficava parado até o scroll. Pausa fora do hero.
+  const janela = document.querySelector('.hero__janela video');
+  janela.src = escolherJanela(innerWidth);
+  janela.preload = 'auto';
+  new IntersectionObserver(es => (es[es.length - 1].isIntersecting ? tocar(janela) : pausar(janela)))
+    .observe(document.getElementById('hero'));
 
   const palco = document.querySelector('.hero__palco');
   const ref = document.querySelector('.hero__card-ref');
@@ -42,7 +51,6 @@ export function iniciarHero({ gsap, menosMovimento }) {
     .fromTo('.hero__janela',
       { clipPath: recorte, rotation: -4, transformOrigin: origem },
       { clipPath: 'inset(0px 0px 0px 0px round 0px)', rotation: 0, duration: 0.58, ease: 'power2.inOut' }, 0.12)
-    .to('.hero__etiqueta', { opacity: 0, duration: 0.08 }, 0.12)
     .to('.hero__logo', { scale: 1.35, opacity: 0, duration: 0.45 }, 0.12)
     .to(['.hero__topo', '.hero__base', '#hero .letreiro', '#hero .estrela'], { opacity: 0, y: 40, duration: 0.35 }, 0.12)
     .to('.hero__escuro', { opacity: 0.6, duration: 0.5 }, 0.12)

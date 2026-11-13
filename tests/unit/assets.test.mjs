@@ -31,8 +31,16 @@ test('og e pdf', () => {
 });
 
 test('janela do hero', () => {
-  assert.ok(tam('assets/video/janela-720.mp4') <= 800_000);
+  assert.ok(tam('assets/video/janela-720.mp4') <= 1_800_000);
+  assert.ok(tam('assets/video/janela-540.mp4') <= 1_200_000);
   assert.ok(tam('assets/video/janela-720.jpg') > 0);
+});
+
+test('clipes dos reels nos sets', () => {
+  for (const n of ['reel-a', 'reel-b', 'reel-c']) {
+    assert.ok(tam(`assets/video/sets/${n}.mp4`) <= 450_000, n);
+    assert.ok(tam(`assets/video/sets/${n}.jpg`) > 0, n);
+  }
 });
 
 test('clipes dos sets', () => {
