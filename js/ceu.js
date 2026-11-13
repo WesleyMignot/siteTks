@@ -23,12 +23,22 @@ export function criarFaixa(n, semente) {
  * Onda e espessura seguem o menor lado: no celular em pé a faixa não fica íngreme.
  */
 export function posicaoFaixa(m, u, t, W, H, fase = 0.6) {
-  const L = 1.6 * W, M = 140, B = Math.min(W, H);
+  // M: margem fora da tela no começo e no fim; cresce com a tela porque o morcego cresce (esc = W/900)
+  const L = 1.6 * W, M = Math.max(140, 0.11 * W), B = Math.min(W, H);
   const e = u + 0.4 * Math.sin(2 * Math.PI * u) / (2 * Math.PI);
   const x = -M - m.q * L + e * (W + L + 2 * M) + m.j * W * (e - 0.5);
   const centro = xx => 0.48 * H + 0.07 * B * Math.sin(xx / W * 1.6 * Math.PI + fase);
   const y = centro(x) + m.dy * 0.11 * B + m.a2 * B * Math.sin(t * m.f2 + m.p2);
   return { x, y, giro: Math.atan2(centro(x + 10) - centro(x), 10) * 0.45 };
+}
+
+/**
+ * O morcego desenhado com escala `tam` em (x, y) ainda pode aparecer numa tela W × H? Usa a meia envergadura
+ * máxima do contorno (37 unidades) com folga para o giro: o recorte cresce com o morcego (telas largas).
+ */
+export function visivel(x, y, tam, W, H) {
+  const r = 40 * tam;
+  return x + r > 0 && x - r < W && y + r > 0 && y - r < H;
 }
 
 /**
@@ -105,8 +115,9 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
         let n = 0;
         for (const m of bando) {
           const p = posicaoFaixa(m, u, t, W, H, fase);
-          if (p.x < -120 || p.x > W + 120 || p.y < -120 || p.y > H + 120) continue; // fora da tela
-          carimbos.desenhar(g, p.x, p.y, m.tam * esc, t * m.bate + m.fase, p.giro);
+          const tam = m.tam * esc;
+          if (!visivel(p.x, p.y, tam, W, H)) continue; // inteiro fora da tela (recorte do tamanho do morcego)
+          carimbos.desenhar(g, p.x, p.y, tam, t * m.bate + m.fase, p.giro);
           n++;
         }
         return n;
