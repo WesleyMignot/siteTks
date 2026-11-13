@@ -138,3 +138,28 @@ test('texturas de chamas emendam sem corte quando se repetem na horizontal', asy
   });
   assert.ok(Object.values(r).every(f => f < 0.05), JSON.stringify(r));
 });
+
+test('Sinistro DNB só na biografia; o número de festas continua 4', async () => {
+  const { page } = await abrir(amb);
+  const tem = sel => page.$eval(sel, e => e.textContent.includes('Sinistro'));
+  assert.equal(await tem('#hero .letreiro'), false);
+  assert.equal(await tem('#producoes'), false);
+  assert.equal(await tem('#carreira'), true);
+  assert.ok(!(await page.$eval('meta[name=description]', m => m.content)).includes('Sinistro'));
+  assert.ok(await page.$$eval('[data-contar]', l => l.some(e => e.dataset.contar === '4' && e.parentElement.textContent.includes('festas criadas'))));
+});
+
+test('Produções em tela de toque larga acendem no centro da tela', async () => {
+  const { page } = await abrir(amb, { largura: 1180, altura: 820, antes: p => p.evaluateOnNewDocument(() => {
+    const mm = window.matchMedia.bind(window);
+    window.matchMedia = q => (q.includes('hover: none') ? mm('(min-width: 0px)') : mm(q)); }) });
+  await page.evaluate(() => { const l = document.querySelectorAll('.producao')[1], r = l.getBoundingClientRect();
+    scrollTo(0, scrollY + r.top + r.height / 2 - innerHeight / 2); });
+  await new Promise(r => setTimeout(r, 700));
+  assert.ok(await page.$$eval('.producao', l => l[1].classList.contains('producao--acesa')));
+});
+
+test('movimento reduzido: foto das Produções sem zoom', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  assert.equal(await page.$eval('.producao__fundo', e => getComputedStyle(e).transform), 'none');
+});

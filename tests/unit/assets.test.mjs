@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { statSync, readdirSync } from 'node:fs';
+import { statSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
 const RAIZ = fileURLToPath(new URL('../../', import.meta.url));
 const tam = p => statSync(join(RAIZ, p)).size;
-const FOTOS = ['21', '22', '29', '31', '32', '39', '43', '57'];
+const FOTOS = ['22']; // só a Carreira usa as fotos do ensaio
 
 test('fotos cor e tks ≤ 350 KB', () => {
   for (const f of FOTOS) for (const v of ['cor', 'tks'])
@@ -50,5 +50,14 @@ test('clipes dos sets', () => {
     assert.ok(tam(`assets/video/sets/${n}.mp4`) <= 450_000, n);
   for (const n of ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'maos', 'pista', 'cabine'])
     assert.ok(tam(`assets/video/sets/${n}.jpg`) > 0, n);
-  assert.ok(tam('assets/img/boiler-quadro.webp') <= 250_000);
+});
+
+test('fotos das produções ≤ 300 KB', () => {
+  for (const n of ['savage', 'boiler', 'sonora']) assert.ok(tam(`assets/img/producao-${n}.webp`) <= 300_000, n);
+});
+
+test('sem imagens órfãs em assets/img', () => {
+  const usado = ['index.html', 'css/base.css', 'css/secoes.css', ...readdirSync(join(RAIZ, 'js')).map(f => `js/${f}`)]
+    .map(f => readFileSync(join(RAIZ, f), 'utf8')).join('\n');
+  assert.deepEqual(readdirSync(join(RAIZ, 'assets/img')).filter(f => !usado.includes(f)), []);
 });

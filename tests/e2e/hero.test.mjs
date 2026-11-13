@@ -56,10 +56,10 @@ test('movimento reduzido: hero sem pin e frase visível na Carreira', async () =
   assert.ok(await page.$eval('.carreira__abertura', e => e.getBoundingClientRect().height > 0 && getComputedStyle(e).position !== 'absolute'));
 });
 
-test('letreiro com as 4 festas', async () => {
+test('letreiro com as 3 festas atuais', async () => {
   const { page } = await abrir(amb);
   const t = await page.$eval('#hero .letreiro', e => e.textContent);
-  for (const f of ['Savage', 'Boiler Baile', 'Sonora Breck', 'Sinistro DNB']) assert.ok(t.includes(f), f);
+  for (const f of ['Savage', 'Boiler Baile', 'Sonora Breck']) assert.ok(t.includes(f), f);
 });
 
 test('logo quebrado vira texto', async () => {

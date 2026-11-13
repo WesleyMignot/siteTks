@@ -127,7 +127,7 @@
 /* Foto apagada no fundo da faixa; acende no hover, no foco ou no centro da tela (celular). */
 .producao__fundo {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-size: cover; background-position: center 30%;
+  background-size: cover; background-position: var(--foco, center 30%); /* foco por card (rosto e olhos na faixa) */
   opacity: .14; mix-blend-mode: multiply; filter: grayscale(1); transform: scale(1.04);
   transition: opacity .5s, filter .5s, transform .5s;
 }
@@ -140,6 +140,7 @@
   opacity: 1; mix-blend-mode: normal; filter: none; transform: none;
 }
 .producao:hover::after, .producao:focus-within::after, .producao--acesa::after { opacity: 1; }
+.menos-movimento .producao__fundo, .menos-movimento .producao:hover .producao__fundo { transform: none; transition: opacity .5s, filter .5s; } /* sem zoom no reduzido */
 .producao:hover .producao__papel, .producao:focus-within .producao__papel, .producao--acesa .producao__papel { color: var(--creme); }
 .producao h3 { font: inherit; }
 .producao__botao {

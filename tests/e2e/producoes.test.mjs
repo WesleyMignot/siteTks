@@ -7,10 +7,10 @@ before(async () => { amb = await iniciarAmbiente(); });
 after(async () => { await amb.fechar(); });
 const espera = ms => new Promise(r => setTimeout(r, ms));
 
-test('4 produções na ordem, com os papéis', async () => {
+test('3 produções na ordem, com os papéis', async () => {
   const { page } = await abrir(amb);
   assert.deepEqual(await page.$$eval('.producao__nome', l => l.map(e => e.textContent.trim())),
-    ['Savage', 'Boiler Baile', 'Sonora Breck', 'Sinistro DNB']);
+    ['Savage', 'Boiler Baile', 'Sonora Breck']);
   const papeis = await page.$$eval('.producao__papel', l => l.map(e => e.textContent));
   assert.ok(papeis[0].includes('Fundador') && papeis.slice(1).every(p => p.includes('Cofundador')));
 });
@@ -40,17 +40,17 @@ test('celular: abrir uma faixa não desalinha o acender das outras', async () =>
   await rolarPara(page, '#producoes');
   await page.click('.producao:first-child .producao__botao');
   await espera(300);
-  await page.evaluate(() => { const l = document.querySelectorAll('.producao')[3]; const r = l.getBoundingClientRect();
+  await page.evaluate(() => { const l = document.querySelectorAll('.producao')[2]; const r = l.getBoundingClientRect();
     scrollTo(0, scrollY + r.top + r.height / 2 - innerHeight / 2); });
   await espera(700);
   assert.deepEqual(await page.$$eval('.producao', l => l.map(e => e.classList.contains('producao--acesa'))),
-    [false, false, false, true]);
+    [false, false, true]);
 });
 
 test('fotos de fundo das faixas', async () => {
   const { page } = await abrir(amb);
   assert.deepEqual(await page.$$eval('.producao__fundo', l => l.map(e => [e.getAttribute('aria-hidden'), e.style.backgroundImage.match(/[\w-]+\.webp/)?.[0]])),
-    [['true', 'foto-21-tks.webp'], ['true', 'boiler-quadro.webp'], ['true', 'foto-57-tks.webp'], ['true', 'foto-39-tks.webp']]);
+    [['true', 'producao-savage.webp'], ['true', 'producao-boiler.webp'], ['true', 'producao-sonora.webp']]);
 });
 
 test('celular: toque abre e fecha', async () => {

@@ -23,8 +23,6 @@ sensi IP9V-06-QJw 1230 4
 "
 # Recorte central de 76%: tira as marcas dos canais nos cantos (logos, "BRUNIN TKS", bandeira).
 RECORTE="crop=iw*0.76:ih*0.76"
-# quadro da Boiler Baile usado no fundo das Produções (id, instante em s)
-BOILER_QUADRO="PuYyCp85V9U 1518.9"
 
 baixar() {
   while read -r nome id ini dur; do
@@ -45,11 +43,6 @@ cortar() {
     ffmpeg -nostdin -v error -y -ss "$(awk "BEGIN{print $ini+0.6}")" -i "$BRUTO/$id.mp4" -frames:v 1 -vf "$RECORTE,scale=960:-2" -q:v 4 "$OUT/$nome.jpg"
     echo "ok $nome $(wc -c < "$OUT/$nome.mp4") bytes"
   done <<< "$TRECHOS"
-  read -r id t <<< "$BOILER_QUADRO"
-  ffmpeg -nostdin -v error -y -ss "$t" -i "$BRUTO/$id.mp4" -frames:v 1 -vf "$RECORTE,scale=1280:-2" "bruto/boiler-quadro.png"
-  $PY -c "import sys; from PIL import Image; Image.open(sys.argv[1]).convert('RGB').save(sys.argv[2], quality=78)" \
-    "bruto/boiler-quadro.png" "assets/img/boiler-quadro.webp"
-  echo "ok boiler-quadro"
 }
 
 case "${1:-}" in

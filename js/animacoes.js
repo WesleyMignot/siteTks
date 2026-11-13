@@ -187,7 +187,8 @@ export function iniciarProducoes({ gsap, ScrollTrigger, CELULAR }) {
 
   if (!gsap) return; // modo estático: a faixa acende só no hover e no foco (CSS)
   // Celular: a faixa que passa pelo meio da tela acende.
-  gsap.matchMedia().add(CELULAR, () => {
+  // celular ou tela de toque (iPad deitado): sem hover, a faixa que passa pelo meio da tela acende
+  gsap.matchMedia().add(`(hover: none), ${CELULAR}`, () => {
     linhas.forEach(linha => ScrollTrigger.create({
       trigger: linha, start: 'top 55%', end: 'bottom 45%', toggleClass: 'producao--acesa',
     }));

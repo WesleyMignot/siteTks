@@ -1,10 +1,12 @@
 """Gera os assets de imagem do site a partir do material bruto.
 
-- assets/img/foto-NN-cor.webp e foto-NN-tks.webp (versão tratada: duotone + grão)
+- assets/img/foto-NN-cor.webp e foto-NN-tks.webp (versão tratada: duotone + grão), só das fotos usadas
+- assets/img/producao-{savage,boiler,sonora}.webp (fundo das faixas das Produções)
 - assets/og.jpg (imagem de compartilhamento 1200x630)
 - assets/presskit.pdf (cópia do PDF para download)
 
-Uso: python tools/tratar-fotos.py   (requer: pip install -r tools/requirements.txt)
+Uso: python tools/tratar-fotos.py [fotos|producoes|og|pdf]   (sem argumento: tudo)
+     (requer: pip install -r tools/requirements.txt)
 """
 from pathlib import Path
 import shutil
@@ -18,6 +20,9 @@ SAIDA_IMG = RAIZ / "assets" / "img"
 
 PRETO, CREME, VERMELHO = "#0F1211", "#F1E2C4", "#E8392F"
 FOTOS_VERMELHAS = {"22", "32", "43"}
+FOTOS_USADAS = {"22"}  # a Carreira (foto dupla); as outras do ensaio não aparecem no site
+# fotos novas das Produções (JPGs brutos na raiz, fora do git) → nome no site
+PRODUCOES = {"savage": "Savage.jpg", "boiler": "boiler.jpg", "sonora": "Sonora.jpg"}
 
 
 
@@ -40,6 +45,8 @@ def fotos() -> None:
     SAIDA_IMG.mkdir(parents=True, exist_ok=True)
     for arq in sorted(FOTOS.glob("*.jpg")):
         nn = arq.stem.rsplit("-", 1)[-1]
+        if nn not in FOTOS_USADAS:
+            continue
         img = Image.open(arq).convert("RGB")
         img = img.resize((round(img.width * 1200 / img.height), 1200), Image.LANCZOS)
         img.save(SAIDA_IMG / f"foto-{nn}-cor.webp", quality=80)
@@ -65,12 +72,25 @@ def og() -> None:
     print("ok og.jpg")
 
 
+def producoes() -> None:
+    """Lado maior de 1400 px, WebP q78 (q70 se passar de 300 KB)."""
+    for nome, bruto in PRODUCOES.items():
+        img = Image.open(RAIZ / bruto).convert("RGB")
+        img.thumbnail((1400, 1400), Image.LANCZOS)
+        saida = SAIDA_IMG / f"producao-{nome}.webp"
+        img.save(saida, quality=78)
+        if saida.stat().st_size > 300_000:
+            img.save(saida, quality=70)
+        print("ok produção", nome, saida.stat().st_size)
+
+
 def pdf() -> None:
     shutil.copyfile(PDF, RAIZ / "assets" / "presskit.pdf")
     print("ok presskit.pdf")
 
 
 if __name__ == "__main__":
-    fotos()
-    og()
-    pdf()
+    import sys
+    etapas = {"fotos": fotos, "producoes": producoes, "og": og, "pdf": pdf}
+    for nome in sys.argv[1:] or list(etapas):
+        etapas[nome]()
