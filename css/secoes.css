@@ -242,7 +242,7 @@
 }
 /* nome + morcego seguinte não se separam: o morcego nunca abre uma linha */
 .cartaz__nome, .cartaz__par { white-space: nowrap; }
-.cartaz__nacionais .morcego--div { height: .42em; }
+.cartaz__nacionais .morcego--div { height: .62em; margin-block: -.1em; } /* viewBox alto (curso da batida): .62em ≈ o tamanho visual antigo */
 .anima-cartaz .cartaz__nome { opacity: .18; }
 .lineup__palcos { margin-top: clamp(48px, 6vw, 96px); text-align: center; }
 .lineup__palcos h3 { color: var(--creme-60); margin-bottom: 14px; }

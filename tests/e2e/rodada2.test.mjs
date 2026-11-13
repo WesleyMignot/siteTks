@@ -26,7 +26,23 @@ test('header fica escuro sobre a seção creme das Produções', async () => {
 
 test('divisores do letreiro do hero são morcegos', async () => {
   const { page } = await abrir(amb);
-  assert.ok(await page.$$eval('#hero .div-morcego', l => l.length >= 4 && l.every(d => d.querySelector('svg .morcego__asas'))));
+  assert.ok(await page.$$eval('#hero .div-morcego', l => l.length >= 4 && l.every(d => d.querySelector('svg .morcego__forma'))));
+});
+
+test('divisores batem as asas (o desenho muda com o tempo)', async () => {
+  // só os visíveis animam: compara todos os do hero (o 1º pode já ter saído da tela no letreiro)
+  const { page } = await abrir(amb);
+  const d = () => page.$$eval('#hero .div-morcego path', l => l.map(p => p.getAttribute('d')));
+  const a = await d(); await new Promise(r => setTimeout(r, 250));
+  const b = await d();
+  assert.ok(b.some((x, i) => x !== a[i]));
+});
+
+test('movimento reduzido: divisores parados', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  const d = () => page.$$eval('#hero .div-morcego path', l => l.map(p => p.getAttribute('d')));
+  const a = await d(); await new Promise(r => setTimeout(r, 250));
+  assert.deepEqual(await d(), a);
 });
 
 test('sem JS os divisores mostram ✦', async () => {

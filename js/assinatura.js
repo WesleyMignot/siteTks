@@ -3,7 +3,7 @@
 // os "pousados" ficam nas bordas de cima das letras, batendo as asas devagar. Ninguém sai.
 // Algoritmo: docs/identidade/morcegos.html (v2). Funções puras + iniciarAssinatura(ctx) (DOM).
 import { criarRng } from './util.js';
-import { ASAS_D, CORPO_D } from './morcego.js';
+import { desenharMorcego } from './morcego.js';
 
 const lim = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const suave = t => t * t * (3 - 2 * t);
@@ -101,7 +101,6 @@ export function iniciarAssinatura({ gsap, ScrollTrigger, menosMovimento, CELULAR
   if (animar) document.documentElement.classList.add('anima-assinatura');
 
   const cor = getComputedStyle(document.documentElement).getPropertyValue('--preto').trim() || '#0F1211';
-  const asas = new Path2D(ASAS_D), corpo = new Path2D(CORPO_D);
   let W = 0, H = 0, dpr = 1, esc = 1, mascara = null, tinta = null, bats = [], p = animar ? 0 : 1, comFonte = false;
 
   const novaTela = () => {
@@ -169,13 +168,12 @@ export function iniciarAssinatura({ gsap, ScrollTrigger, menosMovimento, CELULAR
     g.drawImage(tinta, 0, 0);
     g.fillStyle = cor;
     const dims = { W, H, esc };
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
     for (const b of bats) {
       const e = estadoMorcego(b, p, t, dims);
       if (!e.visivel) continue;
-      g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.translate(e.x, e.y); g.rotate(e.giro); g.scale(b.tam, b.tam);
-      g.fill(corpo);
-      g.scale(1, e.bate); g.fill(asas);
+      const parado = b.pousado && e.giro === 0; // pousado: bate devagar
+      desenharMorcego(g, e.x, e.y, b.tam, t * b.bateF * (parado ? 0.5 : 1) + b.fase, e.giro);
     }
     g.setTransform(1, 0, 0, 1, 0, 0);
   }

@@ -45,7 +45,7 @@ function seguro(nome, fn) {
 
 seguro('header', () => iniciarHeader(ctx));
 seguro('hero', () => iniciarHero(ctx));
-seguro('divisores', () => iniciarDivisores()); // antes dos letreiros: muda a largura do trilho
+seguro('divisores', () => iniciarDivisores(ctx)); // antes dos letreiros: muda a largura do trilho
 seguro('letreiros', () => iniciarLetreiros(ctx));
 seguro('cartaz', () => iniciarCartaz(ctx)); // depois dos divisores: os morcegos mudam a quebra das linhas
 seguro('reveals', () => iniciarReveals(ctx));
