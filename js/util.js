@@ -19,6 +19,15 @@ export function escolherJanela(largura) {
   return largura > 820 ? 'assets/video/janela-720.mp4' : 'assets/video/janela-540.mp4';
 }
 
+/**
+ * Retângulo final do vídeo da janela do hero (9:16, relativo ao palco W × H): altura da tela; encostado à
+ * direita quando cabe, centralizado (cortando as laterais) quando é mais largo que a tela.
+ */
+export function fimDaJanela(W, H) {
+  const w = H * 9 / 16;
+  return { l: w <= W ? W - w : (W - w) / 2, t: 0, w, h: H };
+}
+
 /** Valor de contador arredondado; com `milhar`, usa o separador pt-BR (2.000). */
 export function formatarContagem(valor, { milhar = false } = {}) {
   const n = Math.round(valor);

@@ -57,6 +57,15 @@
 .anima-hero .hero__janela {
   inset: 0; width: auto; height: auto; aspect-ratio: auto; transform: none;
   border-radius: 0; outline: none; box-shadow: none; will-change: clip-path;
+  background: #000; /* emenda com o preto do trecho */
+}
+/* O vídeo inteiro (9:16) sempre no tamanho final — altura da tela; o JS só move e escala (transform) do
+   retângulo do card até o final (fimDaJanela). As bordas laterais esfumam (--borda 0% → 14%) ao crescer. */
+.anima-hero .hero__janela video {
+  position: absolute; left: 0; top: 0; height: 100%; width: auto; aspect-ratio: 9 / 16; max-width: none;
+  transform-origin: 0 0; will-change: transform; --borda: 0%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--borda), #000 calc(100% - var(--borda)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--borda), #000 calc(100% - var(--borda)), transparent);
 }
 .anima-hero .hero__abertura {
   position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 22px;

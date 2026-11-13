@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { horaPOA, escolherHero, escolherJanela, formatarContagem, criarRng } from '../../js/util.js';
+import { horaPOA, escolherHero, escolherJanela, formatarContagem, criarRng, fimDaJanela } from '../../js/util.js';
 
 test('horaPOA', () => {
   assert.equal(horaPOA(new Date('2026-11-10T01:10:00Z')), '22:10');
@@ -27,4 +27,10 @@ test('formatarContagem', () => {
 test('criarRng determinístico em [0,1)', () => {
   const a = criarRng(7), b = criarRng(7);
   for (let i = 0; i < 20; i++) { const v = a(); assert.equal(v, b()); assert.ok(v >= 0 && v < 1); }
+});
+
+test('fimDaJanela: altura da tela, à direita quando cabe, centralizado quando não', () => {
+  assert.deepEqual(fimDaJanela(1440, 900), { l: 933.75, t: 0, w: 506.25, h: 900 });
+  assert.deepEqual(fimDaJanela(390, 844), { l: -42.375, t: 0, w: 474.75, h: 844 });
+  assert.deepEqual(fimDaJanela(450, 800), { l: 0, t: 0, w: 450, h: 800 }); // limite w = W
 });
