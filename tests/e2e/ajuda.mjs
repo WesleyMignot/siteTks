@@ -46,7 +46,12 @@ export async function abrir(amb, {
   largura = 1440, altura = 900, menosMovimento = false, bloquear = [], atrasar = [], antes,
   esperarPronto = true, semJs = false,
 } = {}) {
+  // uma página por vez: as antigas (vídeos e animações rodando) se acumulavam no arquivo inteiro e,
+  // perto do fim, a máquina ficava sem recurso (timeouts intermitentes). Nenhum teste usa a anterior.
+  amb.paginas ??= [];
+  for (const antiga of amb.paginas.splice(0)) await antiga.close().catch(() => {});
   const page = await amb.browser.newPage();
+  amb.paginas.push(page);
   const erros = [];
   await page.setViewport({ width: largura, height: altura });
   if (menosMovimento) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
