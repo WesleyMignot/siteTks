@@ -85,11 +85,14 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
       desenhar(g, W, H, t) {
         g.fillStyle = cor;
         const esc = Math.max(0.8, W / 900);
+        let n = 0;
         for (const m of bando) {
           const p = posicaoNuvem(m, u, t, W, H);
+          if (p.x < -120 || p.x > W + 120 || p.y < -120 || p.y > H + 120) continue; // fora da tela
           desenharMorcego(g, p.x, p.y, m.tam * esc, t * m.bate + m.fase, p.giro);
+          n++;
         }
-        return bando.length;
+        return n;
       },
     });
   });

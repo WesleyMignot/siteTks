@@ -259,7 +259,7 @@
   position: relative; height: 100vh; height: 100svh; min-height: 480px;
   overflow: hidden; display: grid; place-items: center;
 }
-.anima-assinatura .assinatura { height: 300vh; }
+.anima-assinatura .assinatura { height: 350vh; } /* 1ª tela: chegada da nuvem sobre o Line-up; depois o palco sticky */
 .anima-assinatura .assinatura__palco { position: sticky; top: 0; }
 .assinatura__tela { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* sem JS (ou sem canvas) o nome aparece como texto; com o canvas, fica só para o leitor de tela */

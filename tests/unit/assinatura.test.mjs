@@ -22,8 +22,16 @@ test('amostrarAlvos: máscara vazia não trava e devolve listas vazias', () => {
   assert.deepEqual([tinta.length, pouso.length], [0, 0]);
 });
 
-test('fases: limites', () => {
-  assert.equal(fases(0).Bf, 0); assert.equal(fases(0.4).Bf, 0); assert.equal(fases(0.9).Bf, 1); assert.equal(fases(1).Bf, 1);
+test('fases: Bf e perto nos limites', () => {
+  assert.equal(fases(0).Bf, 0); assert.equal(fases(0.42).Bf, 0); assert.equal(fases(0.88).Bf, 1); assert.equal(fases(1).Bf, 1);
+  assert.equal(fases(0).perto, 1); assert.ok(Math.abs(fases(0.31).perto - 1.6) < 0.01); assert.equal(fases(1).perto, 1);
+});
+
+test('criarMorcegos: entram pelos 4 lados, de fora da tela', () => {
+  const tinta = Array.from({ length: 200 }, (_, i) => ({ x: 300 + i, y: 350 }));
+  const ms = criarMorcegos({ tinta, pouso: [], W: 1200, H: 700, esc: 1, semente: 7 });
+  const lado = m => m.ini.x < 0 ? 'e' : m.ini.x > 1200 ? 'd' : m.ini.y < 0 ? 'c' : m.ini.y > 700 ? 'b' : '?';
+  assert.deepEqual(new Set(ms.map(lado)), new Set(['e', 'd', 'c', 'b']));
 });
 
 test('criarMorcegos determinístico', () => {
@@ -41,11 +49,12 @@ test('estadoMorcego: começo fora, fim na assinatura', () => {
   }
 });
 
-test('estadoMorcego: no meio da revoada todos estão na tela', () => {
+test('estadoMorcego: no auge da chegada todos estão na tela, maiores', () => {
   const tinta = Array.from({ length: 40 }, (_, i) => ({ x: 300 + i * 10, y: 350 }));
   const ms = criarMorcegos({ tinta, pouso: [], ...dims, semente: 9 });
   for (const m of ms) {
-    const e = estadoMorcego(m, 0.4, 2, dims);
-    assert.ok(e.visivel && e.x > -60 && e.x < dims.W + 60 && e.y > -60 && e.y < dims.H + 60, JSON.stringify(e));
+    const e = estadoMorcego(m, 0.3, 2, dims);
+    assert.ok(e.tam > m.tam * 1.5, 'cresce perto da câmera');
+    assert.ok(e.visivel && e.x > -120 && e.x < dims.W + 120 && e.y > -120 && e.y < dims.H + 120, JSON.stringify(e));
   }
 });
