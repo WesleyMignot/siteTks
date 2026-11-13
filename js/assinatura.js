@@ -217,9 +217,17 @@ export function iniciarAssinatura({ gsap, ScrollTrigger, menosMovimento, CELULAR
     trigger: secao, start: 'top bottom', end: 'bottom bottom',
     onUpdate: s => { P = s.progress; desenharTinta(); ceu.acordar(); },
   });
+  // P para em 1 quando o palco descola, mas a seção segue na tela por mais uma tela: este gatilho só
+  // acorda o céu nesse trecho (ex.: voltando do Contrate, os pousados reaparecem com as letras)
+  ScrollTrigger.create({
+    trigger: secao, start: 'top bottom', end: 'bottom top',
+    onUpdate: () => ceu.acordar(), onToggle: () => ceu.acordar(),
+  });
 
   // morcegos no céu: voo em coordenadas de tela; quem está chegando ao alvo acompanha o palco
   ceu.registrar({
+    // todos parados quando o último pouso (atraso < 0,5 + 0,35 de voo) terminou
+    voando: () => fases(P).Bf < 0.85,
     ativa() {
       if (P <= 0 || !bats.length) return false;
       const r = palco.getBoundingClientRect();

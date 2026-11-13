@@ -79,6 +79,19 @@ test('céu vazio quando nenhuma cena está ativa (pular pelo menu até o Contrat
   assert.equal(await page.$eval('.ceu', c => +c.dataset.desenhados), 0);
 });
 
+test('céu acompanha a caixa real (barra de rolagem clássica não espreme os morcegos)', async () => {
+  // o puppeteer esconde as barras: simula uma de 15 px estreitando a caixa do canvas
+  const { page } = await abrir(amb);
+  const r = await page.evaluate(async () => {
+    const c = document.querySelector('.ceu');
+    c.style.width = 'calc(100% - 15px)';
+    dispatchEvent(new Event('resize'));
+    await new Promise(ok => requestAnimationFrame(() => requestAnimationFrame(ok)));
+    return { w: c.width, caixa: c.clientWidth, dpr: Math.min(2, devicePixelRatio || 1) };
+  });
+  assert.equal(r.w, Math.round(r.caixa * r.dpr), JSON.stringify(r));
+});
+
 test('movimento reduzido: sem céu', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
   assert.ok(await page.$eval('.ceu', c => getComputedStyle(c).display === 'none'));

@@ -32,8 +32,9 @@ export function posicaoNuvem(m, u, t, W, H) {
 }
 
 /**
- * Liga o céu. Devolve `{ registrar(cena), acordar() }` — cena = { ativa(): boolean, desenhar(g, W, H, t): number }
- * (o número é quantos morcegos ela desenhou) — ou null quando não há céu (reduzido/estático).
+ * Liga o céu. Devolve `{ registrar(cena), acordar() }` — cena = { ativa(): boolean, desenhar(g, W, H, t): number,
+ * voando?(): boolean } (o número é quantos morcegos ela desenhou; sem `voando`, conta como voando) — ou null
+ * quando não há céu (reduzido/estático).
  */
 export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
   const tela = document.querySelector('.ceu');
@@ -44,15 +45,20 @@ export function iniciarCeu({ gsap, ScrollTrigger, menosMovimento, CELULAR }) {
   const cenas = [];
   let W = 0, H = 0, dpr = 1, raf = 0;
   const medir = () => {
-    dpr = Math.min(2, devicePixelRatio || 1);
-    W = innerWidth; H = innerHeight;
-    tela.width = Math.round(W * dpr); tela.height = Math.round(H * dpr);
+    // a caixa real do canvas (sem a barra de rolagem clássica, que innerWidth inclui)
+    W = tela.clientWidth || innerWidth; H = tela.clientHeight || innerHeight;
+    dimensionar(dpr);
   };
+  const dimensionar = k => { dpr = k; tela.width = Math.round(W * k); tela.height = Math.round(H * k); };
   const laco = agora => {
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.clearRect(0, 0, tela.width, tela.height);
     const ativas = cenas.filter(c => c.ativa());
     if (!ativas.length) { tela.dataset.desenhados = '0'; raf = 0; return; }
+    // com morcegos voando, resolução 1× (pintar o canvas na CPU — Safari, Android em blocklist — custa
+    // ~40% menos); com todos parados, nítido no DPR do aparelho (até 2×). Trocar o tamanho limpa o canvas.
+    const k = ativas.some(c => c.voando?.() ?? true) ? 1 : Math.min(2, devicePixelRatio || 1);
+    if (k !== dpr) dimensionar(k);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     const t = agora / 1000;
     let n = 0;

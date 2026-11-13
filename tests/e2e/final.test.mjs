@@ -123,6 +123,34 @@ test('girar no fim da assinatura: pousados do céu continuam sobre as letras', a
   assert.ok(r.d >= 30 && Math.abs(r.topo) < 2, JSON.stringify(r));
 });
 
+test('voltando do Contrate, o "Brunin" reaparece com os pousados', async () => {
+  const { page } = await abrir(amb);
+  await page.click('#menu-botao'); await page.click('#menu a[href="#contrate"]');
+  await new Promise(r => setTimeout(r, 2600));
+  // sobe até o palco (já descolado) ficar ~40% na tela: topo do palco em −0,6 tela
+  await rolarPara(page, '#assinatura', Math.round(3.1 * 900));
+  await new Promise(r => setTimeout(r, 400));
+  const r = await page.evaluate(() => ({ d: +document.querySelector('.ceu').dataset.desenhados,
+    fundo: document.querySelector('.assinatura__palco').getBoundingClientRect().bottom }));
+  assert.ok(r.fundo > 200 && r.d > 0, JSON.stringify(r));
+});
+
+test('desempenho: céu em DPR 1 com morcegos voando, nítido de novo com todos pousados', async () => {
+  // em navegadores que pintam o canvas na CPU (Safari, Android em blocklist) metade da resolução
+  // durante o voo corta ~40% do custo por quadro; os pousados parados voltam a ficar nítidos
+  const { page } = await abrir(amb);
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
+  await page.evaluate(() => dispatchEvent(new Event('resize'))); // mudar só o DPR não dispara resize
+  await new Promise(r => setTimeout(r, 400));
+  const razao = () => page.$eval('.ceu', c => c.width / c.clientWidth);
+  await rolarPara(page, '#assinatura', -Math.round(0.125 * 900)); // P ≈ 0,25: chegada
+  await new Promise(r => setTimeout(r, 400));
+  assert.equal(await razao(), 1);
+  await rolarPara(page, '#assinatura', 2.5 * 900); // P = 1: todos pousados
+  await new Promise(r => setTimeout(r, 400));
+  assert.equal(await razao(), 2);
+});
+
 test('assinatura no modo reduzido: estado final sem scroll', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
   await rolarPara(page, '#assinatura');
