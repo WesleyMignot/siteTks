@@ -9,3 +9,8 @@ Thumbs.db
 node_modules/
 tests/e2e/telas/
 /bruto/
+# fotos e referência brutas da rodada 3 (as tratadas ficam em assets/ e docs/)
+/Savage.jpg
+/Sonora.jpg
+/boiler.jpg
+/morcego_ref.jpg
