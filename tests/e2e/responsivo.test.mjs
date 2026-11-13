@@ -25,13 +25,16 @@ for (const [largura, altura] of [[390, 844], [1440, 900]]) {
     const { page } = await abrir(amb, { largura, altura });
     const tela = async nome => { await espera(500); await page.screenshot({ path: `tests/e2e/telas/${largura}-${nome}.png` }); };
     for (const s of SECOES) {
-      await rolarPara(page, s, s === '#assinatura' ? 2 * altura : 0); // assinatura: estado final (p = 1)
+      await rolarPara(page, s, s === '#assinatura' ? 2.5 * altura : 0); // assinatura (350vh): estado final (P = 1)
       await tela(s.slice(1));
     }
-    // extras: hero no meio do pin (0,4 de 1,5 tela) e a assinatura em formação (p 0,3 e 0,7 de 2 telas)
+    // extras: hero no meio do pin; nuvem da virada para os Sets; assinatura na chegada (P 0,25) e formando (P 0,7)
+    // (P vai do topo da assinatura no fundo da tela até o fim da seção: deslocamento = 3,5·altura·P − altura)
+    const assinatura = P => Math.round(3.5 * altura * P - altura);
     await rolarPara(page, '#hero', Math.round(0.4 * 1.5 * altura)); await tela('hero-0.4');
-    await rolarPara(page, '#assinatura', Math.round(0.3 * 2 * altura)); await tela('assinatura-0.3');
-    await rolarPara(page, '#assinatura', Math.round(0.7 * 2 * altura)); await tela('assinatura-0.7');
+    await rolarPara(page, '#sets', -Math.round(altura / 2)); await tela('virada-sets');
+    await rolarPara(page, '#assinatura', assinatura(0.25)); await tela('assinatura-0.25');
+    await rolarPara(page, '#assinatura', assinatura(0.7)); await tela('assinatura-0.7');
   });
 }
 

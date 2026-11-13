@@ -27,13 +27,29 @@ Os testes de navegador usam o Chrome instalado em `C:/Program Files/Google/Chrom
 
 ## Regenerar os assets
 
-O material bruto fica na raiz e não vai para o git: o PDF do press kit, o `2 REELS.mp4`, o logo e os ZIPs das fotos.
+O material bruto fica na raiz e não vai para o git: o PDF do press kit, o `2 REELS.mp4`, o logo, os ZIPs das fotos e as fotos das Produções (`Savage.jpg`, `boiler.jpg`, `Sonora.jpg`). Os vídeos baixados ficam em `bruto/`, também fora do git.
 
 ```bash
 pip install -r tools/requirements.txt
-python tools/tratar-fotos.py   # fotos tratadas, recortes do PDF, og.jpg, presskit.pdf
-bash tools/cortar-video.sh     # clipes do reel (precisa de ffmpeg)
+python tools/tratar-fotos.py          # foto da Carreira, fotos das Produções, og.jpg, presskit.pdf
+                                      # (ou só uma etapa: fotos | producoes | og | pdf)
+bash tools/cortar-video.sh            # vídeo de fundo do hero, do 2 REELS.mp4 (precisa de ffmpeg)
+bash tools/baixar-reels.sh baixar     # reels do Instagram → bruto/reels/ + folhas de quadros
+bash tools/baixar-reels.sh cortar     # janela do hero (720/540) e fundo dos sets 6–8
+bash tools/baixar-sets.sh baixar      # vídeos dos sets no YouTube → bruto/sets/
+bash tools/baixar-sets.sh cortar      # trechos de 4 s dos sets 1–5
+python tools/gerar-texturas.py        # faixas de chamas (repetem sem emenda)
+python tools/tracar-morcego.py docs/identidade/morcego_ref.jpg   # contorno do morcego (js/morcego.js)
 ```
+
+No Windows, rode os scripts de download com `PY=<caminho do python.exe>`: o atalho `.bat` do pyenv estraga os argumentos do yt-dlp.
+
+## Como os morcegos funcionam
+
+- `js/morcego.js`: a silhueta (contorno do `morcego_ref`) com as asas articuladas; a batida tem 32 quadros pré-calculados, usados nos divisores (SVG) e nos canvases.
+- `js/ceu.js`: um canvas fixo por cima da página desenha as nuvens das viradas (Produções e Sets) e os morcegos da Assinatura. Só anima quando alguma cena está na tela.
+- `js/assinatura.js`: a chegada pelos quatro lados e o "Brunin" formado; o palco desenha só a tinta das letras.
+- Movimento reduzido ou sem GSAP: sem céu; a assinatura aparece pronta, com os pousados parados.
 
 ## Publicar
 
