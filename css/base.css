@@ -187,11 +187,11 @@ main > section:focus { outline: none; } /* seção focada pelo menu: o foco é p
 
 /* ---------- morcego (silhueta única: js/morcego.js) ---------- */
 .morcego { fill: currentColor; overflow: visible; }
-.morcego__asas {
-  transform-box: fill-box; transform-origin: center;
-  animation: bater var(--bate, .5s) ease-in-out var(--atraso, 0s) infinite alternate;
-}
-@keyframes bater { from { transform: scaleY(1); } to { transform: scaleY(-.35); } }
-.morcego--div { height: .8em; width: auto; display: inline-block; vertical-align: middle; margin: 0 .35em; --bate: .9s; }
+/* o viewBox cobre o curso inteiro da batida: o SVG é mais alto que o morcego parado; a margem
+   negativa no eixo vertical não deixa ele aumentar a altura da linha */
+.morcego--div { height: 1.5em; width: auto; display: inline-block; vertical-align: middle; margin: -.35em .2em; }
 .div-morcego { display: inline-block; }
-.menos-movimento .morcego__asas { animation: none; }
+
+/* céu: canvas fixo das nuvens de morcegos e da chegada da assinatura (js/ceu.js); abaixo do menu e do header */
+.ceu { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 70; pointer-events: none; }
+.menos-movimento .ceu { display: none; }

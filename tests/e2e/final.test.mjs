@@ -54,7 +54,7 @@ const escuros = p => p.$eval('.assinatura__tela', c => {
 });
 test('assinatura: no fim, o "Brunin" está formado no canvas', async () => {
   const { page } = await abrir(amb);
-  await rolarPara(page, '#assinatura', 3 * 900 - 900);
+  await rolarPara(page, '#assinatura', 2.5 * 900);
   await new Promise(r => setTimeout(r, 400));
   assert.ok(await escuros(page) > 5000);
 });
@@ -66,7 +66,7 @@ test('assinatura: no começo, as letras ainda não existem', async () => {
 });
 test('assinatura: girar a tela no fim mantém o texto formado', async () => {
   const { page } = await abrir(amb);
-  await rolarPara(page, '#assinatura', 3 * 900 - 900);
+  await rolarPara(page, '#assinatura', 2.5 * 900);
   await page.setViewport({ width: 900, height: 1200 });
   await new Promise(r => setTimeout(r, 1200)); // sem rolar de novo: o lugar tem que ser mantido
   assert.ok(await escuros(page) > 3000);
@@ -74,7 +74,7 @@ test('assinatura: girar a tela no fim mantém o texto formado', async () => {
 const progresso = (page, sel) => page.$eval(sel, e => { const r = e.getBoundingClientRect(); return -r.top / (r.height - innerHeight); });
 test('girar o celular no meio da assinatura mantém o lugar (retrato → paisagem → retrato)', async () => {
   const { page } = await abrir(amb, { largura: 390, altura: 844 });
-  await rolarPara(page, '#assinatura', Math.round(0.95 * 2 * 844));
+  await rolarPara(page, '#assinatura', Math.round(0.95 * 2.5 * 844));
   await new Promise(r => setTimeout(r, 300));
   await page.setViewport({ width: 844, height: 390 });
   await new Promise(r => setTimeout(r, 1200));
@@ -92,6 +92,63 @@ test('redimensionar no meio da pilha dos sets mantém o mesmo set na tela', asyn
   await page.setViewport({ width: 1200, height: 800 });
   await new Promise(r => setTimeout(r, 1200));
   assert.equal(await page.$eval('.sets__contador', e => e.textContent.trim()), '03 / 08');
+});
+
+const escurosCeu = p => p.$eval('.ceu', c => {
+  const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0;
+  for (let i = 3; i < d.length; i += 4) if (d[i] > 200) n++; return n / (c.width * c.height);
+});
+test('chegada da assinatura: nuvem cheia, mas o fundo aparece nas frestas', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#assinatura', -Math.round(0.125 * 900)); // P ≈ 0,25
+  await new Promise(r => setTimeout(r, 400));
+  const f = await escurosCeu(page);
+  assert.ok(f > 0.2 && f < 0.75, String(f));
+});
+test('assinatura: com a Pirata One lenta, o nome aparece com a reserva depois de 3 s', async () => {
+  // atrasar (não bloquear): uma fonte bloqueada falha na hora e não exercita a espera de 3 s
+  const { page } = await abrir(amb, { atrasar: [{ re: /fonts\.gstatic\.com/, ms: 15000 }], esperarPronto: false });
+  await page.waitForFunction(() => document.body.classList.contains('pronto'), { timeout: 14000 });
+  await rolarPara(page, '#assinatura', 2.5 * 900);
+  await new Promise(r => setTimeout(r, 3600));
+  assert.ok(await escuros(page) > 5000);
+});
+test('girar no fim da assinatura: pousados do céu continuam sobre as letras', async () => {
+  const { page } = await abrir(amb);
+  await rolarPara(page, '#assinatura', 2.5 * 900);
+  await page.setViewport({ width: 900, height: 1200 });
+  await new Promise(r => setTimeout(r, 1500));
+  const r = await page.evaluate(() => ({ d: +document.querySelector('.ceu').dataset.desenhados,
+    topo: document.querySelector('.assinatura__palco').getBoundingClientRect().top }));
+  assert.ok(r.d >= 30 && Math.abs(r.topo) < 2, JSON.stringify(r));
+});
+
+test('voltando do Contrate, o "Brunin" reaparece com os pousados', async () => {
+  const { page } = await abrir(amb);
+  await page.click('#menu-botao'); await page.click('#menu a[href="#contrate"]');
+  await new Promise(r => setTimeout(r, 2600));
+  // sobe até o palco (já descolado) ficar ~40% na tela: topo do palco em −0,6 tela
+  await rolarPara(page, '#assinatura', Math.round(3.1 * 900));
+  await new Promise(r => setTimeout(r, 400));
+  const r = await page.evaluate(() => ({ d: +document.querySelector('.ceu').dataset.desenhados,
+    fundo: document.querySelector('.assinatura__palco').getBoundingClientRect().bottom }));
+  assert.ok(r.fundo > 200 && r.d > 0, JSON.stringify(r));
+});
+
+test('desempenho: céu em DPR 1 com morcegos voando, nítido de novo com todos pousados', async () => {
+  // em navegadores que pintam o canvas na CPU (Safari, Android em blocklist) metade da resolução
+  // durante o voo corta ~40% do custo por quadro; os pousados parados voltam a ficar nítidos
+  const { page } = await abrir(amb);
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
+  await page.evaluate(() => dispatchEvent(new Event('resize'))); // mudar só o DPR não dispara resize
+  await new Promise(r => setTimeout(r, 400));
+  const razao = () => page.$eval('.ceu', c => c.width / c.clientWidth);
+  await rolarPara(page, '#assinatura', -Math.round(0.125 * 900)); // P ≈ 0,25: chegada
+  await new Promise(r => setTimeout(r, 400));
+  assert.equal(await razao(), 1);
+  await rolarPara(page, '#assinatura', 2.5 * 900); // P = 1: todos pousados
+  await new Promise(r => setTimeout(r, 400));
+  assert.equal(await razao(), 2);
 });
 
 test('assinatura no modo reduzido: estado final sem scroll', async () => {

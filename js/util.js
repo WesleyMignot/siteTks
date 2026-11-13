@@ -14,6 +14,11 @@ export function escolherHero(largura) {
   return largura > 820 ? 'assets/video/hero-720.mp4' : 'assets/video/hero-540.mp4';
 }
 
+/** Versão do vídeo da janela do hero (o card que vira tela cheia) conforme a largura (> 820px = desktop). */
+export function escolherJanela(largura) {
+  return largura > 820 ? 'assets/video/janela-720.mp4' : 'assets/video/janela-540.mp4';
+}
+
 /** Valor de contador arredondado; com `milhar`, usa o separador pt-BR (2.000). */
 export function formatarContagem(valor, { milhar = false } = {}) {
   const n = Math.round(valor);

@@ -26,7 +26,23 @@ test('header fica escuro sobre a seção creme das Produções', async () => {
 
 test('divisores do letreiro do hero são morcegos', async () => {
   const { page } = await abrir(amb);
-  assert.ok(await page.$$eval('#hero .div-morcego', l => l.length >= 4 && l.every(d => d.querySelector('svg .morcego__asas'))));
+  assert.ok(await page.$$eval('#hero .div-morcego', l => l.length >= 4 && l.every(d => d.querySelector('svg .morcego__forma'))));
+});
+
+test('divisores batem as asas (o desenho muda com o tempo)', async () => {
+  // só os visíveis animam: compara todos os do hero (o 1º pode já ter saído da tela no letreiro)
+  const { page } = await abrir(amb);
+  const d = () => page.$$eval('#hero .div-morcego path', l => l.map(p => p.getAttribute('d')));
+  const a = await d(); await new Promise(r => setTimeout(r, 250));
+  const b = await d();
+  assert.ok(b.some((x, i) => x !== a[i]));
+});
+
+test('movimento reduzido: divisores parados', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  const d = () => page.$$eval('#hero .div-morcego path', l => l.map(p => p.getAttribute('d')));
+  const a = await d(); await new Promise(r => setTimeout(r, 250));
+  assert.deepEqual(await d(), a);
 });
 
 test('sem JS os divisores mostram ✦', async () => {
@@ -40,42 +56,45 @@ test('menu com 5 seções numeradas', async () => {
     ['#carreira', '#producoes', '#sets', '#lineup', '#contrate']);
 });
 
-test('revoada cruza a tela na virada para os Sets', async () => {
+test('céu: nuvem cheia na virada para os Sets', async () => {
   const { page } = await abrir(amb);
-  await rolarPara(page, '#sets', -450);
-  await new Promise(r => setTimeout(r, 300));
-  assert.ok(await page.$$eval('#sets .revoada svg', l => l.length >= 6 && l.some(s => {
-    const r = s.getBoundingClientRect(); return r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight; })));
+  await rolarPara(page, '#sets', -450); await new Promise(r => setTimeout(r, 300));
+  assert.ok(await page.$eval('.ceu', c => +c.dataset.desenhados) >= 60);
 });
 
-test('revoada: celular com menos morcegos e sem rolagem lateral', async () => {
+test('céu no celular: nuvem menor, sem rolagem lateral e DPR no máximo 2', async () => {
   const { page } = await abrir(amb, { largura: 390, altura: 844 });
-  await rolarPara(page, '#sets', -420);
-  assert.ok(await page.$$eval('#sets .revoada svg', l => l.length >= 3 && l.length <= 5));
-  assert.ok(await page.evaluate(() => [...document.querySelectorAll('.revoada')].every(r => getComputedStyle(r).overflow === 'hidden')));
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 3 });
+  await new Promise(r => setTimeout(r, 400));
+  await rolarPara(page, '#sets', -420); await new Promise(r => setTimeout(r, 300));
+  const r = await page.$eval('.ceu', c => ({ n: +c.dataset.desenhados, w: c.width, iw: innerWidth }));
+  assert.ok(r.n > 0 && r.n <= 45 && r.w <= 2 * r.iw, JSON.stringify(r));
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
 });
 
-test('revoada da virada para as Produções aparece acima da seção (não é cortada)', async () => {
+test('céu vazio quando nenhuma cena está ativa (pular pelo menu até o Contrate)', async () => {
   const { page } = await abrir(amb);
-  const corte = await page.$eval('#producoes', s => getComputedStyle(s).overflowY);
-  assert.equal(corte, 'visible');
-  assert.equal(await page.$$eval('[data-revoada]', l => l.map(r => r.closest('section').id).join()), 'producoes,sets,assinatura');
+  await page.click('#menu-botao'); await page.click('#menu a[href="#contrate"]');
+  await new Promise(r => setTimeout(r, 2600));
+  assert.equal(await page.$eval('.ceu', c => +c.dataset.desenhados), 0);
 });
 
-test('revoada contrasta com os dois lados da virada', async () => {
+test('céu acompanha a caixa real (barra de rolagem clássica não espreme os morcegos)', async () => {
+  // o puppeteer esconde as barras: simula uma de 15 px estreitando a caixa do canvas
   const { page } = await abrir(amb);
-  const r = await page.$$eval('[data-revoada]', l => l.map(rv => {
-    const fundo = el => { for (let e = el; e; e = e.parentElement) { const c = getComputedStyle(e).backgroundColor; if (c !== 'rgba(0, 0, 0, 0)') return c; } return 'rgb(255, 255, 255)'; };
-    const secao = rv.closest('section');
-    return { id: secao.id, cor: getComputedStyle(rv).color, aqui: fundo(secao), antes: fundo(secao.previousElementSibling) };
-  }));
-  for (const x of r) assert.ok(x.cor !== x.aqui && x.cor !== x.antes, JSON.stringify(x));
+  const r = await page.evaluate(async () => {
+    const c = document.querySelector('.ceu');
+    c.style.width = 'calc(100% - 15px)';
+    dispatchEvent(new Event('resize'));
+    await new Promise(ok => requestAnimationFrame(() => requestAnimationFrame(ok)));
+    return { w: c.width, caixa: c.clientWidth, dpr: Math.min(2, devicePixelRatio || 1) };
+  });
+  assert.equal(r.w, Math.round(r.caixa * r.dpr), JSON.stringify(r));
 });
 
-test('movimento reduzido: sem revoadas', async () => {
+test('movimento reduzido: sem céu', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
-  assert.equal(await page.$$eval('.revoada svg', l => l.length), 0);
+  assert.ok(await page.$eval('.ceu', c => getComputedStyle(c).display === 'none'));
 });
 
 test('pular pelo menu do topo ao Contrate deixa tudo no estado final coerente', async () => {
@@ -131,4 +150,29 @@ test('texturas de chamas emendam sem corte quando se repetem na horizontal', asy
     return out;
   });
   assert.ok(Object.values(r).every(f => f < 0.05), JSON.stringify(r));
+});
+
+test('Sinistro DNB só na biografia; o número de festas continua 4', async () => {
+  const { page } = await abrir(amb);
+  const tem = sel => page.$eval(sel, e => e.textContent.includes('Sinistro'));
+  assert.equal(await tem('#hero .letreiro'), false);
+  assert.equal(await tem('#producoes'), false);
+  assert.equal(await tem('#carreira'), true);
+  assert.ok(!(await page.$eval('meta[name=description]', m => m.content)).includes('Sinistro'));
+  assert.ok(await page.$$eval('[data-contar]', l => l.some(e => e.dataset.contar === '4' && e.parentElement.textContent.includes('festas criadas'))));
+});
+
+test('Produções em tela de toque larga acendem no centro da tela', async () => {
+  const { page } = await abrir(amb, { largura: 1180, altura: 820, antes: p => p.evaluateOnNewDocument(() => {
+    const mm = window.matchMedia.bind(window);
+    window.matchMedia = q => (q.includes('hover: none') ? mm('(min-width: 0px)') : mm(q)); }) });
+  await page.evaluate(() => { const l = document.querySelectorAll('.producao')[1], r = l.getBoundingClientRect();
+    scrollTo(0, scrollY + r.top + r.height / 2 - innerHeight / 2); });
+  await new Promise(r => setTimeout(r, 700));
+  assert.ok(await page.$$eval('.producao', l => l[1].classList.contains('producao--acesa')));
+});
+
+test('movimento reduzido: foto das Produções sem zoom', async () => {
+  const { page } = await abrir(amb, { menosMovimento: true });
+  assert.equal(await page.$eval('.producao__fundo', e => getComputedStyle(e).transform), 'none');
 });

@@ -9,8 +9,9 @@ import {
   iniciarProducoes, iniciarDivisores, iniciarCartaz,
 } from './animacoes.js';
 import { iniciarAssinatura } from './assinatura.js';
-import { iniciarRevoadas } from './revoadas.js';
+import { iniciarCeu } from './ceu.js';
 import { iniciarAncora } from './ancora.js';
+import { iniciarSoundcloud } from './soundcloud.js';
 
 const CELULAR = '(max-width: 820px)';
 const raiz = document.documentElement;
@@ -45,7 +46,7 @@ function seguro(nome, fn) {
 
 seguro('header', () => iniciarHeader(ctx));
 seguro('hero', () => iniciarHero(ctx));
-seguro('divisores', () => iniciarDivisores()); // antes dos letreiros: muda a largura do trilho
+seguro('divisores', () => iniciarDivisores(ctx)); // antes dos letreiros: muda a largura do trilho
 seguro('letreiros', () => iniciarLetreiros(ctx));
 seguro('cartaz', () => iniciarCartaz(ctx)); // depois dos divisores: os morcegos mudam a quebra das linhas
 seguro('reveals', () => iniciarReveals(ctx));
@@ -53,8 +54,9 @@ seguro('contadores', () => iniciarContadores(ctx));
 seguro('fotos', () => iniciarFotosDuplas());
 seguro('producoes', () => iniciarProducoes(ctx));
 seguro('sets', () => iniciarSets(ctx));
-seguro('assinatura', () => iniciarAssinatura(ctx));
-seguro('revoadas', () => iniciarRevoadas(ctx));
+seguro('soundcloud', () => iniciarSoundcloud()); // também no modo reduzido e no estático
+const ceu = seguro('ceu', () => iniciarCeu(ctx)); // antes da assinatura, que desenha no céu
+seguro('assinatura', () => iniciarAssinatura(ctx, ceu));
 seguro('ancora', () => iniciarAncora(ctx)); // girar/redimensionar não tira o visitante do lugar
 
 seguro('estrelas', () => iniciarEstrelas(ctx));

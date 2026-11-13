@@ -1,22 +1,18 @@
 #!/usr/bin/env bash
-# Corta e comprime os trechos do reel usados no site.
+# Corta e comprime o vídeo de fundo do hero (do reel "2 REELS.mp4"). A janela e os clipes dos sets vêm de baixar-reels.sh / baixar-sets.sh.
 # Uso: bash tools/cortar-video.sh            (gera todos)
-#      bash tools/cortar-video.sh pista cabine  (só os nomes pedidos)
+#      bash tools/cortar-video.sh hero-540   (só os nomes pedidos)
 # Precisa de ffmpeg e do arquivo bruto "2 REELS.mp4" na raiz do repo.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 IN="2 REELS.mp4"
 OUT="assets/video"
-mkdir -p "$OUT/sets"
+mkdir -p "$OUT"
 
 # nome inicio duracao largura crf
 CLIPES="
 hero-720 0 38.2 720 30
 hero-540 0 38.2 540 31
-janela-720 5.8 4 720 30
-sets/pista 15.0 2.5 720 30
-sets/cabine 27.4 2.5 720 30
-sets/maos 31.6 2.5 720 30
 "
 
 enc() {

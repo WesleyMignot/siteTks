@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morcegos — rodada 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  :root { --preto: #0F1211; --creme: #F1E2C4; --vermelho: #E8392F; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--creme); color: var(--preto); font: 14px/1.6 "Space Mono", monospace; padding: 32px 16px 80px; }
+  main { max-width: 1100px; margin: 0 auto; display: grid; gap: 56px; }
+  h1, h2 { font-family: "Pirata One", serif; font-weight: 400; line-height: 1; }
+  h1 { font-size: clamp(44px, 7vw, 84px); }
+  h2 { font-size: clamp(30px, 4vw, 44px); margin-bottom: 8px; }
+  p { max-width: 70ch; }
+  .tag { display: inline-block; padding: 2px 10px; border: 2px solid var(--preto); border-radius: 99px; font-weight: 700; font-size: 12px; text-transform: uppercase; }
+  .quadro { position: relative; border: 2px solid var(--preto); border-radius: 6px; overflow: hidden; margin-top: 16px; }
+  canvas { display: block; width: 100%; }
+  .lado { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: stretch; }
+  .lado img { width: 100%; height: 100%; object-fit: contain; background: #fff; border: 2px solid var(--preto); border-radius: 6px; }
+  .controles { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 12px; font-size: 12px; text-transform: uppercase; font-weight: 700; }
+  input[type=range] { width: min(420px, 100%); accent-color: var(--vermelho); }
+  button { font: inherit; padding: 6px 14px; border: 2px solid var(--preto); background: var(--preto); color: var(--creme); border-radius: 99px; cursor: pointer; }
+  @media (max-width: 700px) { .lado { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="tag">Rodada 3 · protótipo</p>
+    <h1>Morcegos novos</h1>
+    <p>Silhueta tirada do <b>morcego_ref</b>. As asas dobram como um braço: o ombro puxa e a ponta da asa vem atrasada; o corpo sobe a cada batida para baixo. A mesma animação vale para os divisores, as revoadas e a assinatura.</p>
+  </header>
+
+  <section>
+    <h2>1 · Silhueta e batida</h2>
+    <div class="lado">
+      <div class="quadro"><canvas id="c1" height="420"></canvas></div>
+      <img src="morcego_ref.jpg" alt="Referência: morcego_ref">
+    </div>
+    <div class="controles">
+      <label>Velocidade da batida <input id="vel" type="range" min="0.3" max="2" step="0.05" value="1"></label>
+      <span id="velv">1,00×</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · Revoada livre nas viradas</h2>
+    <p>Na entrada das Produções e dos Sets: uma nuvem cheia de morcegos, cada um com a própria trajetória ondulada (nada de arco fixo), batendo as asas fora de sincronia. No site o avanço do bando acompanha o scroll; aqui ele passa em loop.</p>
+    <div class="quadro"><canvas id="c2" height="460"></canvas></div>
+  </section>
+
+  <section>
+    <h2>3 · Cobertura e assinatura</h2>
+    <p>Saindo do Line-up: os morcegos chegam de todos os lados e tomam a tela (sem escurecer tudo: o fundo aparece nas frestas); a página troca por baixo deles e eles mesmos formam o "Brunin". Alguns pousam nas bordas das letras batendo as asas. Arraste para simular o scroll.</p>
+    <div class="quadro"><canvas id="c3" height="560"></canvas></div>
+    <div class="controles">
+      <label>Scroll <input id="p3" type="range" min="0" max="1000" value="0"></label>
+      <button id="auto3" type="button">Tocar</button>
+      <span id="fase3"></span>
+    </div>
+  </section>
+</main>
+
+<script>
+// ---------- silhueta (contorno do morcego_ref, 480 px) e rig das asas ----------
+const BRUTO = [[476,71],[459,89],[452,102],[448,117],[448,129],[452,145],[459,158],[474,176],[464,176],[448,182],[438,191],[433,205],[433,214],[438,230],[441,235],[450,243],[439,245],[425,250],[416,256],[410,262],[405,270],[401,283],[401,294],[400,295],[401,296],[401,307],[404,320],[393,315],[382,312],[366,311],[356,313],[347,317],[337,326],[330,340],[328,352],[329,373],[332,384],[328,377],[317,366],[311,362],[295,356],[279,355],[267,359],[256,370],[252,384],[253,397],[243,387],[230,380],[218,377],[204,376],[191,378],[173,386],[162,396],[155,407],[155,400],[149,386],[142,377],[134,370],[123,364],[113,361],[98,361],[89,364],[83,368],[82,356],[77,343],[71,334],[55,319],[29,306],[16,303],[1,303],[18,291],[39,282],[63,277],[89,276],[90,277],[112,278],[133,282],[166,291],[215,307],[238,311],[248,308],[251,305],[253,300],[252,280],[248,262],[259,272],[264,274],[272,274],[278,271],[282,267],[285,261],[286,255],[285,250],[291,259],[305,272],[315,276],[323,276],[330,274],[337,269],[342,260],[358,205],[367,181],[381,153],[393,135],[412,113],[428,99],[450,84]];
+const CX = 290, CY = 300, K = 56 / 475;
+const nrm = (x, y) => ({ x: (x - CX) * K, y: (y - CY) * K });
+const OMBRO_E = nrm(250, 300), PONTA_E = nrm(1, 300), OMBRO_D = nrm(330, 290), PONTA_D = nrm(476, 71);
+const lim = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const suave = t => t * t * (3 - 2 * t);
+const degrau = (a, b, v) => suave(lim((v - a) / (b - a)));
+const RAD = Math.PI / 180;
+
+const PONTOS = BRUTO.map(([x, y]) => {
+  const p = nrm(x, y);
+  const meio = (OMBRO_E.x + OMBRO_D.x) / 2;
+  const esq = p.x < meio, o = esq ? OMBRO_E : OMBRO_D, ponta = esq ? PONTA_E : PONTA_D;
+  const ax = ponta.x - o.x, ay = ponta.y - o.y;
+  const t = ((p.x - o.x) * ax + (p.y - o.y) * ay) / (ax * ax + ay * ay);
+  return { ...p, esq, braco: degrau(-0.02, 0.16, t), mao: degrau(0.4, 0.92, t) };
+});
+
+/** Pose da asa na fase f (0..2π). sin(f) > 0 = asas subindo. */
+function pose(f) {
+  const g = f - 0.35 * Math.sin(f);               // descida mais rápida que a subida
+  const s = Math.sin(g), atraso = Math.sin(g - 0.95);
+  const ergueE = (6 + 36 * s) * RAD, ergueD = (-30 + 38 * s) * RAD;
+  const mao = 18 * atraso * RAD;
+  const dobra = 0.1 * Math.max(0, Math.cos(g));   // na subida a asa recolhe um pouco
+  const sobe = -1.8 * Math.cos(g);                 // o corpo sobe na batida para baixo
+  return PONTOS.map(p => {
+    const o = p.esq ? OMBRO_E : OMBRO_D;
+    const ang = (p.esq ? 1 : -1) * ((p.esq ? ergueE : ergueD) * p.braco + mao * p.mao);
+    const enc = 1 - dobra * p.mao;
+    const dx = (p.x - o.x) * enc, dy = (p.y - o.y) * enc;
+    const c = Math.cos(ang), sn = Math.sin(ang);
+    return { x: o.x + dx * c - dy * sn, y: o.y + dx * sn + dy * c + sobe };
+  });
+}
+const QUADROS = 32;
+const FORMAS = Array.from({ length: QUADROS }, (_, i) => {
+  const pts = pose(i / QUADROS * Math.PI * 2), c = new Path2D();
+  pts.forEach((p, j) => j ? c.lineTo(p.x, p.y) : c.moveTo(p.x, p.y));
+  c.closePath();
+  return c;
+});
+function morcego(g, x, y, tam, fase, giro = 0, espelho = 1) {
+  const i = ((Math.floor(fase / (Math.PI * 2) * QUADROS) % QUADROS) + QUADROS) % QUADROS;
+  g.save(); g.translate(x, y); g.rotate(giro); g.scale(tam * espelho, tam); g.fill(FORMAS[i]); g.restore();
+}
+function rng(s) { return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function prepara(cv) {
+  cv._H ??= cv.height; // altura em px CSS, lida do atributo uma vez só
+  const dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth;
+  cv.width = W * dpr; cv.height = cv._H * dpr; cv.style.height = cv._H + 'px';
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { g, W, H: cv._H };
+}
+
+// ---------- 1 · silhueta grande + fileira ----------
+const c1 = document.getElementById('c1');
+let s1 = prepara(c1), vel = 1;
+document.getElementById('vel').addEventListener('input', e => { vel = +e.target.value; document.getElementById('velv').textContent = vel.toFixed(2).replace('.', ',') + '×'; });
+function desenha1(t) {
+  const { g, W, H } = s1;
+  g.clearRect(0, 0, W, H); g.fillStyle = '#0F1211';
+  morcego(g, W * 0.5, H * 0.42, Math.min(W, H) / 70, t * 9 * vel);
+  for (let k = 0; k < 9; k++) morcego(g, W * (0.08 + k * 0.105), H * 0.86, 0.75 + (k % 3) * 0.25, t * (8 + k * 0.7) * vel + k * 1.7, Math.sin(k) * 0.15, k % 2 ? 1 : -1);
+}
+
+// ---------- 2 · revoada livre ----------
+const c2 = document.getElementById('c2');
+let s2 = prepara(c2);
+const BANDO = (() => { const r = rng(5); return Array.from({ length: innerWidth < 820 ? 40 : 90 }, () => ({
+  du: (r() - 0.5) * 0.34, dy: (r() - 0.5) * 0.42, a1: 0.08 + r() * 0.16, f1: 1.5 + r() * 2.5, p1: r() * 6.3,
+  a2: 0.02 + r() * 0.05, f2: 0.6 + r() * 1.2, p2: r() * 6.3, tam: 0.7 + r() * 0.9, bate: 9 + r() * 6, fase: r() * 6.3 })); })();
+function voo(b, u, t, W, H) {
+  const uu = u + b.du;
+  const x = -0.15 * W + 1.3 * W * uu;
+  const y = H * (0.62 - 0.32 * uu + b.dy * 0.6) + H * b.a1 * Math.sin(uu * Math.PI * b.f1 + b.p1) + H * b.a2 * Math.sin(t * b.f2 + b.p2);
+  return { x, y };
+}
+function desenha2(t) {
+  const { g, W, H } = s2;
+  g.fillStyle = '#F1E2C4'; g.fillRect(0, 0, W, H * 0.5);
+  g.fillStyle = '#0F1211'; g.fillRect(0, H * 0.5, W, H * 0.5);
+  const u = (t * 0.11) % 1.6 - 0.3;
+  g.fillStyle = '#E8392F';
+  for (const b of BANDO) {
+    const a = voo(b, u, t, W, H), d = voo(b, u + 0.01, t, W, H);
+    morcego(g, a.x, a.y, b.tam * Math.max(0.8, W / 900), t * b.bate + b.fase, Math.atan2(d.y - a.y, d.x - a.x) * 0.45);
+  }
+}
+
+// ---------- 3 · cobertura + assinatura ----------
+const c3 = document.getElementById('c3');
+let s3 = prepara(c3), alvos = null, tinta = null, mascara = null, bando3 = [];
+function monta3() {
+  const { W, H } = s3;
+  const esc = Math.max(0.55, Math.min(W / 1400, H / 800));
+  mascara = document.createElement('canvas'); mascara.width = W; mascara.height = H;
+  const m = mascara.getContext('2d');
+  m.font = `400 ${Math.min(W * (W < H ? 0.36 : 0.27), H * 0.5)}px "Pirata One", serif`;
+  m.textAlign = 'center'; m.textBaseline = 'middle'; m.fillStyle = '#000'; m.fillText('Brunin', W / 2, H * 0.52);
+  const d = m.getImageData(0, 0, W, H).data, dentro = (x, y) => x >= 0 && y >= 0 && x < W && y < H && d[(y * W + x) * 4 + 3] > 128;
+  const r = rng(11), interior = [], topo = [];
+  const N_TINTA = W < 820 ? 230 : 460, N_POUSO = W < 820 ? 18 : 34;
+  for (let k = 0; k < 400000 && (interior.length < N_TINTA || topo.length < 4000); k++) {
+    const x = Math.floor(r() * W), y = Math.floor(r() * H);
+    if (!dentro(x, y)) continue;
+    if (interior.length < N_TINTA) interior.push({ x, y });
+    if (!dentro(x, y - 3)) topo.push({ x, y });
+  }
+  const pousos = [];
+  for (const q of topo) { if (pousos.length >= N_POUSO) break; if (pousos.every(o => Math.hypot(o.x - q.x, o.y - q.y) >= 46 * esc)) pousos.push(q); }
+  tinta = document.createElement('canvas'); tinta.width = W; tinta.height = H;
+  const g = rng(7);
+  const borda = () => { const lado = Math.floor(g() * 4), v = g();
+    return lado === 0 ? { x: -80, y: v * H } : lado === 1 ? { x: W + 80, y: v * H } : lado === 2 ? { x: v * W, y: -80 } : { x: v * W, y: H + 80 }; };
+  const novo = (alvo, pousado) => ({ alvo, pousado, ini: borda(), meio: { x: W * (-0.05 + 1.1 * g()), y: H * (-0.05 + 1.1 * g()) },
+    entra: g() * 0.12, pouso: g() * 0.5, tam: (pousado ? 0.85 + g() * 0.4 : 0.5 + g() * 0.9) * esc * 1.25,
+    bateF: pousado ? 7 + g() * 4 : 13 + g() * 8, fase: g() * 6.28, pairar: 6 + g() * 14, curva: (g() - 0.5) * 0.6 });
+  bando3 = [...interior.map(a => novo(a, false)), ...pousos.map(a => novo(a, true))];
+  alvos = { esc };
+}
+const bez = (a, c, b, t) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * c + t * t * b;
+function desenha3(P, t) {
+  const { g, W, H } = s3, esc = alvos.esc;
+  // fundo: line-up vermelho subindo e o palco creme da assinatura entrando por baixo (a cobertura esconde a troca)
+  const emenda = H * (1 - lim(P / 0.3));
+  g.fillStyle = '#E8392F'; g.fillRect(0, 0, W, emenda);
+  g.fillStyle = '#F1E2C4'; g.fillRect(0, emenda, W, H - emenda);
+  g.fillStyle = '#0F1211'; g.font = `400 ${Math.min(W * 0.08, 60)}px "Pirata One"`; g.textAlign = 'center';
+  if (emenda > 40) g.fillText('Kl Jay ✦ Rincon Sapiência ✦ Pocah', W / 2, emenda * 0.5);
+
+  const Bf = lim((P - 0.42) / 0.46);               // pouso nas letras
+  // tinta das letras
+  const raio = Math.min(W, H) * 0.045, tc = tinta.getContext('2d');
+  tc.globalCompositeOperation = 'source-over'; tc.clearRect(0, 0, W, H); tc.fillStyle = '#0F1211';
+  if (Bf >= 0.999) tc.fillRect(0, 0, W, H);
+  else for (const b of bando3) { if (b.pousado) continue; const ja = Bf - b.pouso - 0.35;
+    if (ja >= 0) { tc.beginPath(); tc.arc(b.alvo.x, b.alvo.y, raio * (0.35 + 0.65 * suave(lim(ja / 0.12))), 0, 6.283); tc.fill(); } }
+  tc.globalCompositeOperation = 'destination-in'; tc.drawImage(mascara, 0, 0);
+  g.drawImage(tinta, 0, 0);
+
+  g.fillStyle = '#0F1211';
+  const perto = 1 + 0.6 * (degrau(0.05, 0.3, P) - degrau(0.32, 0.6, P)); // crescem como se viessem para a câmera
+  for (const b of bando3) {
+    const f = suave(lim((P - b.entra) / 0.26));
+    let x = bez(b.ini.x, (b.ini.x + b.meio.x) / 2 + b.curva * H, b.meio.x, f);
+    let y = bez(b.ini.y, (b.ini.y + b.meio.y) / 2 - b.curva * W * 0.3, b.meio.y, f);
+    x += Math.sin(t * 1.3 + b.fase) * b.pairar * esc * 2; y += Math.cos(t * 1.7 + b.fase) * b.pairar * 1.4 * esc;
+    const a = suave(lim((Bf - b.pouso) / 0.35));
+    if (a > 0) {
+      x = bez(x, (x + b.alvo.x) / 2 + Math.sin(b.fase) * W * 0.12, b.alvo.x, a);
+      y = bez(y, Math.min(y, b.alvo.y) - H * 0.18, b.pousado ? b.alvo.y - 7 * b.tam : b.alvo.y, a);
+    }
+    if (!b.pousado && a >= 1) continue;
+    if (f <= 0) continue;
+    const parado = b.pousado && a >= 1;
+    morcego(g, x, y, b.tam * (parado ? 1 : perto), t * (parado ? b.bateF * 0.5 : b.bateF) + b.fase, parado ? 0 : Math.sin(t * 2 + b.fase) * 0.25, b.fase > 3.14 ? 1 : -1);
+  }
+  document.getElementById('fase3').textContent =
+    P < 0.16 ? 'chegando de todos os lados' : P < 0.46 ? 'tomando a tela' : Bf < 1 ? 'formando o nome' : 'nome formado — pousados batendo as asas';
+}
+
+let P3 = 0, auto3 = false;
+document.getElementById('p3').addEventListener('input', e => { auto3 = false; P3 = e.target.value / 1000; });
+document.getElementById('auto3').addEventListener('click', () => { auto3 = !auto3; if (P3 >= 1) P3 = 0; });
+addEventListener('resize', () => { s1 = prepara(c1); s2 = prepara(c2); s3 = prepara(c3); monta3(); });
+function laco(ms) {
+  const t = ms / 1000;
+  if (auto3) { P3 = Math.min(1, P3 + 0.0016); document.getElementById('p3').value = P3 * 1000; if (P3 >= 1) auto3 = false; }
+  desenha1(t); desenha2(t); desenha3(P3, t);
+  requestAnimationFrame(laco);
+}
+const q = new URLSearchParams(location.search);
+if (q.has('p')) { P3 = +q.get('p'); document.getElementById('p3').value = P3 * 1000; }
+document.fonts.load('400 200px "Pirata One"').then(() => { monta3(); requestAnimationFrame(laco); });
+</script>
+</body>
+</html>
