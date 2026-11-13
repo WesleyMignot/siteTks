@@ -56,42 +56,32 @@ test('menu com 5 seções numeradas', async () => {
     ['#carreira', '#producoes', '#sets', '#lineup', '#contrate']);
 });
 
-test('revoada cruza a tela na virada para os Sets', async () => {
+test('céu: nuvem cheia na virada para os Sets', async () => {
   const { page } = await abrir(amb);
-  await rolarPara(page, '#sets', -450);
-  await new Promise(r => setTimeout(r, 300));
-  assert.ok(await page.$$eval('#sets .revoada svg', l => l.length >= 6 && l.some(s => {
-    const r = s.getBoundingClientRect(); return r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight; })));
+  await rolarPara(page, '#sets', -450); await new Promise(r => setTimeout(r, 300));
+  assert.ok(await page.$eval('.ceu', c => +c.dataset.desenhados) >= 60);
 });
 
-test('revoada: celular com menos morcegos e sem rolagem lateral', async () => {
+test('céu no celular: nuvem menor, sem rolagem lateral e DPR no máximo 2', async () => {
   const { page } = await abrir(amb, { largura: 390, altura: 844 });
-  await rolarPara(page, '#sets', -420);
-  assert.ok(await page.$$eval('#sets .revoada svg', l => l.length >= 3 && l.length <= 5));
-  assert.ok(await page.evaluate(() => [...document.querySelectorAll('.revoada')].every(r => getComputedStyle(r).overflow === 'hidden')));
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 3 });
+  await new Promise(r => setTimeout(r, 400));
+  await rolarPara(page, '#sets', -420); await new Promise(r => setTimeout(r, 300));
+  const r = await page.$eval('.ceu', c => ({ n: +c.dataset.desenhados, w: c.width, iw: innerWidth }));
+  assert.ok(r.n > 0 && r.n <= 45 && r.w <= 2 * r.iw, JSON.stringify(r));
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
 });
 
-test('revoada da virada para as Produções aparece acima da seção (não é cortada)', async () => {
+test('céu vazio quando nenhuma cena está ativa (pular pelo menu até o Contrate)', async () => {
   const { page } = await abrir(amb);
-  const corte = await page.$eval('#producoes', s => getComputedStyle(s).overflowY);
-  assert.equal(corte, 'visible');
-  assert.equal(await page.$$eval('[data-revoada]', l => l.map(r => r.closest('section').id).join()), 'producoes,sets,assinatura');
+  await page.click('#menu-botao'); await page.click('#menu a[href="#contrate"]');
+  await new Promise(r => setTimeout(r, 2600));
+  assert.equal(await page.$eval('.ceu', c => +c.dataset.desenhados), 0);
 });
 
-test('revoada contrasta com os dois lados da virada', async () => {
-  const { page } = await abrir(amb);
-  const r = await page.$$eval('[data-revoada]', l => l.map(rv => {
-    const fundo = el => { for (let e = el; e; e = e.parentElement) { const c = getComputedStyle(e).backgroundColor; if (c !== 'rgba(0, 0, 0, 0)') return c; } return 'rgb(255, 255, 255)'; };
-    const secao = rv.closest('section');
-    return { id: secao.id, cor: getComputedStyle(rv).color, aqui: fundo(secao), antes: fundo(secao.previousElementSibling) };
-  }));
-  for (const x of r) assert.ok(x.cor !== x.aqui && x.cor !== x.antes, JSON.stringify(x));
-});
-
-test('movimento reduzido: sem revoadas', async () => {
+test('movimento reduzido: sem céu', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
-  assert.equal(await page.$$eval('.revoada svg', l => l.length), 0);
+  assert.ok(await page.$eval('.ceu', c => getComputedStyle(c).display === 'none'));
 });
 
 test('pular pelo menu do topo ao Contrate deixa tudo no estado final coerente', async () => {

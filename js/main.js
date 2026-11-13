@@ -9,7 +9,7 @@ import {
   iniciarProducoes, iniciarDivisores, iniciarCartaz,
 } from './animacoes.js';
 import { iniciarAssinatura } from './assinatura.js';
-import { iniciarRevoadas } from './revoadas.js';
+import { iniciarCeu } from './ceu.js';
 import { iniciarAncora } from './ancora.js';
 
 const CELULAR = '(max-width: 820px)';
@@ -53,8 +53,8 @@ seguro('contadores', () => iniciarContadores(ctx));
 seguro('fotos', () => iniciarFotosDuplas());
 seguro('producoes', () => iniciarProducoes(ctx));
 seguro('sets', () => iniciarSets(ctx));
-seguro('assinatura', () => iniciarAssinatura(ctx));
-seguro('revoadas', () => iniciarRevoadas(ctx));
+const ceu = seguro('ceu', () => iniciarCeu(ctx)); // antes da assinatura, que desenha no céu
+seguro('assinatura', () => iniciarAssinatura(ctx, ceu));
 seguro('ancora', () => iniciarAncora(ctx)); // girar/redimensionar não tira o visitante do lugar
 
 seguro('estrelas', () => iniciarEstrelas(ctx));
