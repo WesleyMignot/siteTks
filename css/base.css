@@ -1,0 +1,197 @@
+/* ==========================================================================
+   Brunin Tks — base: tokens, reset, tipografia, grão, estrelas, botões,
+   preloader, header e menu.
+   ========================================================================== */
+
+:root {
+  --preto: #0F1211;
+  --creme: #F1E2C4;
+  --vermelho: #E8392F;
+  --brasa: #E2512B;
+  --sangue: #5E1D19;
+  --creme-60: rgba(241, 226, 196, .6);
+  --linha: rgba(241, 226, 196, .15);
+
+  --fonte-titulo: "Pirata One", "UnifrakturCook", "Old English Text MT", serif;
+  --fonte-texto: "Space Mono", ui-monospace, "Courier New", monospace;
+  --fonte-gotica: var(--fonte-titulo);
+
+  --gutter: clamp(16px, 2.2vw, 32px);
+  --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+/* Lenis (antes vinha do CDN; inline para não bloquear a renderização) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+body {
+  background: var(--preto);
+  color: var(--creme);
+  font-family: var(--fonte-texto);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video, svg { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+ul, ol { list-style: none; }
+
+:focus-visible { outline: 2px solid var(--creme); outline-offset: 3px; }
+main > section:focus { outline: none; } /* seção focada pelo menu: o foco é para o Tab seguinte, não visual */
+#contrate :focus-visible { outline-color: var(--preto); }
+
+.visualmente-oculto {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---------- tipografia ---------- */
+.titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  line-height: .9;
+  letter-spacing: 0;
+}
+.gotica { font-family: var(--fonte-gotica); font-weight: 400; }
+.caixa-alta { text-transform: uppercase; }
+.rotulo {
+  font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+}
+.rotulo .gotica { font-size: 1.6em; letter-spacing: 0; text-transform: none; margin-right: .2em; }
+
+/* ---------- grão ---------- */
+.grao {
+  position: fixed; inset: -50%; z-index: 90; pointer-events: none;
+  background: var(--grao); opacity: .18; mix-blend-mode: overlay;
+  animation: grao .6s steps(4) infinite;
+}
+@keyframes grao {
+  0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); } 75% { transform: translate(-1%, 3%); }
+}
+.menos-movimento .grao { animation: none; }
+
+/* ---------- estrelas ---------- */
+.estrela { position: absolute; width: clamp(18px, 2.4vw, 34px); height: auto; fill: var(--creme); pointer-events: none; }
+
+/* ---------- botões ---------- */
+.botao {
+  display: inline-flex; align-items: center; gap: .5em;
+  padding: 11px 20px; border-radius: 99px;
+  background: var(--creme); color: var(--preto);
+  font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  transition: background .25s, color .25s;
+}
+.botao:hover { background: var(--vermelho); color: var(--preto); }
+
+/* ---------- preloader ---------- */
+.preloader {
+  position: fixed; inset: 0; z-index: 100; background: var(--preto);
+  display: grid; place-items: center; overflow: hidden;
+  /* trava de segurança: se o JS falhar, o preloader some sozinho e libera o conteúdo */
+  animation: preloader-seguranca 0s linear 9s forwards;
+}
+@keyframes preloader-seguranca { to { visibility: hidden; pointer-events: none; } }
+.preloader__numero {
+  position: absolute; left: var(--gutter); bottom: var(--gutter);
+  font-size: clamp(56px, 12vw, 180px); font-weight: 800; line-height: .8; letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
+}
+.preloader__estrela { position: static; width: clamp(36px, 5vw, 64px); animation: girar 2.4s linear infinite; }
+.preloader__cortina { position: absolute; inset: 0; background: var(--vermelho); transform: scaleY(0); transform-origin: bottom; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.menos-movimento .preloader__estrela { animation: none; }
+
+/* ---------- header ---------- */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 85;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  padding: 14px var(--gutter);
+  color: var(--creme); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  pointer-events: none; transition: color .3s;
+}
+.header > * { pointer-events: auto; }
+.header::before {
+  content: ""; position: absolute; inset: 0 0 -24px; z-index: -1; pointer-events: none;
+  background: linear-gradient(rgba(15, 18, 17, .85), rgba(15, 18, 17, 0)); transition: opacity .3s;
+}
+.header--escuro::before, .menu-aberto .header::before { opacity: 0; }
+.header__logo { justify-self: start; }
+.header__logo img { height: 26px; width: auto; transition: filter .3s; }
+.relogio { justify-self: center; font-variant-numeric: tabular-nums; }
+.relogio__dp { animation: piscar 1s steps(2) infinite; }
+@keyframes piscar { 50% { opacity: 0; } }
+.menos-movimento .relogio__dp { animation: none; }
+.header__botao { justify-self: end; position: relative; width: 44px; height: 44px; }
+.header__botao span {
+  position: absolute; left: 10px; right: 10px; top: 50%; height: 2px; background: currentColor;
+  transition: transform .35s;
+}
+.header__botao span:last-child { transform: rotate(90deg); }
+.header__botao[aria-expanded="true"] span:first-child { transform: rotate(45deg); }
+.header__botao[aria-expanded="true"] span:last-child { transform: rotate(135deg); }
+
+.header--escuro { color: var(--preto); }
+.header--escuro .header__logo img { filter: brightness(0); }
+.menu-aberto .header { color: var(--creme); }
+.menu-aberto .header__logo img { filter: none; }
+
+/* ---------- menu ---------- */
+.menu {
+  position: fixed; inset: 0; z-index: 80; background: var(--preto);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 90px var(--gutter) var(--gutter); overflow-y: auto;
+}
+.menu[hidden] { display: none; }
+.menu__links a {
+  display: inline-flex; align-items: baseline; gap: .35em;
+  font-family: var(--fonte-titulo); font-weight: 400;
+  font-size: clamp(44px, 8.5vw, 120px); line-height: 1.02; transition: color .25s;
+}
+.menu__links a .gotica { font-family: var(--fonte-texto); font-weight: 700; font-size: .16em; letter-spacing: .1em; color: var(--creme-60); }
+.menu__links a:hover { color: var(--vermelho); }
+.menu__rodape { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: auto; padding-top: 40px; }
+.menu__rodape a:hover { color: var(--vermelho); }
+
+/* ---------- blocos de cor (rodada 2) ---------- */
+/* Seções vermelhas/creme: texto preto e linhas/textos secundários escuros. */
+[data-tema="claro"] { color: var(--preto); --creme-60: rgba(15, 18, 17, .72); --linha: rgba(15, 18, 17, .28); }
+/* Retícula de xerox nas seções creme. */
+.reticula {
+  background-color: var(--creme);
+  background-image: radial-gradient(circle, rgba(15, 18, 17, .16) 1px, transparent 1.3px);
+  background-size: 7px 7px;
+}
+/* Faixa de chamas tribais na emenda com a seção de cima. */
+.chamas-topo { position: relative; }
+.chamas-topo::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 100px; z-index: 1; pointer-events: none;
+  background: var(--chamas) center top / auto 300px repeat-x;
+  transform: var(--chamas-giro, none);
+  /* a máscara gira junto com o elemento: nas faixas viradas ela vai "to top" para continuar opaca na emenda */
+  -webkit-mask-image: linear-gradient(var(--chamas-sentido, to bottom), #000 35%, transparent);
+  mask-image: linear-gradient(var(--chamas-sentido, to bottom), #000 35%, transparent);
+}
+@media (max-width: 820px) { .chamas-topo::before { height: 60px; background-size: auto 200px; } }
+
+/* ---------- morcego (silhueta única: js/morcego.js) ---------- */
+.morcego { fill: currentColor; overflow: visible; }
+.morcego__asas {
+  transform-box: fill-box; transform-origin: center;
+  animation: bater var(--bate, .5s) ease-in-out var(--atraso, 0s) infinite alternate;
+}
+@keyframes bater { from { transform: scaleY(1); } to { transform: scaleY(-.35); } }
+.morcego--div { height: .8em; width: auto; display: inline-block; vertical-align: middle; margin: 0 .35em; --bate: .9s; }
+.div-morcego { display: inline-block; }
+.menos-movimento .morcego__asas { animation: none; }

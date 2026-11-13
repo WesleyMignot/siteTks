@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brunin Tks — Revisão 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=Pirata+One&family=Space+Mono:wght@400;700&family=Unbounded:wght@400;700;900&family=Inter+Tight:wght@400;500;700&family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500;700&family=Grenze+Gotisch:wght@700;800&family=Fraunces:ital,opsz,wght,SOFT@1,9..144,900,100&family=Archivo:wdth,wght@125,500;125,800&display=swap">
+<style>
+  :root{--preto:#0F1211;--creme:#F1E2C4;--vermelho:#E3302F;--brasa:#E2512B;--sangue:#5E1D19;
+    --grao:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --pontos:radial-gradient(circle,rgba(15,18,17,.55) 1.1px,transparent 1.4px) 0 0/7px 7px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0b0b0b;color:#e9e4d6;font-family:Archivo,system-ui,sans-serif;font-stretch:125%;padding:48px 20px 140px;line-height:1.4}
+  .wrap{max-width:1280px;margin:0 auto}
+  h1{font-size:clamp(28px,4vw,52px);font-weight:800;text-transform:uppercase;letter-spacing:-.02em}
+  .intro p{max-width:760px;opacity:.7;margin-top:12px;font-size:15px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border:1px solid currentColor;border-radius:99px}
+  .rec{background:#e9e4d6;color:#0b0b0b;border-color:#e9e4d6}
+  section.bloco{margin-top:96px}
+  .cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;margin-bottom:18px}
+  .cab h2{font-size:clamp(22px,2.6vw,34px);font-weight:800;text-transform:uppercase}
+  .cab p{flex:1 1 420px;opacity:.72;font-size:14px}
+  .grade{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .op{border-radius:6px;overflow:hidden;background:#141615}
+  .op .leg{padding:12px 16px 16px;font-size:13px}
+  .op .leg b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.1em;margin-bottom:4px}
+  .op .leg span{opacity:.7}
+  .grao{position:absolute;inset:-50%;background:var(--grao);opacity:.2;mix-blend-mode:overlay;pointer-events:none;animation:grao .6s steps(4) infinite;z-index:9}
+  @keyframes grao{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-1%,3%)}}
+  .rel{position:relative;overflow:hidden;isolation:isolate}
+
+  /* ---------- 1. fontes ---------- */
+  .fonte{position:relative;padding:28px 26px 26px;background:var(--preto);color:var(--creme);min-height:360px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .fonte .num{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+  .fonte .t{font-size:clamp(38px,4.6vw,64px);line-height:.92}
+  .fonte .festas{color:var(--vermelho);font-size:clamp(20px,2.2vw,30px);line-height:1}
+  .fonte .n{font-size:clamp(40px,4vw,58px);line-height:.9}
+  .fonte .txt{font-size:12.5px;max-width:52ch;opacity:.85}
+  .fonte .linha{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:auto}
+  .fonte .btn{font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:9px 16px;border-radius:99px;background:var(--creme);color:var(--preto);font-weight:700}
+  .fonte img{position:absolute;right:18px;top:18px;width:120px;opacity:.9}
+  .f0 .t,.f0 .n{font-family:Fraunces;font-style:italic;font-weight:900;font-variation-settings:"SOFT" 100}
+  .f0 .festas{font-family:"Grenze Gotisch";font-weight:800}
+  .f0 .txt,.f0 .btn,.f0 .num{font-family:Archivo;font-stretch:125%;text-transform:uppercase}
+  .f1 .t,.f1 .n,.f1 .festas{font-family:Anton;text-transform:uppercase;letter-spacing:.005em}
+  .f1 .t{font-size:clamp(44px,5.4vw,76px)}
+  .f1 .txt,.f1 .btn,.f1 .num{font-family:"Space Grotesk";font-weight:500}
+  .f1 .txt{text-transform:uppercase;letter-spacing:.02em}
+  .f2 .t,.f2 .n,.f2 .festas{font-family:"Pirata One";font-weight:400}
+  .f2 .t{font-size:clamp(44px,5.4vw,76px);line-height:.9}
+  .f2 .txt,.f2 .btn,.f2 .num{font-family:"Space Mono";text-transform:uppercase}
+  .f2 .txt{font-size:11.5px}
+  .f3 .t,.f3 .n{font-family:Unbounded;font-weight:900;text-transform:uppercase;letter-spacing:-.02em}
+  .f3 .t{font-size:clamp(30px,3.6vw,50px)}
+  .f3 .festas{font-family:Unbounded;font-weight:700;text-transform:uppercase;font-size:clamp(14px,1.5vw,20px)}
+  .f3 .txt,.f3 .btn,.f3 .num{font-family:"Inter Tight";font-weight:500}
+  .f4 .t,.f4 .n,.f4 .festas{font-family:"Big Shoulders Display";font-weight:900;text-transform:uppercase;letter-spacing:.01em}
+  .f4 .t{font-size:clamp(48px,6vw,84px);line-height:.86}
+  .f4 .txt,.f4 .btn,.f4 .num{font-family:"IBM Plex Mono";font-weight:500;text-transform:uppercase}
+  .f4 .txt{font-size:11.5px}
+
+  /* ---------- 2. cor e textura ---------- */
+  .pagina{display:flex;flex-direction:column}
+  .mini{position:relative;min-height:150px;padding:22px 22px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;overflow:hidden;isolation:isolate}
+  .mini h4{font-family:Anton;text-transform:uppercase;font-size:34px;line-height:.9;font-weight:400}
+  .mini p{font-family:"Space Grotesk";font-size:11px;text-transform:uppercase;max-width:46ch;opacity:.85}
+  .mini .tex{position:absolute;inset:0;z-index:-1;background-size:cover;background-position:center}
+  .mini .foto{position:absolute;right:0;top:0;bottom:0;width:42%;z-index:-1;background-size:cover;background-position:center}
+  .k-preto{background:var(--preto);color:var(--creme)}
+  .k-verm{background:var(--vermelho);color:var(--preto)}
+  .k-creme{background:var(--creme);color:var(--preto)}
+  .borda-chamas{position:absolute;left:0;right:0;height:46px;background:url(tex/preto-no-vermelho.webp) center/cover;z-index:-1}
+
+  /* ---------- 3. transição do hero ---------- */
+  .palco{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--preto);isolation:isolate;border-radius:6px}
+  .palco>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.6)}
+  .palco .logo{position:absolute;left:50%;top:46%;width:46%;transform:translate(-50%,-50%) rotate(-3deg);z-index:3;animation:logoSai 6s infinite}
+  .palco .card{position:absolute;z-index:4;overflow:hidden;animation:cresce 6s cubic-bezier(.7,0,.2,1) infinite;outline:2px solid var(--creme)}
+  .palco .card video{width:100%;height:100%;object-fit:cover}
+  .palco .card .dentro{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:6%;background:linear-gradient(90deg,rgba(15,18,17,.85),rgba(15,18,17,.2));opacity:0;animation:dentro 6s infinite}
+  .palco .card .dentro b{font-family:Anton;text-transform:uppercase;font-size:clamp(22px,3.4vw,48px);line-height:.92;color:var(--creme);font-weight:400;max-width:14ch}
+  .palco .card .dentro small{font-family:"Space Grotesk";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--creme);opacity:.7;margin-bottom:8px}
+  @keyframes cresce{0%,22%{left:86%;top:24%;width:10.5%;height:33%;border-radius:8px;transform:rotate(0)}
+    32%{transform:rotate(-4deg)}
+    55%,88%{left:0;top:0;width:100%;height:100%;border-radius:0;transform:rotate(0)}100%{left:86%;top:24%;width:10.5%;height:33%;border-radius:8px}}
+  @keyframes dentro{0%,52%{opacity:0;transform:translateY(20px)}62%,86%{opacity:1;transform:none}92%,100%{opacity:0}}
+  @keyframes logoSai{0%,22%{opacity:1;transform:translate(-50%,-50%) rotate(-3deg) scale(1)}50%,100%{opacity:0;transform:translate(-50%,-50%) rotate(-3deg) scale(1.3)}}
+
+  /* ---------- 4. produções ---------- */
+  .prod{background:var(--preto)}
+  .prod .linha{position:relative;display:flex;justify-content:space-between;align-items:center;padding:26px 24px;border-bottom:1px solid rgba(241,226,196,.15);overflow:hidden;isolation:isolate;cursor:pointer}
+  .prod .linha .bg{position:absolute;inset:0;z-index:-1;background-size:cover;background-position:center 30%;opacity:.16;filter:grayscale(1) contrast(1.1);transform:scale(1.04);transition:opacity .5s,filter .5s,transform .8s}
+  .prod .linha::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(15,18,17,.85),rgba(15,18,17,.25) 60%,transparent);}
+  .prod .linha:hover .bg{opacity:1;filter:none;transform:scale(1)}
+  .prod .nome{font-family:Anton;text-transform:uppercase;font-size:clamp(40px,6vw,86px);line-height:.9;color:var(--creme)}
+  .prod .papel{font-family:"Space Grotesk";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--creme);opacity:.8;text-align:right;max-width:24ch}
+
+  /* ---------- 5. line-up ---------- */
+  .cartaz{background:var(--vermelho);color:var(--preto);padding:34px 26px;text-align:center;font-family:Anton;text-transform:uppercase;line-height:1.02;position:relative;isolation:isolate}
+  .cartaz .grande{font-size:clamp(28px,3.4vw,48px)}
+  .cartaz .peq{font-family:"Space Grotesk";font-weight:700;font-size:clamp(12px,1.25vw,16px);letter-spacing:.06em;margin-top:14px;line-height:1.6}
+  .cartaz span{opacity:.22;transition:opacity .3s;white-space:nowrap}
+  .cartaz span.on{opacity:1}
+  .cartaz .sep{opacity:1;color:var(--creme);margin:0 .25em}
+  .cartaz h5{font-family:"Space Grotesk";font-size:11px;letter-spacing:.14em;margin-bottom:14px}
+  .stickers{background:var(--preto);padding:28px 22px;display:flex;flex-wrap:wrap;gap:10px 10px;justify-content:center;align-content:center;min-height:330px}
+  .stickers span{font-family:Anton;text-transform:uppercase;font-size:clamp(15px,1.7vw,22px);padding:8px 14px 9px;border-radius:10px;animation:cai .7s cubic-bezier(.2,1.4,.4,1) both;transition:transform .25s}
+  .stickers span:hover{transform:rotate(0) scale(1.12)!important}
+  .s1{background:var(--creme);color:var(--preto)} .s2{background:var(--vermelho);color:var(--preto)} .s3{border:2px solid var(--creme);color:var(--creme)} .s4{background:var(--preto);color:var(--vermelho);border:2px solid var(--vermelho)}
+  @keyframes cai{from{opacity:0;transform:translateY(-60px) rotate(var(--r,0deg)) scale(.8)}to{opacity:1;transform:translateY(0) rotate(var(--r,0deg))}}
+
+  /* ---------- 6. assinatura ---------- */
+  .assin{position:relative;aspect-ratio:16/9;background:var(--preto);overflow:hidden;border-radius:6px}
+  .assin svg{position:absolute;inset:0;width:100%;height:100%}
+  .assin .traco{fill:none;stroke:var(--vermelho);stroke-linecap:round;stroke-linejoin:round}
+  .assin .t1{stroke-width:22;stroke-dasharray:1;stroke-dashoffset:1;animation:desenha 7s infinite}
+  .assin .t2{stroke-width:9;stroke-dasharray:1;stroke-dashoffset:1;animation:desenha2 7s infinite;opacity:.9}
+  .assin .t3{stroke-width:5;stroke-dasharray:1;stroke-dashoffset:1;animation:desenha3 7s infinite;opacity:.8}
+  .assin .gota{fill:var(--vermelho);opacity:0;animation:gota 7s infinite}
+  .assin text{font-family:"Grenze Gotisch";font-weight:800;font-size:150px;fill:var(--creme);fill-opacity:0;stroke:var(--creme);stroke-width:2;stroke-dasharray:900;stroke-dashoffset:900;animation:escreve 7s infinite}
+  @keyframes desenha{0%,8%{stroke-dashoffset:1}45%,90%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+  @keyframes desenha2{0%,30%{stroke-dashoffset:1}58%,90%{stroke-dashoffset:0}100%{opacity:0}}
+  @keyframes desenha3{0%,45%{stroke-dashoffset:1}66%,90%{stroke-dashoffset:0}100%{opacity:0}}
+  @keyframes gota{0%,60%{opacity:0;transform:scale(.3)}66%,90%{opacity:1;transform:scale(1)}100%{opacity:0}}
+  @keyframes escreve{0%,20%{stroke-dashoffset:900;fill-opacity:0}55%{stroke-dashoffset:0;fill-opacity:0}68%,90%{stroke-dashoffset:0;fill-opacity:1}100%{fill-opacity:0;stroke-dashoffset:0}}
+  .assin .barra{position:absolute;left:0;right:0;bottom:12px;margin:0 16px;height:4px;background:rgba(241,226,196,.15);border-radius:4px;overflow:hidden}
+  .assin .barra i{display:block;height:100%;background:var(--creme);animation:barra 7s linear infinite}
+  .assin .barra-rot{position:absolute;left:16px;bottom:22px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+  @keyframes barra{from{width:0}90%,to{width:100%}}
+
+  /* ---------- 7. contrate ---------- */
+  .ct{background:var(--vermelho);color:var(--preto);padding:24px;min-height:380px;position:relative;overflow:hidden;isolation:isolate}
+  .ct h5{font-family:Anton;text-transform:uppercase;font-size:56px;line-height:.9;font-weight:400;margin-bottom:14px}
+  .ct-stk{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  .ct-stk a{display:flex;flex-direction:column;align-items:center;gap:8px;width:118px;padding:16px 10px 12px;border-radius:16px;background:var(--creme);color:var(--preto);text-decoration:none;font-family:"Space Grotesk";font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;box-shadow:0 6px 0 var(--preto);transition:transform .3s cubic-bezier(.2,1.6,.4,1)}
+  .ct-stk a:nth-child(1){transform:rotate(-6deg)} .ct-stk a:nth-child(2){transform:rotate(4deg) translateY(10px)} .ct-stk a:nth-child(3){transform:rotate(-2deg)} .ct-stk a:nth-child(4){transform:rotate(7deg) translateY(6px)} .ct-stk a:nth-child(5){transform:rotate(-5deg) translateY(14px)}
+  .ct-stk a:hover{transform:rotate(0) translateY(-8px) scale(1.08)}
+  .ct-stk svg{width:46px;height:46px;animation:balanca 2.4s ease-in-out infinite}
+  .ct-stk a:nth-child(2n) svg{animation-delay:-1.2s}
+  .ct-stk a:hover svg{animation:pula .5s ease-in-out infinite}
+  @keyframes balanca{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  @keyframes pula{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.15)}}
+  .ct-lin a{display:flex;align-items:center;gap:18px;padding:12px 10px;border-top:2px solid var(--preto);color:var(--preto);text-decoration:none;position:relative;overflow:hidden;isolation:isolate}
+  .ct-lin a:last-child{border-bottom:2px solid var(--preto)}
+  .ct-lin a::before{content:"";position:absolute;inset:0;background:var(--preto);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.7,0,.2,1);z-index:-1}
+  .ct-lin a:hover::before{transform:scaleX(1)}
+  .ct-lin a:hover{color:var(--creme)}
+  .ct-lin svg{width:40px;height:40px;flex:none;transition:transform .6s cubic-bezier(.2,1.6,.4,1)}
+  .ct-lin a:hover svg{transform:rotate(360deg) scale(1.2)}
+  .ct-lin b{font-family:Anton;text-transform:uppercase;font-size:28px;font-weight:400;line-height:1}
+  .ct-lin small{margin-left:auto;font-family:"Space Grotesk";font-weight:700;font-size:12px;text-transform:uppercase}
+  svg.ic{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  @media (max-width:860px){.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="intro">
+  <span class="tag">Brunin Tks · revisão 2</span>
+  <h1 style="margin-top:14px">Fontes, cor, line-up, contrate e as novas transições</h1>
+  <p>As demos rodam em loop. Passe o mouse nas Produções e nos links do Contrate. Os textos são os do site; o logo continua o mesmo em todas as opções.</p>
+</header>
+
+<!-- ===================== 1. FONTES ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">1</span><h2>Fontes</h2><p>Mesma tela em 4 pares de fontes (título + texto). A primeira é a atual, para comparar.</p></div>
+  <div class="grade g2">
+    <div class="op"><div class="fonte f0"><img src="../../assets/logo/logo-creme.png" alt=""><span class="num">Nº 004 — Sets · atual</span><div class="t">Sets que marcaram a trajetória</div><div class="festas">Savage · Boiler Baile · Sinistro DNB</div><p class="txt">Dos bailes que viraram memória aos sets que rodaram o Brasil e a Europa.</p><div class="linha"><span class="n">288 mil+</span><span class="btn">▶ Assistir</span></div></div>
+      <div class="leg"><b>0 · Atual</b><span>Fraunces itálico + Archivo largo + gótico.</span></div></div>
+    <div class="op"><div class="fonte f1"><img src="../../assets/logo/logo-creme.png" alt=""><span class="num">Nº 004 — Sets</span><div class="t">Sets que marcaram a trajetória</div><div class="festas">Savage · Boiler Baile · Sinistro DNB</div><p class="txt">Dos bailes que viraram memória aos sets que rodaram o Brasil e a Europa.</p><div class="linha"><span class="n">288 mil+</span><span class="btn">▶ Assistir</span></div></div>
+      <div class="leg"><b>A · Cartaz de baile</b><span>Anton (condensada, pesada, caixa-alta) + Space Grotesk. Lembra lambe-lambe e flyer de baile.</span></div></div>
+    <div class="op"><div class="fonte f2"><img src="../../assets/logo/logo-creme.png" alt=""><span class="num">Nº 004 — Sets</span><div class="t">Sets que marcaram a trajetória</div><div class="festas">Savage · Boiler Baile · Sinistro DNB</div><p class="txt">Dos bailes que viraram memória aos sets que rodaram o Brasil e a Europa.</p><div class="linha"><span class="n">288 mil+</span><span class="btn">▶ Assistir</span></div></div>
+      <div class="leg"><b>B · Bruxaria</b><span>Pirata One (gótica) + Space Mono. Conversa direto com o logo e o "Brunin" do reel.</span></div></div>
+    <div class="op"><div class="fonte f3"><img src="../../assets/logo/logo-creme.png" alt=""><span class="num">Nº 004 — Sets</span><div class="t">Sets que marcaram a trajetória</div><div class="festas">Savage · Boiler Baile · Sinistro DNB</div><p class="txt">Dos bailes que viraram memória aos sets que rodaram o Brasil e a Europa.</p><div class="linha"><span class="n">288 mil+</span><span class="btn">▶ Assistir</span></div></div>
+      <div class="leg"><b>C · Flyer de clube</b><span>Unbounded (larga, arredondada) + Inter Tight. Mais eletrônico / Y2K.</span></div></div>
+    <div class="op"><div class="fonte f4"><img src="../../assets/logo/logo-creme.png" alt=""><span class="num">Nº 004 — Sets</span><div class="t">Sets que marcaram a trajetória</div><div class="festas">Savage · Boiler Baile · Sinistro DNB</div><p class="txt">Dos bailes que viraram memória aos sets que rodaram o Brasil e a Europa.</p><div class="linha"><span class="n">288 mil+</span><span class="btn">▶ Assistir</span></div></div>
+      <div class="leg"><b>D · Industrial</b><span>Big Shoulders Display (condensada industrial) + IBM Plex Mono. Seco, técnico, de festa underground.</span></div></div>
+  </div>
+</section>
+
+<!-- ===================== 2. COR E TEXTURA ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">2</span><h2>Cor e textura</h2><p>Duas formas de trazer mais cor. As texturas de chama foram geradas no estilo das chamas tribais do PDF.</p></div>
+  <div class="grade g2">
+    <div class="op">
+      <div class="pagina">
+        <div class="mini k-preto"><video src="../../assets/video/hero-540.mp4" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;filter:brightness(.55)"></video><h4>Hero</h4><p>Reel de fundo</p></div>
+        <div class="mini k-verm"><div class="borda-chamas" style="top:0;transform:scaleY(-1);background-image:url(tex/creme-no-preto.webp);opacity:.9"></div><div class="foto" style="background-image:url(../../assets/img/foto-22-tks.webp);mix-blend-mode:multiply"></div><h4>Carreira</h4><p>Fundo vermelho chapado, foto em duotone mesclada, texto preto</p></div>
+        <div class="mini k-creme"><div class="tex" style="background:var(--pontos);opacity:.35"></div><h4>Produções</h4><p>Papel creme com retícula de xerox, nomes pretos, detalhes vermelhos</p></div>
+        <div class="mini k-preto"><div class="tex" style="background-image:url(tex/vermelho-no-preto.webp);opacity:.35"></div><h4>Sets</h4><p>Preto com chamas vermelhas por trás dos vídeos</p></div>
+        <div class="mini k-verm"><div class="tex" style="background-image:url(tex/preto-no-vermelho.webp);opacity:.25"></div><h4>Contrate</h4><p>Vermelho com chamas pretas</p></div>
+      </div>
+      <div class="leg"><b>A · Blocos alternados, como o PDF</b> <span class="tag rec" style="margin:4px 0">Recomendada</span><br><span>As seções alternam preto, vermelho chapado e creme "xerox", como as páginas do press kit alternam. Muito mais cor, cada seção com cara própria. Chamas tribais nas viradas entre seções.</span></div>
+    </div>
+    <div class="op">
+      <div class="pagina">
+        <div class="mini k-preto"><video src="../../assets/video/hero-540.mp4" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;filter:brightness(.55)"></video><h4>Hero</h4><p>Reel de fundo</p></div>
+        <div class="mini k-preto"><div class="tex" style="background-image:url(tex/vermelho-no-preto.webp);opacity:.55"></div><div class="foto" style="background-image:url(../../assets/img/foto-22-tks.webp);opacity:.8"></div><h4>Carreira</h4><p>Preto com chamas vermelhas fortes e foto duotone</p></div>
+        <div class="mini k-preto"><div class="tex" style="background-image:url(tex/creme-no-preto.webp);opacity:.18"></div><div class="tex" style="background:var(--pontos);opacity:.6;mix-blend-mode:multiply"></div><h4>Produções</h4><p>Chamas creme bem sutis + retícula</p></div>
+        <div class="mini k-preto"><div class="tex" style="background:radial-gradient(60% 80% at 70% 50%,rgba(226,81,43,.55),transparent 70%)"></div><h4>Sets</h4><p>Luz de brasa por trás dos vídeos</p></div>
+        <div class="mini k-verm"><div class="tex" style="background-image:url(tex/preto-no-vermelho.webp);opacity:.25"></div><h4>Contrate</h4><p>Vermelho com chamas pretas</p></div>
+      </div>
+      <div class="leg"><b>B · Escuro com textura</b><br><span>Mantém a base preta do reel, mas com chamas, retícula e brilho de brasa em todas as seções. Mais textura, menos troca de cor.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. TRANSIÇÃO DO HERO ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">3</span><h2>Transição do hero</h2><p>Demo em loop do que acontece com o scroll: o card pequeno gira de leve e cresce até ocupar a tela inteira, virando o fundo da Carreira. No site isso fica preso ao scroll (vai e volta conforme você rola).</p></div>
+  <div class="palco">
+    <video src="../../assets/video/hero-540.mp4" autoplay muted loop playsinline></video>
+    <img class="logo" src="../../assets/logo/logo-sticker-osso.png" alt="">
+    <div class="card"><video src="../../assets/video/boiler.mp4" autoplay muted loop playsinline></video>
+      <div class="dentro"><small>Nº 001 — Carreira</small><b>Um DJ de funk que explora as vertentes mais agressivas e eufóricas</b></div></div>
+    <div class="grao"></div>
+  </div>
+</section>
+
+<!-- ===================== 4. PRODUÇÕES ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">4</span><h2>Produções</h2><p>Passe o mouse: a foto de cada festa fica apagada no fundo da faixa e acende no hover. O texto continua legível. No celular, a faixa acende quando passa pelo meio da tela.</p></div>
+  <div class="op prod">
+    <div class="linha"><div class="bg" style="background-image:url(../../assets/img/foto-21-cor.webp)"></div><span class="nome">Savage</span><span class="papel">Fundador · DJ residente</span></div>
+    <div class="linha"><div class="bg" style="background-image:url(../../assets/video/boiler.jpg)"></div><span class="nome">Boiler Baile</span><span class="papel">Cofundador · Curadoria · Direção criativa</span></div>
+    <div class="linha"><div class="bg" style="background-image:url(../../assets/img/foto-57-cor.webp)"></div><span class="nome">Sonora Breck</span><span class="papel">Cofundador · Curadoria · Direção criativa</span></div>
+    <div class="linha"><div class="bg" style="background-image:url(../../assets/video/dj-luz.jpg)"></div><span class="nome">Sinistro DNB</span><span class="papel">Cofundador · Curadoria · Direção criativa</span></div>
+  </div>
+</section>
+
+<!-- ===================== 5. LINE-UP ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">5</span><h2>Line-up sem carrossel</h2><p>Duas alternativas. Ambas mostram todos os nomes de uma vez, sem nada passando sozinho.</p></div>
+  <div class="grade g2">
+    <div class="op"><div class="cartaz rel" id="cartaz">
+      <h5>Já dividiu o line com</h5>
+      <div class="grande"><span>KL Jay</span><b class="sep">✦</b><span>Rincon Sapiência</span><b class="sep">✦</b><span>Raffa Moreira</span><br><span>MC Binn</span><b class="sep">✦</b><span>Pocah</span><b class="sep">✦</b><span>MC Felipinho</span><b class="sep">✦</b><span>Wesley Gonzaga</span></div>
+      <div class="peq"><span>DJ Patife</span> · <span>Caio Prince</span> · <span>Bonekinha Iraquiana</span> · <span>Ramon Sucesso</span> · <span>Nanda Tsunami</span> · <span>Young Clubber</span> · <span>Carlos do Complexo</span> · <span>Idlibra</span> · <span>Dayeh</span> · <span>Bassan</span> · <span>Kenan e Kel</span> · <span>DJ Lorrany</span> · <span>Brum</span></div>
+      <div class="grao"></div></div>
+      <div class="leg"><b>A · Cartaz de festival</b> <span class="tag rec" style="margin:4px 0">Recomendada</span><br><span>Bloco único, como um cartaz de line-up: nacionais grandes, underground menores. Os nomes começam apagados e vão acendendo um a um conforme o scroll.</span></div></div>
+    <div class="op"><div class="stickers" id="stickers"></div>
+      <div class="leg"><b>B · Adesivos</b><br><span>Cada nome vira um adesivo inclinado que "cai" na tela quando a seção aparece, como adesivos colados numa parede de baile. Passe o mouse para destacar.</span></div></div>
+  </div>
+</section>
+
+<!-- ===================== 6. ASSINATURA ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">6</span><h2>Assinatura construída com o scroll</h2><p>A barra embaixo simula o scroll. No site: seção mais longa (3 telas), o traço principal vai sendo pintado, depois entram dois riscos mais finos e respingos, enquanto o "Brunin" é contornado letra a letra e só então preenchido. Borda do traço irregular, como marcador.</p></div>
+  <div class="assin">
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+      <defs><filter id="aspero" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="10"/></filter></defs>
+      <g filter="url(#aspero)">
+        <path class="traco t1" pathLength="1" d="M180 720C330 260 560 170 640 470S1010 860 1110 430 1380 160 1470 300"/>
+        <path class="traco t2" pathLength="1" d="M240 760C420 520 600 520 700 610S980 700 1180 520"/>
+        <path class="traco t3" pathLength="1" d="M1280 650C1340 560 1420 560 1460 620"/>
+        <circle class="gota" cx="1495" cy="330" r="14"/><circle class="gota" cx="1525" cy="370" r="7"/><circle class="gota" cx="215" cy="790" r="10"/>
+      </g>
+      <text x="800" y="500" text-anchor="middle">Brunin</text>
+    </svg>
+    <span class="barra-rot">scroll</span><div class="barra"><i></i></div>
+  </div>
+</section>
+
+<!-- ===================== 7. CONTRATE ===================== -->
+<section class="bloco">
+  <div class="cab"><span class="tag">7</span><h2>Contrate com os logos</h2><p>Passe o mouse. Em ambas, cada link tem o ícone da rede/serviço, animado.</p></div>
+  <div class="grade g2">
+    <div class="op"><div class="ct rel"><h5>Contrate</h5>
+      <div class="ct-stk">
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>Instagram</a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3Z"/><path d="M9.2 8.6c.4-.7.9-.6 1.1-.1l.5 1.3c.1.3 0 .5-.2.7l-.4.4c.6 1.1 1.5 2 2.6 2.6l.4-.4c.2-.2.4-.3.7-.2l1.3.5c.5.2.6.7-.1 1.1-1 .5-2.2.4-3.5-.4a8 8 0 0 1-2.6-2.6c-.8-1.3-.9-2.5-.4-3.5Z" fill="currentColor" stroke="none"/></svg>WhatsApp</a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg>E-mail</a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M8.5 3h7l6 10.5-3.5 6.5h-12L2.5 13.5Z"/><path d="M8.5 3 15 14h6.5M2.5 13.5h12.7L12 20"/></svg>Drive</a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6Z"/><path d="M14 2v5h5M12.5 10v7m-3-3 3 3 3-3"/></svg>Press kit</a>
+      </div><div class="grao"></div></div>
+      <div class="leg"><b>A · Adesivos com ícone</b> <span class="tag rec" style="margin:4px 0">Recomendada</span><br><span>Cada link é um adesivo inclinado com o ícone balançando. No hover ele "desgruda", endireita e o ícone pula. Abaixo dos adesivos, os dados por extenso (e-mail, número) para quem quer copiar.</span></div></div>
+    <div class="op"><div class="ct rel"><h5>Contrate</h5>
+      <div class="ct-lin">
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg><b>@djbrunintks</b><small>Instagram ↗</small></a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3Z"/><path d="M9.2 8.6c.4-.7.9-.6 1.1-.1l.5 1.3c.1.3 0 .5-.2.7l-.4.4c.6 1.1 1.5 2 2.6 2.6l.4-.4c.2-.2.4-.3.7-.2l1.3.5c.5.2.6.7-.1 1.1-1 .5-2.2.4-3.5-.4a8 8 0 0 1-2.6-2.6c-.8-1.3-.9-2.5-.4-3.5Z" fill="currentColor" stroke="none"/></svg><b>51 98040-7711</b><small>WhatsApp ↗</small></a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg><b>contato.bruninn@gmail.com</b><small>E-mail ↗</small></a>
+        <a href="#"><svg class="ic" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6Z"/><path d="M14 2v5h5M12.5 10v7m-3-3 3 3 3-3"/></svg><b>Press kit em PDF</b><small>Baixar ↓</small></a>
+      </div><div class="grao"></div></div>
+      <div class="leg"><b>B · Linhas com ícone que gira</b><br><span>Lista como hoje, mas cada linha tem o ícone grande; no hover a linha é preenchida de preto da esquerda para a direita e o ícone dá um giro.</span></div></div>
+  </div>
+</section>
+</div>
+
+<script>
+  // line-up A: acende os nomes em sequência (no site, preso ao scroll)
+  const nomes = [...document.querySelectorAll('#cartaz span')];
+  let i = 0;
+  setInterval(() => { if (i >= nomes.length) { nomes.forEach(n => n.classList.remove('on')); i = 0; return; } nomes[i++].classList.add('on'); }, 260);
+  // line-up B: adesivos
+  const lista = ['KL Jay','Rincon Sapiência','Raffa Moreira','MC Binn','Pocah','MC Felipinho','Wesley Gonzaga','DJ Patife','Caio Prince','Bonekinha Iraquiana','Ramon Sucesso','Nanda Tsunami','Young Clubber','Carlos do Complexo','Idlibra','Dayeh','Bassan','Kenan e Kel','DJ Lorrany','Brum'];
+  const caixa = document.getElementById('stickers');
+  function colar(){ caixa.innerHTML=''; lista.forEach((n,k)=>{ const s=document.createElement('span'); s.textContent=n; s.className='s'+(1+(k*7)%4); s.style.setProperty('--r', ((k*37)%17-8)+'deg'); s.style.transform=`rotate(${(k*37)%17-8}deg)`; s.style.animationDelay=(k*70)+'ms'; caixa.appendChild(s); }); }
+  colar(); setInterval(colar, 6000);
+</script>
+</body>
+</html>
