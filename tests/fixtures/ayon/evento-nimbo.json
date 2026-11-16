@@ -1,0 +1,92 @@
+{
+ "fonte": "JSON-LD de useayon.com em 16/11/2026 (ayon-estreia-nimbo-no-ceu-21-11-2026)",
+ "jsonld": [
+  {
+   "@context": "https://schema.org",
+   "@graph": [
+    {
+     "@type": "Organization",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com",
+     "logo": {
+      "@type": "ImageObject",
+      "url": "https://useayon.com/icon.png"
+     },
+     "sameAs": [
+      "https://www.instagram.com/useayonbr",
+      "https://www.tiktok.com/@useayonbr"
+     ]
+    },
+    {
+     "@type": "WebSite",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com"
+    }
+   ]
+  },
+  {
+   "@context": "https://schema.org",
+   "@type": "Event",
+   "name": "ESTREIA NIMBO NO CÉU",
+   "description": "NIMBO TRÁS UM EVENTO DE FUNK/ DNB / HOUSE / R&B / MODA / CULTURA E MUITO MAIS DIREATAMENTE NO CEU DA ZONA SUL.",
+   "startDate": "2026-11-21T19:00:00-03:00",
+   "endDate": "2026-11-22T02:00:00-03:00",
+   "eventStatus": "https://schema.org/EventScheduled",
+   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+   "image": [
+    "https://cdn.useayon.com/events/452/cover-1794411546468.webp"
+   ],
+   "url": "https://useayon.com/eventos/e/estreia-nimbo-no-ceu-21-11-2026",
+   "location": {
+    "@type": "Place",
+    "name": "Céu zona sul",
+    "address": {
+     "@type": "PostalAddress",
+     "streetAddress": "Avenida Wenceslau Escobar",
+     "addressLocality": "Porto Alegre",
+     "addressRegion": "RS",
+     "postalCode": "91900-225",
+     "addressCountry": "BR"
+    }
+   },
+   "offers": {
+    "@type": "Offer",
+    "url": "https://feedme.click/evento/estreia-nimbo-no-ceu",
+    "availability": "https://schema.org/InStock"
+   },
+   "organizer": {
+    "@type": "Person",
+    "name": "imnotnv_",
+    "url": "https://useayon.com/Imnotnv"
+   },
+   "performer": [
+    {
+     "@type": "Person",
+     "name": "Blockboy",
+     "url": "https://useayon.com/Blockboy"
+    },
+    {
+     "@type": "Person",
+     "name": "Baddie Loma",
+     "url": "https://useayon.com/baddieloma"
+    },
+    {
+     "@type": "Person",
+     "name": "Brunin TKS",
+     "url": "https://useayon.com/djbrunintks"
+    },
+    {
+     "@type": "Person",
+     "name": "DJ Ramos"
+    },
+    {
+     "@type": "Person",
+     "name": "imnotnv_",
+     "url": "https://useayon.com/Imnotnv"
+    }
+   ]
+  }
+ ]
+}
