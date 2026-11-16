@@ -1,0 +1,44 @@
+# Robô da agenda: lê os próximos shows do Brunin no Ayon (useayon.com/djbrunintks) e atualiza a seção #agenda do site
+# (index.html + flyers em assets/agenda/). Roda a cada 6 h e também pelo botão "Run workflow" (Actions → Agenda).
+# Só faz commit quando algo mudou; depois pede a publicação ao GitHub Pages (um push feito com o token do workflow
+# pode não disparar a publicação sozinho). Se o Ayon falhar, o job fica vermelho e o site continua como estava.
+name: Agenda
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: agenda
+  cancel-in-progress: false
+
+jobs:
+  agenda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 'lts/*'
+          cache: npm
+      - run: npm ci
+      - run: node tools/agenda.mjs
+      - name: Publicar se a agenda mudou
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git status --porcelain -- index.html assets/agenda | grep -q .; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898283+github-actions[bot]@users.noreply.github.com'
+            git add index.html assets/agenda
+            git commit -m 'agenda: atualiza pelo Ayon'
+            git push || { git pull --rebase && git push; }
+            gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo '::warning::não consegui pedir a publicação do Pages; ela sai no próximo push'
+          else
+            echo 'sem mudanças'
+          fi

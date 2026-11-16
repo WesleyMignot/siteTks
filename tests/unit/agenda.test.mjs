@@ -136,3 +136,11 @@ test('trocarBloco troca só o que está entre os marcadores', () => {
   assert.throws(() => trocarBloco('sem marcadores', 'x'), /marcadores/);
   assert.throws(() => trocarBloco('<!-- agenda:fim --><!-- agenda:inicio -->', 'x'), /marcadores/);
 });
+
+test('workflow da agenda: a cada 6 h e no botão, com permissão de gravar e publicar', () => {
+  const yml = readFileSync(new URL('../../.github/workflows/agenda.yml', import.meta.url), 'utf8');
+  for (const trecho of ["cron: '17 */6 * * *'", 'workflow_dispatch', 'contents: write', 'pages: write', 'node tools/agenda.mjs',
+    'agenda: atualiza pelo Ayon', 'pages/builds', 'git status --porcelain -- index.html assets/agenda']) {
+    assert.ok(yml.includes(trecho), trecho);
+  }
+});

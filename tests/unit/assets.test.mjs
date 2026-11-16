@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { statSync, readdirSync, readFileSync } from 'node:fs';
+import { statSync, readdirSync, readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
@@ -74,4 +74,13 @@ test('versões -cel dos 6 sets horizontais cabem no orçamento', () => {
     const p = tam(`assets/video/sets/${n}-cel.jpg`);
     assert.ok(p > 0 && p <= 120_000, `${n}-cel.jpg`);
   }
+});
+
+// rodada 5: flyers da agenda, gravados pelo robô (tools/agenda.mjs)
+test('flyers da agenda cabem no orçamento e os do index.html existem', () => {
+  const pasta = join(RAIZ, 'assets/agenda');
+  const flyers = existsSync(pasta) ? readdirSync(pasta).filter(f => f.endsWith('.jpg')) : [];
+  for (const f of flyers) assert.ok(tam(`assets/agenda/${f}`) <= 120_000, f);
+  const html = readFileSync(join(RAIZ, 'index.html'), 'utf8');
+  for (const [, src] of html.matchAll(/src="(assets\/agenda\/[^"]+)"/g)) assert.ok(existsSync(join(RAIZ, src)), src);
 });
