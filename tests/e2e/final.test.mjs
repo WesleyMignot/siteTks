@@ -61,8 +61,15 @@ test('cartaz: nenhum nome quebrado nem morcego abrindo linha', async () => {
         const nome = p.querySelector('.cartaz__nome'), morcego = p.querySelector('.div-morcego');
         return morcego && morcego.getBoundingClientRect().left < nome.getBoundingClientRect().left;
       }).map(p => p.textContent.trim()),
+      // medidas de layout (sem o giro da folha): cada nome cabe dentro da folha, com 8 px de folga
+      estourando: [...document.querySelectorAll('.cartaz__nome')].filter(n => {
+        const folha = n.closest('.cartaz__folha');
+        let x = 0;
+        for (let el = n; el && el !== folha; el = el.offsetParent) x += el.offsetLeft; // o nível transformado vira offsetParent
+        return x < 8 || x + n.offsetWidth > folha.clientWidth - 8;
+      }).map(n => n.textContent),
     }));
-    assert.deepEqual(r, { quebrados: [], abrindo: [] }, `${largura}`);
+    assert.deepEqual(r, { quebrados: [], abrindo: [], estourando: [] }, `${largura}`);
   }
 });
 

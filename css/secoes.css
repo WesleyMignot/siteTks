@@ -254,7 +254,7 @@
 .cartaz__folha::after { content: ''; position: absolute; inset: 0; background: var(--grao); opacity: .16; mix-blend-mode: screen; pointer-events: none; }
 .cartaz__topo { margin: 0; padding-bottom: 14px; border-bottom: 1px solid var(--linha); color: var(--creme-60); text-align: left; font-size: clamp(9px, .9vw, 12px); }
 .cartaz__topo b { color: var(--vermelho); }
-.cartaz__n1 { font-size: clamp(46px, 7.2vw, 104px); line-height: .95; margin: clamp(22px, 2.4vw, 34px) 0 12px; text-wrap: balance; }
+.cartaz__n1 { font-size: clamp(36px, 11.8vw, 104px); line-height: .95; margin: clamp(22px, 2.4vw, 34px) 0 12px; text-wrap: balance; }
 .cartaz__n2 { font-size: clamp(29px, 4.4vw, 64px); line-height: 1.02; margin: 0 0 clamp(18px, 1.8vw, 26px); text-wrap: balance; }
 .cartaz__n3 { max-width: 76ch; margin: 0 auto clamp(18px, 2.1vw, 30px); font-size: clamp(10.5px, 1.05vw, 15px); line-height: 1.9; }
 .cartaz__pe { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin: 0; padding-top: 16px;
