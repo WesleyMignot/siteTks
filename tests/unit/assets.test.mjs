@@ -13,7 +13,7 @@ test('fotos cor e tks ≤ 350 KB', () => {
     assert.ok(tam(`assets/img/foto-${f}-${v}.webp`) <= 350_000, `${f}-${v}`);
 });
 test('texturas ≤ 200 KB', () => {
-  for (const t of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme'])
+  for (const t of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme', 'preto-no-creme'])
     assert.ok(tam(`assets/texturas/${t}.webp`) <= 200_000, t);
 });
 test('sem clipes órfãos do reel em assets/video (os dos sets ficam em sets/)', () => {

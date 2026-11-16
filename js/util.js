@@ -33,6 +33,12 @@ export function fimDaJanela(W, H) {
   return { l: w <= W ? W - w : (W - w) / 2, t: 0, w, h: H };
 }
 
+/** O show já acabou? (fim em ISO, com fuso; data inválida conta como não acabou: o cartão fica). */
+export function passou(fimIso, agora) {
+  const fim = Date.parse(fimIso);
+  return Number.isFinite(fim) && fim < agora.getTime();
+}
+
 /** Valor de contador arredondado; com `milhar`, usa o separador pt-BR (2.000). */
 export function formatarContagem(valor, { milhar = false } = {}) {
   const n = Math.round(valor);

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { horaPOA, escolherHero, escolherJanela, formatarContagem, criarRng, fimDaJanela, escolherVersaoSet } from '../../js/util.js';
+import { horaPOA, escolherHero, escolherJanela, formatarContagem, criarRng, fimDaJanela, escolherVersaoSet, passou } from '../../js/util.js';
 
 test('horaPOA', () => {
   assert.equal(horaPOA(new Date('2026-11-10T01:10:00Z')), '22:10');
@@ -40,4 +40,10 @@ test('escolherVersaoSet: retrato usa a versão do celular quando existe', () => 
   assert.deepEqual(escolherVersaoSet(v, true), { src: 'a-cel.mp4', poster: 'a-cel.jpg' });
   assert.deepEqual(escolherVersaoSet(v, false), { src: 'a.mp4', poster: 'a.jpg' });
   assert.deepEqual(escolherVersaoSet({ src: 'b.mp4', poster: 'b.jpg' }, true), { src: 'b.mp4', poster: 'b.jpg' });
+});
+
+test('passou: o show acabou depois do fim (fuso respeitado)', () => {
+  assert.equal(passou('2026-11-22T02:00:00-03:00', new Date('2026-11-22T05:00:01Z')), true);
+  assert.equal(passou('2026-11-22T02:00:00-03:00', new Date('2026-11-22T04:59:59Z')), false);
+  assert.equal(passou('2026-11-22T02:00:00-03:00', new Date('2026-11-22T05:00:00Z')), false); // no minuto do fim ainda vale
 });
