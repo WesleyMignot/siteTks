@@ -89,3 +89,54 @@ test('focar o Ouvir aqui pelo teclado leva ao set dele', async () => {
   await espera(1500);
   assert.equal(await page.$eval('.sets__contador', e => e.textContent.trim()), '07 / 08');
 });
+
+// rodada 5: no celular em pé, os 6 sets horizontais usam a versão vertical (-cel), enquadrada no Bruno
+const CEL = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-c'];
+const versoes = p => p.$$eval('.set__video[data-src-cel]', l => l.map(v => ({
+  src: v.dataset.src, poster: v.getAttribute('poster'), carregado: v.getAttribute('src'),
+})));
+
+test('celular em pé escolhe a versão -cel sem pré-carregar', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  const v = await versoes(page);
+  assert.equal(v.length, CEL.length);
+  v.forEach((x, i) => {
+    assert.equal(x.src, `assets/video/sets/${CEL[i]}-cel.mp4`);
+    assert.equal(x.poster, `assets/video/sets/${CEL[i]}-cel.jpg`);
+    assert.equal(x.carregado, null);
+  });
+});
+
+test('computador e celular deitado usam a versão atual', async () => {
+  for (const [largura, altura] of [[1440, 900], [844, 390]]) {
+    const { page } = await abrir(amb, { largura, altura });
+    const v = await versoes(page);
+    assert.equal(v.length, CEL.length, `${largura}×${altura}`);
+    v.forEach((x, i) => {
+      assert.equal(x.src, `assets/video/sets/${CEL[i]}.mp4`, `${largura}×${altura}`);
+      assert.equal(x.poster, `assets/video/sets/${CEL[i]}.jpg`, `${largura}×${altura}`);
+    });
+  }
+});
+
+test('girar com o set tocando troca a versão e segue tocando', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844 });
+  await rolarPara(page, '.sets__pilha', 30);
+  await espera(900);
+  const antes = await page.$eval('.set__video', v => ({ src: v.getAttribute('src'), tocando: !v.paused }));
+  assert.ok(antes.src?.endsWith('senso-cel.mp4'), antes.src);
+  assert.ok(antes.tocando);
+  await page.setViewport({ width: 844, height: 390 });
+  await espera(1200);
+  const depois = await page.$eval('.set__video', v => ({ src: v.getAttribute('src'), poster: v.getAttribute('poster'), tocando: !v.paused }));
+  assert.ok(depois.src?.endsWith('sets/senso.mp4'), depois.src);
+  assert.ok(depois.poster.endsWith('sets/senso.jpg'), depois.poster);
+  assert.ok(depois.tocando);
+});
+
+test('movimento reduzido no celular mostra o pôster -cel', async () => {
+  const { page } = await abrir(amb, { largura: 390, altura: 844, menosMovimento: true });
+  const v = await versoes(page);
+  assert.equal(v.length, CEL.length);
+  v.forEach((x, i) => assert.equal(x.poster, `assets/video/sets/${CEL[i]}-cel.jpg`));
+});

@@ -61,6 +61,17 @@ test('sem imagens órfãs em assets/img', () => {
 });
 
 test('sem clipes órfãos em assets/video/sets', () => {
-  const usados = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-a', 'reel-b', 'reel-c'];
+  const usados = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-a', 'reel-b', 'reel-c']
+    .flatMap(n => [n, `${n}-cel`]);
   assert.deepEqual(readdirSync(join(RAIZ, 'assets/video/sets')).filter(f => !usados.includes(f.replace(/\.(mp4|jpg)$/, ''))), []);
+});
+
+// rodada 5: versões verticais (celular em pé) dos 6 sets horizontais, enquadradas no Bruno
+const SETS_CEL = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-c'];
+test('versões -cel dos 6 sets horizontais cabem no orçamento', () => {
+  for (const n of SETS_CEL) {
+    assert.ok(tam(`assets/video/sets/${n}-cel.mp4`) <= 700_000, `${n}-cel.mp4`);
+    const p = tam(`assets/video/sets/${n}-cel.jpg`);
+    assert.ok(p > 0 && p <= 120_000, `${n}-cel.jpg`);
+  }
 });

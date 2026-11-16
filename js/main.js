@@ -3,7 +3,7 @@
 /* global gsap, ScrollTrigger, Lenis */
 import { iniciarPreloader, iniciarHeader, liberarPagina } from './interface.js';
 import { observarVideos } from './videos.js';
-import { iniciarSets } from './sets.js';
+import { iniciarSets, iniciarVersoesSets } from './sets.js';
 import {
   iniciarHero, iniciarLetreiros, iniciarEstrelas, iniciarReveals, iniciarContadores, iniciarFotosDuplas,
   iniciarProducoes, iniciarDivisores, iniciarCartaz,
@@ -53,6 +53,7 @@ seguro('reveals', () => iniciarReveals(ctx));
 seguro('contadores', () => iniciarContadores(ctx));
 seguro('fotos', () => iniciarFotosDuplas());
 seguro('producoes', () => iniciarProducoes(ctx));
+seguro('versoes-sets', () => iniciarVersoesSets()); // também no modo reduzido: o pôster do celular em pé
 seguro('sets', () => iniciarSets(ctx));
 seguro('soundcloud', () => iniciarSoundcloud()); // também no modo reduzido e no estático
 const ceu = seguro('ceu', () => iniciarCeu(ctx)); // antes da assinatura, que desenha no céu

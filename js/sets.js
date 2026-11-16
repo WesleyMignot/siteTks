@@ -1,5 +1,34 @@
 // Sets: pilha de cortinas fixa na tela; cada set entra sobre o anterior e só o ativo toca seu clipe.
 import { tocar, pausar } from './videos.js';
+import { escolherVersaoSet } from './util.js';
+
+/**
+ * Celular em pé: os sets horizontais usam a versão vertical (-cel), enquadrada no Bruno. Só troca data-src e pôster
+ * (nada é baixado antes da hora); roda em qualquer modo (o reduzido mostra só o pôster). Girar o aparelho troca a
+ * versão, inclusive a do vídeo já carregado, que segue tocando se estava tocando.
+ */
+export function iniciarVersoesSets() {
+  const retrato = matchMedia('(orientation: portrait)');
+  const videos = [...document.querySelectorAll('.set__video[data-src-cel]')];
+  for (const v of videos) {
+    v.dataset.srcPc = v.dataset.src;
+    v.dataset.posterPc = v.getAttribute('poster') ?? '';
+  }
+  const aplicar = () => videos.forEach(v => {
+    const { src, poster } = escolherVersaoSet({
+      src: v.dataset.srcPc, srcCel: v.dataset.srcCel, poster: v.dataset.posterPc, posterCel: v.dataset.posterCel,
+    }, retrato.matches);
+    if (v.dataset.src === src) return;
+    v.dataset.src = src;
+    v.setAttribute('poster', poster);
+    if (!v.getAttribute('src')) return;
+    const tocando = !v.paused;
+    v.src = src;
+    if (tocando) tocar(v);
+  });
+  aplicar();
+  retrato.addEventListener('change', aplicar);
+}
 
 export function iniciarSets({ gsap, lenis, menosMovimento }) {
   const pilha = document.querySelector('.sets__pilha');

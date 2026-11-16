@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { horaPOA, escolherHero, escolherJanela, formatarContagem, criarRng, fimDaJanela } from '../../js/util.js';
+import { horaPOA, escolherHero, escolherJanela, formatarContagem, criarRng, fimDaJanela, escolherVersaoSet } from '../../js/util.js';
 
 test('horaPOA', () => {
   assert.equal(horaPOA(new Date('2026-11-10T01:10:00Z')), '22:10');
@@ -33,4 +33,11 @@ test('fimDaJanela: altura da tela, à direita quando cabe, centralizado quando n
   assert.deepEqual(fimDaJanela(1440, 900), { l: 933.75, t: 0, w: 506.25, h: 900 });
   assert.deepEqual(fimDaJanela(390, 844), { l: -42.375, t: 0, w: 474.75, h: 844 });
   assert.deepEqual(fimDaJanela(450, 800), { l: 0, t: 0, w: 450, h: 800 }); // limite w = W
+});
+
+test('escolherVersaoSet: retrato usa a versão do celular quando existe', () => {
+  const v = { src: 'a.mp4', srcCel: 'a-cel.mp4', poster: 'a.jpg', posterCel: 'a-cel.jpg' };
+  assert.deepEqual(escolherVersaoSet(v, true), { src: 'a-cel.mp4', poster: 'a-cel.jpg' });
+  assert.deepEqual(escolherVersaoSet(v, false), { src: 'a.mp4', poster: 'a.jpg' });
+  assert.deepEqual(escolherVersaoSet({ src: 'b.mp4', poster: 'b.jpg' }, true), { src: 'b.mp4', poster: 'b.jpg' });
 });
