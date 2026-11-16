@@ -1,6 +1,7 @@
 // Agenda (rodada 5): funções puras que leem os dados públicos do Ayon (JSON-LD) e geram o bloco da seção #agenda.
 // Sem rede e sem disco: quem busca e grava é tools/agenda.mjs. Tudo que vem do Ayon é dado não confiável:
 // texto sai escapado e só URLs https entram.
+import { createHash } from 'node:crypto';
 
 const SEIS_HORAS = 6 * 3600_000;
 const MARCA_INICIO = '<!-- agenda:inicio -->';
@@ -20,7 +21,11 @@ const dataValida = s => typeof s === 'string' && !Number.isNaN(Date.parse(s));
 function nos(jsonld) {
   return jsonld.flatMap(b => (Array.isArray(b) ? b : [b])).flatMap(b => (Array.isArray(b?.['@graph']) ? b['@graph'] : [b]));
 }
-const ehTipo = (n, tipo) => n && (n['@type'] === tipo || (Array.isArray(n['@type']) && n['@type'].includes(tipo)));
+const tipos = n => (Array.isArray(n?.['@type']) ? n['@type'] : [n?.['@type']]).filter(t => typeof t === 'string');
+const ehTipo = (n, tipo) => tipos(n).includes(tipo);
+/** Event ou um subtipo do schema.org (MusicEvent, Festival...). */
+const ehEvento = n => tipos(n).some(t => /Event$|^Festival$/.test(t));
+const cancelado = n => /EventCancelled$/.test(String(n.eventStatus ?? ''));
 
 /** Todos os <script type="application/ld+json"> válidos da página (listas achatadas; blocos quebrados ignorados). */
 export function lerJsonLd(html) {
@@ -44,7 +49,7 @@ export function lerPerfil(jsonld) {
   if (!todos.some(n => ehTipo(n, 'Person') && String(n['@id'] ?? '').endsWith('#profile'))) {
     throw erroFormato('o perfil não tem a pessoa (#profile) no JSON-LD');
   }
-  return todos.filter(n => ehTipo(n, 'Event')).map(n => {
+  return todos.filter(n => ehEvento(n) && !cancelado(n)).map(n => {
     const pagina = https(n.url);
     if (typeof n.name !== 'string' || !n.name.trim()) throw erroFormato('evento sem nome');
     if (!dataValida(n.startDate)) throw erroFormato(`evento sem data de início válida (${n.name})`);
@@ -66,7 +71,7 @@ export function lerPerfil(jsonld) {
 
 /** Ingresso (offers.url, https) e line-up cru (performer[].name) da página de um evento. */
 export function lerEvento(jsonld) {
-  const ev = nos(jsonld).find(n => ehTipo(n, 'Event'));
+  const ev = nos(jsonld).find(ehEvento);
   if (!ev) return { ingresso: null, line: [] };
   const ofertas = Array.isArray(ev.offers) ? ev.offers : [ev.offers];
   const ingresso = ofertas.map(o => https(o?.url)).find(Boolean) ?? null;
@@ -148,6 +153,23 @@ export function renderizarAgenda(eventos, recuo = '        ') {
   ].join('\n');
   if (!eventos.length) return vazia;
   return [`${r}<div class="agenda__cartoes">`, ...eventos.map(e => cartao(e, `${r}  `)), `${r}</div>`, vazia].join('\n');
+}
+
+/**
+ * O Ayon não trouxe nenhum show, mas a agenda no ar ainda tem show por vir? Provável mudança de formato (eventos fora do
+ * JSON-LD, outro tipo...): o robô para em vez de publicar "Agenda aberta" e apagar os flyers.
+ */
+export function esvaziamentoSuspeito(htmlAtual, eventos, agora) {
+  if (eventos.length) return false;
+  const a = htmlAtual.indexOf(MARCA_INICIO), b = htmlAtual.indexOf(MARCA_FIM);
+  const bloco = a >= 0 && b > a ? htmlAtual.slice(a, b) : '';
+  return [...bloco.matchAll(/data-fim="([^"]+)"/g)].some(([, fim]) => Date.parse(fim) >= agora.getTime());
+}
+
+/** Nome do flyer: slug saneado + 8 hex do endereço da imagem (o Ayon troca o endereço quando troca o flyer). */
+export function nomeDoFlyer(slug, imagem) {
+  const base = String(slug).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'evento';
+  return `${base}-${createHash('sha1').update(String(imagem)).digest('hex').slice(0, 8)}.jpg`;
 }
 
 /** Troca o que está entre <!-- agenda:inicio --> e <!-- agenda:fim --> por `bloco` (o recuo do marcador final é mantido). */

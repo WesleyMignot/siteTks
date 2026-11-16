@@ -1,13 +1,19 @@
 # Robô da agenda: lê os próximos shows do Brunin no Ayon (useayon.com/djbrunintks) e atualiza a seção #agenda do site
 # (index.html + flyers em assets/agenda/). Roda a cada 6 h e também pelo botão "Run workflow" (Actions → Agenda).
-# Só faz commit quando algo mudou; depois pede a publicação ao GitHub Pages (um push feito com o token do workflow
-# pode não disparar a publicação sozinho). Se o Ayon falhar, o job fica vermelho e o site continua como estava.
+# Só faz commit quando algo mudou. Depois confere se o Pages já publicou o commit atual e, se não, pede a publicação
+# (um push feito com o token do workflow pode não disparar o Pages; um pedido que falhou é refeito na próxima vez).
+# Qualquer falha deixa o job vermelho e o GitHub manda e-mail; o site continua como estava.
 name: Agenda
 
 on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+    inputs:
+      permitir_vazia:
+        description: 'Deixar a agenda vazia mesmo que o site ainda tenha shows por vir (shows cancelados de verdade)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -28,7 +34,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node tools/agenda.mjs
-      - name: Publicar se a agenda mudou
+        env:
+          AGENDA_PERMITIR_VAZIA: ${{ inputs.permitir_vazia && '1' || '' }}
+      - name: Commit e publicação
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -38,7 +46,10 @@ jobs:
             git add index.html assets/agenda
             git commit -m 'agenda: atualiza pelo Ayon'
             git push || { git pull --rebase && git push; }
-            gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo '::warning::não consegui pedir a publicação do Pages; ela sai no próximo push'
           else
-            echo 'sem mudanças'
+            echo 'sem mudanças na agenda'
+          fi
+          publicado=$(gh api "repos/${{ github.repository }}/pages/builds/latest" --jq .commit 2>/dev/null || true)
+          if [ "$publicado" != "$(git rev-parse HEAD)" ]; then
+            gh api -X POST "repos/${{ github.repository }}/pages/builds"
           fi

@@ -42,3 +42,20 @@ test('Google Fonts bloqueado: a página abre mesmo assim', async () => {
   assert.ok(await page.$eval('body', b => b.classList.contains('pronto')));
   assert.deepEqual(erros, []);
 });
+
+// revisão final: com 6 itens, no celular deitado o menu passa da altura da tela; o topo tem de continuar alcançável
+test('menu aberto no celular deitado: primeiro e último itens alcançáveis', async () => {
+  const { page } = await abrir(amb, { largura: 844, altura: 390 });
+  await page.click('#menu-botao');
+  await new Promise(r => setTimeout(r, 400));
+  const r = await page.evaluate(() => {
+    const menu = document.getElementById('menu');
+    menu.scrollTop = 0;
+    const topo = menu.querySelector('.menu__links a').getBoundingClientRect().top;
+    menu.scrollTop = menu.scrollHeight;
+    const fim = [...menu.querySelectorAll('.menu__links a')].at(-1).getBoundingClientRect().bottom;
+    return { topo, fim, altura: innerHeight };
+  });
+  assert.ok(r.topo >= 60, `primeiro item em ${r.topo} (atrás do header)`);
+  assert.ok(r.fim <= r.altura, `último item em ${r.fim}`);
+});

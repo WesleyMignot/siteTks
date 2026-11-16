@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  lerJsonLd, lerPerfil, lerEvento, limparLine, proximos, formatarData, renderizarAgenda, trocarBloco,
+  lerJsonLd, lerPerfil, lerEvento, limparLine, proximos, formatarData, renderizarAgenda, trocarBloco, esvaziamentoSuspeito, nomeDoFlyer,
 } from '../../tools/agenda-dados.mjs';
 
 // fixtures: só os blocos JSON-LD das páginas reais do Ayon (16/11/2026)
@@ -143,4 +143,41 @@ test('workflow da agenda: a cada 6 h e no botão, com permissão de gravar e pub
     'agenda: atualiza pelo Ayon', 'pages/builds', 'git status --porcelain -- index.html assets/agenda']) {
     assert.ok(yml.includes(trecho), trecho);
   }
+});
+
+// revisão final: subtipos de Event, shows cancelados, agenda apagada sem aviso, flyer trocado no Ayon
+test('lerPerfil lê subtipos de Event (MusicEvent) e ignora shows cancelados', () => {
+  const no = (mais) => ({ '@type': 'Event', startDate: '2026-11-21T22:00:00Z', ...mais });
+  const ev = lerPerfil([{ '@graph': [PESSOA,
+    no({ '@type': 'MusicEvent', name: 'A', url: 'https://useayon.com/eventos/e/a' }),
+    no({ name: 'B', url: 'https://useayon.com/eventos/e/b', eventStatus: 'https://schema.org/EventCancelled' }),
+    no({ '@type': ['Event', 'Thing'], name: 'C', url: 'https://useayon.com/eventos/e/c', eventStatus: 'https://schema.org/EventScheduled' }),
+  ] }]);
+  assert.deepEqual(ev.map(e => e.nome), ['A', 'C']);
+  assert.equal(lerEvento([{ '@type': 'MusicEvent', offers: { url: 'https://a.example/x' } }]).ingresso, 'https://a.example/x');
+});
+
+test('esvaziamentoSuspeito: Ayon sem shows enquanto o site ainda tem shows por vir', () => {
+  const site = eventos => trocarBloco('<!-- agenda:inicio --><!-- agenda:fim -->', renderizarAgenda(eventos));
+  const comShow = site([evento({ fim: '2026-11-22T02:00:00-03:00' })]);
+  assert.equal(esvaziamentoSuspeito(comShow, [], new Date('2026-11-20T00:00:00Z')), true);
+  assert.equal(esvaziamentoSuspeito(comShow, [evento()], new Date('2026-11-20T00:00:00Z')), false);
+  assert.equal(esvaziamentoSuspeito(comShow, [], new Date('2026-11-23T00:00:00Z')), false); // os do site já passaram
+  assert.equal(esvaziamentoSuspeito(site([]), [], new Date('2026-11-20T00:00:00Z')), false); // já estava vazia
+});
+
+test('nomeDoFlyer muda quando o Ayon troca a imagem do show', () => {
+  const slug = 'estreia-nimbo-no-ceu-21-11-2026';
+  const a = nomeDoFlyer(slug, 'https://cdn.useayon.com/events/452/cover-1.webp');
+  assert.equal(a, nomeDoFlyer(slug, 'https://cdn.useayon.com/events/452/cover-1.webp'));
+  assert.notEqual(a, nomeDoFlyer(slug, 'https://cdn.useayon.com/events/452/cover-2.webp'));
+  assert.match(a, /^estreia-nimbo-no-ceu-21-11-2026-[0-9a-f]{8}\.jpg$/);
+  assert.match(nomeDoFlyer('Show Ç/../X', 'https://a.example/b'), /^[a-z0-9-]+\.jpg$/);
+  assert.match(renderizarAgenda([evento({ flyer: `assets/agenda/${a}` })]), /<img class="evento__flyer" src="assets\/agenda\//);
+});
+
+test('workflow da agenda: publicação que falhou é refeita e não vira só aviso', () => {
+  const yml = readFileSync(new URL('../../.github/workflows/agenda.yml', import.meta.url), 'utf8');
+  assert.ok(!yml.includes('::warning::'));
+  for (const trecho of ['pages/builds/latest', 'git rev-parse HEAD', 'permitir_vazia', 'AGENDA_PERMITIR_VAZIA']) assert.ok(yml.includes(trecho), trecho);
 });
