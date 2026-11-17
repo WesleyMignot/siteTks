@@ -19,6 +19,11 @@ export function escolherJanela(largura) {
   return largura > 820 ? 'assets/video/janela-720.mp4' : 'assets/video/janela-540.mp4';
 }
 
+/** Versão do clipe de um set: a vertical (-cel, enquadrada no Bruno) em retrato, quando existe; senão a horizontal. */
+export function escolherVersaoSet({ src, srcCel, poster, posterCel }, retrato) {
+  return retrato && srcCel ? { src: srcCel, poster: posterCel ?? poster } : { src, poster };
+}
+
 /**
  * Retângulo final do vídeo da janela do hero (9:16, relativo ao palco W × H): altura da tela; encostado à
  * direita quando cabe, centralizado (cortando as laterais) quando é mais largo que a tela.
@@ -26,6 +31,12 @@ export function escolherJanela(largura) {
 export function fimDaJanela(W, H) {
   const w = H * 9 / 16;
   return { l: w <= W ? W - w : (W - w) / 2, t: 0, w, h: H };
+}
+
+/** O show já acabou? (fim em ISO, com fuso; data inválida conta como não acabou: o cartão fica). */
+export function passou(fimIso, agora) {
+  const fim = Date.parse(fimIso);
+  return Number.isFinite(fim) && fim < agora.getTime();
 }
 
 /** Valor de contador arredondado; com `milhar`, usa o separador pt-BR (2.000). */

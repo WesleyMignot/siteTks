@@ -64,14 +64,25 @@ export function iniciarHero({ gsap, menosMovimento }) {
     .set({}, {}, 1); // timeline com duração 1 = progresso do scroll
 }
 
-/** Line-up em cartaz: os 20 nomes acendem em sequência com o scroll. Reduzido/estático: todos acesos (CSS). */
+/**
+ * Line-up em cartaz de festival: a folha sobe e endireita com o scroll e os níveis "carimbam" em sequência (n1, n2, n3,
+ * rodapé; o selo por último). O fim do scrub é o centro do cartaz no meio da tela: dali em diante está tudo legível.
+ * Reduzido/estático/sem JS: o estado final está no CSS.
+ */
 export function iniciarCartaz({ gsap, menosMovimento }) {
   if (menosMovimento) return;
-  document.documentElement.classList.add('anima-cartaz');
-  gsap.to('.cartaz__nome', {
-    opacity: 1, stagger: 0.05, ease: 'none',
-    scrollTrigger: { trigger: '.cartaz', start: 'top 75%', end: 'bottom 55%', scrub: true },
-  });
+  const carimbo = { opacity: 1, scale: 1, duration: 0.1, ease: 'power2.out' };
+  gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: '.cartaz', start: 'top bottom', end: 'center center', scrub: true },
+  })
+    .fromTo('.cartaz__folha', { yPercent: 75, rotate: -8 }, { yPercent: 0, rotate: -2, duration: 0.32, ease: 'power2.out' }, 0)
+    .fromTo('.cartaz__n1', { opacity: 0, scale: 1.25 }, carimbo, 0.32)
+    .fromTo('.cartaz__n2', { opacity: 0, scale: 1.25 }, carimbo, 0.42)
+    .fromTo('.cartaz__n3', { opacity: 0, scale: 1.25 }, carimbo, 0.52)
+    .fromTo('.cartaz__pe', { opacity: 0, scale: 1.25 }, carimbo, 0.58)
+    .fromTo('.cartaz__selo', { opacity: 0, scale: 2.2, rotate: -30 }, { opacity: 1, scale: 1, rotate: 12, duration: 0.1, ease: 'back.out(2)' }, 0.68)
+    .set({}, {}, 1); // timeline com duração 1 = progresso do scroll
 }
 
 /** Letreiros infinitos (.letreiro__trilho com o conteúdo duplicado). Aceleram com o scroll. */

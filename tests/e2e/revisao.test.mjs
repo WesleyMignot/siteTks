@@ -61,11 +61,15 @@ test('menu pelo teclado: depois de ir ao Contrate, o próximo Tab continua no Co
 // #4 — movimento reduzido não pode esconder nomes do line-up
 test('movimento reduzido: cartaz todo aceso e dentro da tela', async () => {
   const { page } = await abrir(amb, { menosMovimento: true });
-  const { ops, dentro } = await page.evaluate(() => ({
-    ops: [...document.querySelectorAll('.cartaz__nome')].map(e => +getComputedStyle(e).opacity),
+  const { ops, dentro, folha } = await page.evaluate(() => ({
+    ops: [...document.querySelectorAll('.cartaz__nome, .cartaz__n1, .cartaz__n2, .cartaz__n3, .cartaz__selo')].map(e => +getComputedStyle(e).opacity),
     dentro: [...document.querySelectorAll('.cartaz__nome')].every(e => e.getBoundingClientRect().right <= innerWidth + 1),
+    folha: getComputedStyle(document.querySelector('.cartaz__folha')).transform,
   }));
-  assert.ok(ops.length === 20 && ops.every(o => o > 0.9) && dentro);
+  assert.ok(ops.length === 20 + 4 && ops.every(o => o > 0.9) && dentro, JSON.stringify({ n: ops.length, dentro }));
+  // parado: só a inclinação do CSS, sem deslocamento (matrix(a, b, c, d, 0, 0))
+  const [, , , , e, f] = folha.match(/matrix\(([^)]+)\)/)[1].split(',').map(Number);
+  assert.ok(Math.abs(e) < 0.5 && Math.abs(f) < 0.5, folha);
 });
 
 // #5 — Produções acompanha a mudança de largura (iPad girando)

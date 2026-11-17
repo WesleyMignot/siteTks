@@ -8,6 +8,7 @@
     "test": "npm run test:unit && npm run test:e2e"
   },
   "devDependencies": {
-    "puppeteer-core": "^25.16.0"
+    "puppeteer-core": "^25.16.0",
+    "sharp": "^0.35.5"
   }
 }

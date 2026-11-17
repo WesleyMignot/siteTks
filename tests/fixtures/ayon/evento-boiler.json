@@ -1,0 +1,107 @@
+{
+ "fonte": "JSON-LD de useayon.com em 16/11/2026 (ayon-evento)",
+ "jsonld": [
+  {
+   "@context": "https://schema.org",
+   "@graph": [
+    {
+     "@type": "Organization",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com",
+     "logo": {
+      "@type": "ImageObject",
+      "url": "https://useayon.com/icon.png"
+     },
+     "sameAs": [
+      "https://www.instagram.com/useayonbr",
+      "https://www.tiktok.com/@useayonbr"
+     ]
+    },
+    {
+     "@type": "WebSite",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com"
+    }
+   ]
+  },
+  {
+   "@context": "https://schema.org",
+   "@type": "Event",
+   "name": "Boiler Baile • Gran Finale",
+   "description": "EXPLODEEEE! O CIRCO DO SUBMUNDO ESTÁ ARMADO 🎪\n\nGRAN FINALE! O POVO QUER PÃO, CIRCO E GRAVE!\n\nNo picadeiro, uma trupe de peso. Sem número de ilusionismo, aqui o espetáculo é de verdade\n\nLINE UP\nBrunin TKS b2b Dalberth\nPedro Bala (SP)\nVICX (RJ)\nDanna (PBI)\nPZZS (RJ)\nPV5000\n\nPERFORMANCE\nJuana Chi\n\nNOS VISUAIS\nBRF\nGio Valentini\n\nANFITRIÃ\nLays Ayana\n\nÚltima BOILER BAILE do ano, fechando 2K26 em grande estilo, depois de um ano de muito trabalho, encontros e pistas históricas. Nosso agradecimento a todas as pessoas que, de alguma forma, fizeram parte da construção e do crescimento da BOILER BAILE.\n\nA BOILER BAILE é um selo independente, com valores que não estão à venda. A gente sabe o preço de sustentar nossas escolhas e segue pagando, sem abrir mão do que acredita.\n\nNosso line up continua firme e sólido, pode vir tranquilo!\n\nA ÚLTIMA FUNÇÃO DO ANO VAI COMEÇAR. RESPEITÁVEL PÚBLICO, O PICADEIRO É NOSSO! 🎪💥\n\n🇧🇷\n\n* ATENÇÃO:\n\nA lista de espera da Shotgun funciona apenas em duas situações: quando há um cancelamento de compra ou quando um lote de ingressos é reaberto.\n\nNo caso do evento BOILER BAILE, que trabalha com lotação limitada, NENHUM LOTE SERÁ REABERTO. Portanto, a lista de espera só será ativada se algum cliente cancelar sua compra.",
+   "startDate": "2026-11-28T23:00:00-03:00",
+   "endDate": "2026-11-29T06:00:00-03:00",
+   "eventStatus": "https://schema.org/EventScheduled",
+   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+   "image": [
+    "https://assets.shotgun.live/image/upload/c_limit,w_1200,h_630,f_jpg,q_auto/production/artworks/Poster_Shotgun_Thumb_1920x1080px_cm66qy.png"
+   ],
+   "url": "https://useayon.com/eventos/e/boiler-baile-gran-finale-28-11-2026",
+   "location": {
+    "@type": "Place",
+    "name": "S.B.C. Bambas da Orgia",
+    "address": {
+     "@type": "PostalAddress",
+     "streetAddress": "Rua Voluntários da Pátria, 1387",
+     "addressLocality": "Porto Alegre",
+     "addressRegion": "RS",
+     "postalCode": "90220-351",
+     "addressCountry": "BR"
+    }
+   },
+   "offers": {
+    "@type": "Offer",
+    "url": "https://shotgun.live/events/boiler-baile-gran-finale",
+    "availability": "https://schema.org/InStock"
+   },
+   "organizer": {
+    "@type": "Person",
+    "name": "boilerbaile"
+   },
+   "performer": [
+    {
+     "@type": "Person",
+     "name": "Brunin TKS b2b Dalberth"
+    },
+    {
+     "@type": "Person",
+     "name": "Pedro Bala (SP)"
+    },
+    {
+     "@type": "Person",
+     "name": "VICX (RJ)"
+    },
+    {
+     "@type": "Person",
+     "name": "Danna (PBI)"
+    },
+    {
+     "@type": "Person",
+     "name": "PZZS (RJ)"
+    },
+    {
+     "@type": "Person",
+     "name": "PV5000"
+    },
+    {
+     "@type": "Person",
+     "name": "Juana Chi"
+    },
+    {
+     "@type": "Person",
+     "name": "BRF"
+    },
+    {
+     "@type": "Person",
+     "name": "Gio Valentini"
+    },
+    {
+     "@type": "Person",
+     "name": "Lays Ayana"
+    }
+   ]
+  }
+ ]
+}

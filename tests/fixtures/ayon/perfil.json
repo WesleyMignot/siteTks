@@ -1,0 +1,179 @@
+{
+ "fonte": "JSON-LD de useayon.com em 16/11/2026 (ayon)",
+ "jsonld": [
+  {
+   "@context": "https://schema.org",
+   "@graph": [
+    {
+     "@type": "Organization",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com",
+     "logo": {
+      "@type": "ImageObject",
+      "url": "https://useayon.com/icon.png"
+     },
+     "sameAs": [
+      "https://www.instagram.com/useayonbr",
+      "https://www.tiktok.com/@useayonbr"
+     ]
+    },
+    {
+     "@type": "WebSite",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com"
+    }
+   ]
+  },
+  {
+   "@context": "https://schema.org",
+   "@graph": [
+    {
+     "@type": "Person",
+     "@id": "https://useayon.com/djbrunintks#profile",
+     "name": "Brunin TKS",
+     "url": "https://useayon.com/djbrunintks",
+     "description": "dj, producer  • founder @nitesavage  — co-founder @boiler.baile & @sonorabreck 🇧🇷",
+     "image": "https://cdn.useayon.com/users/60/avatar-1793791883230.webp",
+     "jobTitle": "DJ",
+     "sameAs": [
+      "https://www.instagram.com/djbrunintks/",
+      "https://soundcloud.com/taaakes"
+     ],
+     "performerIn": [
+      {
+       "@id": "https://useayon.com/eventos/e/preview-de-rua-1-ano-de-giro-no-vintagelabbr-15-11-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/submundo-808-porto-alegre-14-11-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/ynr-mode-at-cortex-13-11-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/cucko-session-001-a-pista-em-registro-1211-12-11-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/cop-ou-drop-2026-07-11-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/domingo-de-role-na-nave-01-11-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/street-baile-a-bruxa-ta-solta-31-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/open-halloween-casa-do-terror-30-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/green-baile-x-boiler-baile-os-cachorrao-chegou-rio-24-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/barbiemarley-23-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/baile-da-joker-ft-block-apresenta-kyan-17-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/social-club-open-mezanino-popfunkhousegarage-15-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/croissant-sound-bakery-15-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/aurora-capsule-002-09-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/savage-bonde-da-madrugada-cuckopoa-03-10-2026"
+      },
+      {
+       "@id": "https://useayon.com/eventos/e/open-cucko-open-bar-cucko-25-09-2026"
+      }
+     ]
+    },
+    {
+     "@type": "Event",
+     "@id": "https://useayon.com/eventos/e/estreia-nimbo-no-ceu-21-11-2026",
+     "url": "https://useayon.com/eventos/e/estreia-nimbo-no-ceu-21-11-2026",
+     "name": "ESTREIA NIMBO NO CÉU",
+     "startDate": "2026-11-21T19:00:00-03:00",
+     "endDate": "2026-11-22T02:00:00-03:00",
+     "eventStatus": "https://schema.org/EventScheduled",
+     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+     "image": [
+      "https://cdn.useayon.com/events/452/cover-1794411546468.webp"
+     ],
+     "location": {
+      "@type": "Place",
+      "name": "Céu zona sul",
+      "address": {
+       "@type": "PostalAddress",
+       "streetAddress": "Avenida Wenceslau Escobar",
+       "addressLocality": "Porto Alegre",
+       "addressRegion": "RS",
+       "addressCountry": "BR"
+      }
+     },
+     "performer": {
+      "@id": "https://useayon.com/djbrunintks#profile"
+     }
+    },
+    {
+     "@type": "Event",
+     "@id": "https://useayon.com/eventos/e/boiler-baile-gran-finale-28-11-2026",
+     "url": "https://useayon.com/eventos/e/boiler-baile-gran-finale-28-11-2026",
+     "name": "Boiler Baile • Gran Finale",
+     "startDate": "2026-11-28T23:00:00-03:00",
+     "endDate": "2026-11-29T06:00:00-03:00",
+     "eventStatus": "https://schema.org/EventScheduled",
+     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+     "image": [
+      "https://assets.shotgun.live/image/upload/c_limit,w_1200,h_630,f_jpg,q_auto/production/artworks/Poster_Shotgun_Thumb_1920x1080px_cm66qy.png"
+     ],
+     "location": {
+      "@type": "Place",
+      "name": "S.B.C. Bambas da Orgia",
+      "address": {
+       "@type": "PostalAddress",
+       "streetAddress": "Rua Voluntários da Pátria, 1387",
+       "addressLocality": "Porto Alegre",
+       "addressRegion": "RS",
+       "addressCountry": "BR"
+      }
+     },
+     "performer": {
+      "@id": "https://useayon.com/djbrunintks#profile"
+     }
+    },
+    {
+     "@type": "Event",
+     "@id": "https://useayon.com/eventos/e/ultima-sonora-breck-do-ano-ft-gp-da-zl-04-12-2026",
+     "url": "https://useayon.com/eventos/e/ultima-sonora-breck-do-ano-ft-gp-da-zl-04-12-2026",
+     "name": "Última Sonora Breck Do Ano Ft Gp Da Zl",
+     "startDate": "2026-12-04T23:00:00-03:00",
+     "endDate": "2026-12-05T06:00:00-03:00",
+     "eventStatus": "https://schema.org/EventScheduled",
+     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+     "image": [
+      "https://assets.shotgun.live/image/upload/c_limit,w_1200,h_630,f_jpg,q_auto/production/artworks/SHOTGUN_SONORA-BRECK_CAPA_pofetj.png"
+     ],
+     "location": {
+      "@type": "Place",
+      "name": "Fuga Bar 4º Distrito",
+      "address": {
+       "@type": "PostalAddress",
+       "streetAddress": "Rua Álvaro Chaves, 91",
+       "addressLocality": "Porto Alegre",
+       "addressRegion": "RS",
+       "addressCountry": "BR"
+      }
+     },
+     "performer": {
+      "@id": "https://useayon.com/djbrunintks#profile"
+     }
+    }
+   ]
+  }
+ ]
+}

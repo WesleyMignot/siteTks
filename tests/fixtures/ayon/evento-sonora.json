@@ -1,0 +1,102 @@
+{
+ "fonte": "JSON-LD de useayon.com em 16/11/2026 (ayon-ultima-sonora-breck-do-ano-ft-gp-da-zl-04-12-2026)",
+ "jsonld": [
+  {
+   "@context": "https://schema.org",
+   "@graph": [
+    {
+     "@type": "Organization",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com",
+     "logo": {
+      "@type": "ImageObject",
+      "url": "https://useayon.com/icon.png"
+     },
+     "sameAs": [
+      "https://www.instagram.com/useayonbr",
+      "https://www.tiktok.com/@useayonbr"
+     ]
+    },
+    {
+     "@type": "WebSite",
+     "name": "Ayon",
+     "alternateName": "useayon",
+     "url": "https://useayon.com"
+    }
+   ]
+  },
+  {
+   "@context": "https://schema.org",
+   "@type": "Event",
+   "name": "Última Sonora Breck Do Ano Ft Gp Da Zl",
+   "description": "𝘾𝙝𝙚𝙜𝙖𝙢𝙤𝙨 𝙥𝙧𝙖 𝙙𝙚𝙘𝙧𝙚𝙩𝙖𝙧 𝙖 𝙣𝙤𝙨𝙨𝙖 𝙪́𝙡𝙩𝙞𝙢𝙖 𝙥𝙖𝙧𝙩𝙞𝙘𝙞𝙥𝙖𝙘̧𝙖̃𝙤 𝙣𝙚𝙨𝙨𝙚 𝙖𝙣𝙤 𝙞𝙣𝙘𝙧𝜾́𝙫𝙚𝙡.ᐟ\n\nPra dar o xeque mate final atendendo pedido das caixinhas e nosso mano @djgpdazl desembarca na capital gaúcha pela primeira vez além disso @k.risk4 diretamente de Curitiba já mostrou suas mix precisas e muita técnica com nosso funk vem somar naquele clima sincero! Estreando também no nosso baile tem warm up sincero com @emersxxn e o closing set na mão dos meninos do momento da @youngnewrichs @blockboynr & @imnotnv_ e pra finalizar o line temos as convidadas que já passaram por aqui e não poderia ser diferente @turva.br & @baddieloma enfrentam nossa pista mais uma vez e ainda tem @djcoppetti e @djbrunintks na contenção pra somar com esse peso de line!\n\nNos registros @olvtr_ soma junto com a apresentação do mestre de cerimônias @cadeominero vem na beca puxar a responsa com a tropa!\n\nAcataram lá vision? Dia 04/12 é nosso último encontro do ano cheio de novidades na nossa pista! Nos vemos em breve e toma colinha 👇\n\n📅 04.12.2026\n🕢 23h - 06h\n📍 Rua Álvaro Chaves, 91",
+   "startDate": "2026-12-04T23:00:00-03:00",
+   "endDate": "2026-12-05T06:00:00-03:00",
+   "eventStatus": "https://schema.org/EventScheduled",
+   "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+   "image": [
+    "https://assets.shotgun.live/image/upload/c_limit,w_1200,h_630,f_jpg,q_auto/production/artworks/SHOTGUN_SONORA-BRECK_CAPA_pofetj.png"
+   ],
+   "url": "https://useayon.com/eventos/e/ultima-sonora-breck-do-ano-ft-gp-da-zl-04-12-2026",
+   "location": {
+    "@type": "Place",
+    "name": "Fuga Bar 4º Distrito",
+    "address": {
+     "@type": "PostalAddress",
+     "streetAddress": "Rua Álvaro Chaves, 91",
+     "addressLocality": "Porto Alegre",
+     "addressRegion": "RS",
+     "postalCode": "90220-040",
+     "addressCountry": "BR"
+    }
+   },
+   "offers": {
+    "@type": "Offer",
+    "url": "https://shotgun.live/events/sonora-breck-ft-gp-da-zl",
+    "availability": "https://schema.org/InStock"
+   },
+   "organizer": {
+    "@type": "Person",
+    "name": "SONORA BRECK"
+   },
+   "performer": [
+    {
+     "@type": "Person",
+     "name": "emersxxn — Warm-up"
+    },
+    {
+     "@type": "Person",
+     "name": "djcoppetti — Contenção"
+    },
+    {
+     "@type": "Person",
+     "name": "Brunin TKS — Contenção",
+     "url": "https://useayon.com/djbrunintks"
+    },
+    {
+     "@type": "Person",
+     "name": "TURVA — Convidada",
+     "url": "https://useayon.com/turva.br"
+    },
+    {
+     "@type": "Person",
+     "name": "Baddie Loma — Convidada",
+     "url": "https://useayon.com/baddieloma"
+    },
+    {
+     "@type": "Person",
+     "name": "k.risk4"
+    },
+    {
+     "@type": "Person",
+     "name": "djgpdazl"
+    },
+    {
+     "@type": "Person",
+     "name": "BlockboyB2Bimnotnv_ — Closing Set · Young New Richs"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rodada 5 — protótipos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --preto: #0F1211; --creme: #F1E2C4; --vermelho: #E8392F; --creme-60: rgba(241, 226, 196, .6); --linha: rgba(241, 226, 196, .15);
+    --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #1b1d1c; color: var(--creme); font: 14px/1.5 'Space Mono', monospace; }
+  main { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1, h2 { font-family: 'Pirata One', serif; font-weight: 400; margin: 0 0 8px; }
+  h1 { font-size: 48px; } h2 { font-size: 34px; margin-top: 64px; }
+  main > p, .nota { max-width: 78ch; color: rgba(241, 226, 196, .8); }
+  .nota { border-left: 3px solid var(--vermelho); padding-left: 12px; }
+  .controles { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0; }
+  .controles button { font: inherit; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding: 8px 12px;
+    background: transparent; color: var(--creme); border: 1px solid rgba(241, 226, 196, .4); border-radius: 999px; cursor: pointer; }
+  .controles button[aria-pressed="true"] { background: var(--vermelho); border-color: var(--vermelho); color: var(--preto); }
+  .controles input[type=range] { flex: 1 1 220px; accent-color: var(--vermelho); }
+  .controles label { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+  .telas { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .telas > div:first-child.pc { flex: 1 1 520px; min-width: 0; max-width: 940px; }
+  .tela { position: relative; overflow: hidden; border-radius: 6px; background: #000; }
+  .tela--pc { width: 100%; aspect-ratio: 1440 / 900; }
+  .tela--cel { width: 240px; aspect-ratio: 390 / 844; }
+  .legenda { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; opacity: .6; margin-top: 6px; max-width: 240px; }
+  .virtual { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; }
+
+  /* tipografia do site, dentro das telas */
+  .titulo { font-family: 'Pirata One', serif; font-weight: 400; line-height: .9; }
+  .rotulo { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .gotica { font-family: 'Pirata One', serif; font-weight: 400; font-size: 1.6em; letter-spacing: 0; text-transform: none; margin-right: .2em; }
+  .botao { display: inline-flex; align-items: center; gap: .5em; padding: 11px 20px; border-radius: 99px; background: var(--creme);
+    color: var(--preto); font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+
+  /* ---------- 1 · sets ---------- */
+  .s-set { position: absolute; inset: 0; overflow: hidden; background: var(--preto); color: var(--creme); }
+  .s-video { position: absolute; left: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; }
+  .s-set--A .s-video { object-position: var(--foco) 50%; }
+  .s-borrado { position: absolute; left: -10%; top: -10%; width: 120%; height: 120%; object-fit: cover;
+    filter: blur(22px) brightness(.45) saturate(1.3); }
+  .s-set--B .s-video { top: 19%; height: auto; aspect-ratio: 16 / 9; box-shadow: 0 24px 60px rgba(0, 0, 0, .55); }
+  .s-sombra { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15, 18, 17, .95) 0 40%, rgba(15, 18, 17, .25) 80%); }
+  .s-set--B .s-sombra { background: linear-gradient(0deg, rgba(15, 18, 17, .95) 0 34%, rgba(15, 18, 17, 0) 52%); }
+  .s-topo { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 24px 16px; }
+  .s-topo img { width: 69px; } .s-mais { font-size: 40px; line-height: 1; font-weight: 300; }
+  .s-info { position: absolute; left: 16px; right: 16px; bottom: 72px; z-index: 2; }
+  .s-meta { color: var(--creme-60); margin: 0 0 14px; } .s-titulo { font-size: 40px; margin: 0; }
+  .s-plat { margin: 18px 0 22px; }
+  .s-cont { position: absolute; right: 16px; bottom: 16px; margin: 0; font-size: 14px; z-index: 2; }
+  .s-set--hoje .s-foco, .s-set--B .s-foco { display: none; }
+
+  /* ---------- 2 · line-up (fundo vermelho, texto preto) ---------- */
+  .l { position: absolute; inset: 0; overflow: hidden; background: var(--vermelho); color: var(--preto); }
+  .l i { font-style: normal; color: var(--vermelho); }
+  /* hoje */
+  .l-hoje { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 60px; }
+  .lh-nac { font-size: 92px; line-height: 1.05; margin: 22px 0 28px; } .lh-nac i { color: var(--preto); font-size: .5em; vertical-align: middle; margin: 0 .4em; }
+  .lh-und { max-width: 64ch; font-size: 17px; line-height: 2; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin: 0; }
+  .cel .l-hoje { padding: 0 16px; } .cel .lh-nac { font-size: 38px; } .cel .lh-und { font-size: 12.5px; }
+  /* A · cartaz */
+  .l-A { display: grid; place-items: center; }
+  .cp { position: relative; width: 1080px; padding: 46px 60px 40px; background: var(--preto); color: var(--creme); text-align: center;
+    box-shadow: 0 40px 80px rgba(60, 8, 4, .45); will-change: transform; }
+  .cp::after { content: ''; position: absolute; inset: 0; background: var(--grao); opacity: .16; mix-blend-mode: screen; pointer-events: none; }
+  .cp-topo { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--linha); color: var(--creme-60); }
+  .cp-topo b { color: var(--vermelho); }
+  .cp span, .lh-nac span, .lh-und span { white-space: nowrap; }
+  .cp-t1 { font-size: 104px; line-height: .95; margin: 34px 0 12px; text-wrap: balance; }
+  .cp-t2 { font-size: 64px; line-height: 1.02; margin: 0 0 26px; text-wrap: balance; }
+  .cp-t1 i, .cp-t2 i { font-size: .42em; vertical-align: middle; margin: 0 .35em; }
+  .cp-t3 { max-width: 76ch; margin: 0 auto 30px; font-size: 15px; line-height: 1.9; }
+  .cp-t3 i { margin: 0 .5em; }
+  .cp-pe { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 14px; padding-top: 16px; border-top: 1px solid var(--linha);
+    color: var(--creme-60); font-size: 11px; }
+  .cp-pe b { color: var(--creme); }
+  .cp-selo { position: absolute; right: -34px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: var(--vermelho);
+    color: var(--preto); display: grid; place-content: center; text-align: center; box-shadow: inset 0 0 0 5px var(--preto), inset 0 0 0 8px var(--vermelho), inset 0 0 0 10px var(--preto); }
+  .cp-selo .titulo { font-size: 56px; line-height: .8; } .cp-selo .rotulo { font-size: 11px; line-height: 1.25; }
+  .cel .cp { width: 352px; padding: 26px 16px 22px; }
+  .cel .cp-topo { font-size: 9px; letter-spacing: .08em; }
+  .cel .cp-t1 { font-size: 46px; margin: 22px 0 8px; } .cel .cp-t2 { font-size: 29px; margin-bottom: 18px; }
+  .cel .cp-t3 { font-size: 10.5px; margin-bottom: 18px; } .cel .cp-pe { font-size: 9px; }
+  .cel .cp-selo { width: 92px; height: 92px; right: -10px; top: -54px; } .cel .cp-selo .titulo { font-size: 34px; } .cel .cp-selo .rotulo { font-size: 8px; }
+  /* B · letreiro */
+  .l-B { display: flex; flex-direction: column; justify-content: center; gap: 0; }
+  .lb-rot { position: absolute; top: 56px; left: 0; right: 0; text-align: center; margin: 0; }
+  .lb-linha, .lb-fita { white-space: nowrap; overflow: visible; }
+  .lb-trilho { display: inline-block; will-change: transform; }
+  .lb-linha { font-family: 'Pirata One', serif; font-size: 190px; line-height: 1.02; }
+  .lb-linha i { font-size: .36em; vertical-align: middle; margin: 0 .3em; color: var(--preto); }
+  .lb-vazado { color: transparent; -webkit-text-stroke: 2px var(--preto); }
+  .lb-vazado i { -webkit-text-stroke: 0; color: var(--preto); }
+  .lb-fita { position: relative; z-index: 2; margin: 6px -40px; padding: 14px 0; background: var(--preto); color: var(--creme);
+    font-size: 22px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; transform: rotate(-2.5deg); }
+  .lb-fita i { color: var(--vermelho); margin: 0 .7em; }
+  .lb-fita--creme { background: var(--creme); color: var(--preto); transform: rotate(1.8deg); font-size: 17px; }
+  .cel .lb-rot { top: 92px; } .cel .lb-linha { font-size: 84px; } .cel .lb-fita { font-size: 14px; padding: 9px 0; } .cel .lb-fita--creme { font-size: 12px; }
+  /* C · um por vez */
+  .l-C { display: grid; place-items: center; text-align: center; }
+  .lc-rot { position: absolute; top: 56px; left: 0; right: 0; margin: 0; }
+  .lc-rot b { font-family: 'Pirata One', serif; font-weight: 400; font-size: 1.7em; letter-spacing: 0; text-transform: none; }
+  .lc-nome { position: absolute; left: 40px; right: 40px; top: 50%; margin: 0; font-size: 230px; line-height: .9; opacity: 0; will-change: transform, opacity; }
+  .lc-parede { position: absolute; inset: 120px 60px 100px; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px 26px;
+    font-size: 30px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .lc-parede span { opacity: 0; }
+  .lc-parede .lc-e { width: 100%; font-family: 'Pirata One', serif; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 64px; margin-bottom: 10px; }
+  .lc-cont { position: absolute; left: 40px; bottom: 36px; margin: 0; font-size: 18px; }
+  .lc-grupo { position: absolute; right: 40px; bottom: 36px; margin: 0; }
+  .cel .lc-rot { top: 92px; padding: 0 16px; } .cel .lc-nome { font-size: 92px; left: 16px; right: 16px; }
+  .cel .lc-parede { inset: 150px 16px 90px; font-size: 15px; gap: 8px 14px; } .cel .lc-parede .lc-e { font-size: 40px; }
+  .cel .lc-cont { left: 16px; bottom: 24px; font-size: 14px; } .cel .lc-grupo { right: 16px; bottom: 24px; font-size: 10px; }
+
+  /* ---------- 3 · agenda (fundo preto) ---------- */
+  .ag { position: absolute; inset: 0; overflow: hidden; background: var(--preto); color: var(--creme); padding: 70px 64px 40px; }
+  .ag::after { content: ''; position: absolute; inset: 0; background: var(--grao); opacity: .08; mix-blend-mode: screen; pointer-events: none; }
+  .ag-tit { font-size: 96px; margin: 22px 0 34px; }
+  .ag-rodape { margin: 22px 0 0; color: var(--creme-60); font-size: 11px; }
+  .ag-rodape b { color: var(--creme); }
+  /* A · lista */
+  .ag-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linha); }
+  .ag-ev { position: relative; display: grid; grid-template-columns: 150px 1fr 260px auto; gap: 28px; align-items: center;
+    padding: 22px 0; border-bottom: 1px solid var(--linha); }
+  .ag-data { display: flex; align-items: baseline; gap: 8px; color: var(--vermelho); }
+  .ag-dia { font-size: 92px; line-height: .8; } .ag-mes { font-size: 15px; }
+  .ag-quando { color: var(--creme-60); margin: 0 0 6px; } .ag-nome { font-size: 44px; margin: 0 0 8px; line-height: .95; }
+  .ag-line { margin: 0; font-size: 12px; color: var(--creme-60); } .ag-line b { color: var(--creme); font-weight: 700; }
+  .ag-local { margin: 0; font-size: 12px; line-height: 1.6; } .ag-local span { color: var(--creme-60); }
+  .ag-flyer { position: absolute; right: 200px; top: 50%; width: 240px; aspect-ratio: 1200 / 630; object-fit: cover; border-radius: 4px;
+    transform: translateY(-50%) rotate(4deg) scale(.9); opacity: 0; transition: .25s; pointer-events: none; box-shadow: 0 20px 40px rgba(0,0,0,.6); }
+  .ag-ev:hover .ag-flyer { opacity: 1; transform: translateY(-50%) rotate(4deg) scale(1); }
+  .cel .ag { padding: 100px 16px 24px; } .cel .ag-tit { font-size: 50px; margin: 18px 0 22px; }
+  .cel .ag-ev { grid-template-columns: 74px 1fr; gap: 6px 14px; align-items: start; padding: 18px 0; }
+  .cel .ag-dia { font-size: 56px; } .cel .ag-data { flex-direction: column; gap: 0; } .cel .ag-mes { font-size: 12px; }
+  .cel .ag-nome { font-size: 27px; } .cel .ag-line { font-size: 10.5px; }
+  .cel .ag-local { grid-column: 2; font-size: 10.5px; } .cel .ag-ev .botao { grid-column: 2; justify-self: start; padding: 9px 16px; font-size: 11px; }
+  .cel .ag-flyer { display: none; }
+  /* B · flyers */
+  .ag-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .ag-card { position: relative; display: flex; flex-direction: column; background: #181c1b; border: 1px solid var(--linha); border-radius: 6px; overflow: hidden; }
+  .ag-card img { width: 100%; aspect-ratio: 1200 / 630; object-fit: cover; display: block; }
+  .ag-selo { position: absolute; left: 12px; top: 12px; background: var(--vermelho); color: var(--preto); padding: 6px 10px 5px; border-radius: 4px; text-align: center; }
+  .ag-selo .titulo { display: block; font-size: 40px; line-height: .8; } .ag-selo .rotulo { font-size: 10px; }
+  .ag-corpo { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .ag-corpo .ag-nome { font-size: 34px; margin: 0; } .ag-corpo .botao { margin-top: auto; align-self: flex-start; }
+  .cel .ag-cards { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin-right: -16px; padding-right: 16px; scrollbar-width: none; }
+  .cel .ag-card { flex: 0 0 300px; scroll-snap-align: start; } .cel .ag-corpo .ag-nome { font-size: 28px; }
+  /* sem datas */
+  .ag-vazio { border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); padding: 40px 0; }
+  .ag-vazio .titulo { font-size: 72px; margin: 0 0 14px; color: var(--vermelho); } .ag-vazio p { max-width: 52ch; color: var(--creme-60); margin: 0 0 22px; }
+  .cel .ag-vazio .titulo { font-size: 44px; } .cel .ag-vazio p { font-size: 12px; }
+  @media (max-width: 760px) { .tela--cel { width: 100%; max-width: 300px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Rodada 5 · protótipos</h1>
+  <p>As telas mostram o site no computador (1440 × 900) e no celular (390 × 844), em tamanho reduzido. Escolha uma letra em
+    cada parte. Os vídeos dos Sets usam os originais baixados em <code>bruto/</code>, por isso esta página só funciona nesta máquina.</p>
+
+  <h2>1 · Sets no celular</h2>
+  <p><b>Hoje</b>: o vídeo horizontal é ampliado até cobrir a tela em pé, e só aparece a faixa do meio, com uns 22% da largura.
+    <b>A · enquadrado no Bruno</b>: o mesmo tamanho de tela cheia, mas cada vídeo ganha uma versão própria para o celular,
+    recortada em cima dele e feita a partir do original em resolução maior, então fica mais nítida.
+    <b>B · vídeo inteiro</b>: o vídeo aparece inteiro, na largura da tela, e uma cópia desfocada dele preenche o fundo.
+    No computador, nada muda.</p>
+  <div class="controles" id="c-sets"></div>
+  <div class="telas">
+    <div><div class="tela tela--cel" id="sets-hoje"></div><div class="legenda">hoje</div></div>
+    <div><div class="tela tela--cel" id="sets-A"></div><div class="legenda">A · enquadrado no Bruno</div></div>
+    <div><div class="tela tela--cel" id="sets-B"></div><div class="legenda">B · vídeo inteiro</div></div>
+  </div>
+  <p class="nota"><b>Confira o Grau:</b> quem toca nesse trecho tem cabelo comprido e óculos escuros, e não parece o Bruno.
+    Se não for ele, vale escolher outro trecho do vídeo. No Ataque Sonoro, o Bruno fica bem à direita, embaixo do letreiro
+    do Boiler Baile, e o enquadramento A segue ele lá.</p>
+
+  <h2>2 · Já dividiu line com</h2>
+  <p><b>A · cartaz</b>: a seção vira um cartaz de festival de verdade, preto e um pouco inclinado. Ele sobe na rolagem, e os nomes
+    entram em camadas, como num flyer: os maiores no topo, o underground embaixo e os palcos no rodapé. Um selo marca as
+    3 edições do Planeta Atlântida. Quem fica no topo (KL Jay e Rincon Sapiência) é palpite meu, e você ajusta.
+    <b>B · letreiro</b>: os nomes viram faixas gigantes correndo de lado a lado, em sentidos alternados, cortadas por duas
+    fitas com o underground e os palcos. A tela inteira fica tomada.
+    <b>C · um por vez</b>: a seção fica parada na tela, e cada nome nacional ocupa a tela sozinho, um após o outro, como créditos.
+    No fim, entra a parede com o underground.
+    <b>Hoje</b>: o que está no site.</p>
+  <div class="controles" id="c-line"></div>
+  <div class="controles"><label><input type="checkbox" id="auto-line" checked> automático</label>
+    <input type="range" id="p-line" min="0" max="1000" value="0" aria-label="Progresso da rolagem do line-up"></div>
+  <div class="telas">
+    <div class="pc"><div class="tela tela--pc" id="line-pc"></div><div class="legenda">computador</div></div>
+    <div><div class="tela tela--cel" id="line-cel"></div><div class="legenda">celular</div></div>
+  </div>
+
+  <h2>3 · Agenda (próximos shows)</h2>
+  <p>Uma seção nova, logo depois do Line-up: primeiro quem ele já tocou junto, depois onde ele vai tocar. Os dados são os reais, tirados do
+    Ayon agora: nome, data, local, line-up e link do ingresso (Feedme e Shotgun), do jeito que o Ayon escreve.
+    <b>A · lista</b>: um cartaz de turnê, com a data grande em vermelho e uma linha por show. No computador, o flyer aparece ao passar
+    o mouse.
+    <b>B · flyers</b>: um cartão por show, com o flyer do evento. No celular, os cartões correm para o lado.
+    <b>Sem datas</b>: o que aparece quando não houver show anunciado. Em vez de sumir, a seção chama para contratar.</p>
+  <div class="controles" id="c-agenda"></div>
+  <div class="telas">
+    <div class="pc"><div class="tela tela--pc" id="ag-pc"></div><div class="legenda">computador (passe o mouse numa linha da opção A)</div></div>
+    <div><div class="tela tela--cel" id="ag-cel"></div><div class="legenda">celular</div></div>
+  </div>
+</main>
+
+<script>
+const SETS = [
+  { id: 'senso', n: '01', meta: 'Senso Radio NH', titulo: 'Senso Rádio convida Brunin', plat: 'YouTube', foco: 18 },
+  { id: 'grau', n: '02', meta: 'Veneno Live SP x Senso Rádio NH', titulo: 'Boiler Baile x Grau', plat: 'YouTube', foco: 46 },
+  { id: 'ataque', n: '03', meta: 'Veneno Live SP', titulo: 'Boiler Baile Ataque Sonoro', plat: 'YouTube', foco: 96 },
+  { id: 'veneno-lab', n: '04', meta: 'São Paulo', titulo: 'Veneno Lab', plat: 'YouTube', foco: 50 },
+  { id: 'sensi', n: '05', meta: 'DnB set', titulo: 'Live Sensi por BSTV', plat: 'YouTube', foco: 94 },
+  { id: 'reel-c', n: '08', meta: 'Porto Alegre', titulo: 'Trinka', plat: 'SoundCloud', foco: 50 },
+];
+const NAC = ['KL Jay', 'Rincon Sapiência', 'Pocah', 'Raffa Moreira', 'MC Binn', 'MC Felipinho', 'Wesley Gonzaga', 'Nanda Tsunami'];
+const UNDER = ['DJ Patife', 'Caio Prince', 'Bonekinha Iraquiana', 'Ramon Sucesso', 'Young Clubber', 'Carlos do Complexo',
+  'Idlibra', 'Dayeh', 'Bassan', 'Kenan e Kel', 'DJ Lorrany', 'Brum'];
+const PALCOS = ['Planeta Atlântida (3 edições)', 'Onze Bar', 'Senso Radio', 'Trinka', 'Lóbulo', 'Function', 'Guilda', 'Veneno', 'Relativa (Madri)'];
+// dados reais do Ayon (JSON-LD das páginas dos eventos), em 16/11/2026, com nomes do jeito que vêm de lá
+const EVENTOS = [
+  { nome: 'ESTREIA NIMBO NO CÉU', inicio: '2026-11-21T19:00:00-03:00', local: 'Céu zona sul', cidade: 'Porto Alegre',
+    capa: 'https://cdn.useayon.com/events/452/cover-1794411546468.webp', ingresso: 'https://feedme.click/evento/estreia-nimbo-no-ceu',
+    line: ['Blockboy', 'Baddie Loma', 'DJ Ramos', 'imnotnv_'] },
+  { nome: 'Boiler Baile • Gran Finale', inicio: '2026-11-28T23:00:00-03:00', local: 'S.B.C. Bambas da Orgia', cidade: 'Porto Alegre',
+    capa: 'https://assets.shotgun.live/image/upload/c_limit,w_1200,h_630,f_jpg,q_auto/production/artworks/Poster_Shotgun_Thumb_1920x1080px_cm66qy.png',
+    ingresso: 'https://shotgun.live/events/boiler-baile-gran-finale',
+    line: ['Dalberth (b2b)', 'Pedro Bala (SP)', 'VICX (RJ)', 'Danna (PBI)', 'PZZS (RJ)', 'PV5000', 'Juana Chi', 'BRF', 'Gio Valentini', 'Lays Ayana'] },
+  { nome: 'Última Sonora Breck Do Ano Ft Gp Da Zl', inicio: '2026-12-04T23:00:00-03:00', local: 'Fuga Bar 4º Distrito', cidade: 'Porto Alegre',
+    capa: 'https://assets.shotgun.live/image/upload/c_limit,w_1200,h_630,f_jpg,q_auto/production/artworks/SHOTGUN_SONORA-BRECK_CAPA_pofetj.png',
+    ingresso: 'https://shotgun.live/events/sonora-breck-ft-gp-da-zl',
+    line: ['djgpdazl', 'k.risk4', 'djcoppetti', 'TURVA', 'Baddie Loma', 'emersxxn', 'BlockboyB2Bimnotnv_'] },
+];
+
+const estado = { set: 'senso', line: 'A', agenda: 'A', vazio: false, p: 0 };
+
+function virtual(tela, W, H, cel) {
+  const v = document.createElement('div');
+  v.className = 'virtual' + (cel ? ' cel' : '');
+  Object.assign(v.style, { width: W + 'px', height: H + 'px' });
+  tela.append(v);
+  const ajustar = () => { v.style.transform = `scale(${tela.clientWidth / W})`; };
+  new ResizeObserver(ajustar).observe(tela); ajustar();
+  return v;
+}
+function botoes(id, itens, chave, aoMudar) {
+  const c = document.getElementById(id);
+  for (const [valor, texto] of itens) {
+    const b = Object.assign(document.createElement('button'), { type: 'button', textContent: texto });
+    b.dataset.v = valor;
+    b.setAttribute('aria-pressed', String(estado[chave] === valor));
+    b.onclick = () => { estado[chave] = valor; c.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); aoMudar(); };
+    c.append(b);
+  }
+}
+// nome + separador seguinte não se separam: o separador nunca abre uma linha (igual ao .cartaz__par do site)
+const juntar = (lista, sep) => lista.map((n, i) => `<span>${n}${i < lista.length - 1 ? ` ${sep.trim()}` : ''}</span>`).join(' ');
+
+/* ---------- 1 · sets ---------- */
+const vSets = { hoje: virtual(document.getElementById('sets-hoje'), 390, 844, true),
+  A: virtual(document.getElementById('sets-A'), 390, 844, true), B: virtual(document.getElementById('sets-B'), 390, 844, true) };
+function telaSet(s, k) {
+  const src = k === 'hoje' ? `../../assets/video/sets/${s.id}.mp4` : `../../bruto/prototipo-r5/${s.id}.mp4`;
+  const vid = cls => `<video class="${cls}" src="${src}" autoplay muted loop playsinline></video>`;
+  return `<div class="s-set s-set--${k}" style="--foco:${s.foco}%">
+    ${k === 'B' ? vid('s-borrado') : ''}${vid('s-video')}
+    <div class="s-sombra"></div>
+    <div class="s-topo"><img src="../../assets/logo/logo-creme.png" alt=""><span class="rotulo">POA 15:27</span><span class="s-mais">+</span></div>
+    <div class="s-info"><p class="rotulo s-meta">Set ${s.n} / 08 · ${s.meta}</p><h3 class="titulo s-titulo">${s.titulo}</h3>
+      <p class="rotulo s-plat">${s.plat}</p><span class="botao">▶ ${s.plat === 'YouTube' ? 'Assistir' : 'Ouvir aqui'}</span></div>
+    <p class="rotulo s-cont">${s.n} / 08</p></div>`;
+}
+function renderSets() {
+  const s = SETS.find(x => x.id === estado.set);
+  for (const [k, v] of Object.entries(vSets)) v.innerHTML = telaSet(s, k);
+}
+botoes('c-sets', SETS.map(s => [s.id, s.titulo.replace('Senso Rádio convida Brunin', 'Senso')]), 'set', renderSets);
+renderSets();
+
+/* ---------- 2 · line-up ---------- */
+const vLine = { pc: virtual(document.getElementById('line-pc'), 1440, 900, false), cel: virtual(document.getElementById('line-cel'), 390, 844, true) };
+const estrela = '<i>✦</i>';
+function htmlLine(k) {
+  if (k === 'hoje') return `<div class="l l-hoje"><p class="rotulo">Já dividiu o line com</p>
+    <p class="titulo lh-nac">${juntar(['KL Jay', 'Rincon Sapiência', 'Raffa Moreira', 'MC Binn', 'Pocah', 'MC Felipinho', 'Wesley Gonzaga'], estrela)}</p>
+    <p class="lh-und">${juntar(UNDER, estrela)}</p></div>`;
+  if (k === 'A') return `<div class="l l-A"><div class="cp">
+    <div class="cp-topo rotulo"><span><b>Brunin Tks</b> já dividiu o line com</span></div>
+    <p class="titulo cp-t1">${juntar(NAC.slice(0, 2), estrela)}</p>
+    <p class="titulo cp-t2">${juntar(NAC.slice(2), estrela)}</p>
+    <p class="rotulo cp-t3">${juntar(UNDER, estrela)}</p>
+    <div class="cp-pe rotulo"><b>Palcos, festas e rádios</b>${juntar(PALCOS.slice(1), ' · ')}</div>
+    <div class="cp-selo"><span class="titulo">3×</span><span class="rotulo">Planeta<br>Atlântida</span></div></div></div>`;
+  if (k === 'B') {
+    const faixa = (lista, sep) => { const t = juntar(lista, sep) + sep; return t + t + t; };
+    return `<div class="l l-B"><p class="rotulo lb-rot">Já dividiu o line com</p>
+      <div class="lb-linha" data-vel="-1"><div class="lb-trilho">${faixa(NAC, estrela)}</div></div>
+      <div class="lb-fita" data-vel="1.4"><div class="lb-trilho">${faixa(UNDER, estrela)}</div></div>
+      <div class="lb-linha lb-vazado" data-vel="-.7"><div class="lb-trilho">${faixa([...NAC].reverse(), estrela)}</div></div>
+      <div class="lb-fita lb-fita--creme" data-vel="-1.1"><div class="lb-trilho">${faixa(PALCOS, estrela)}</div></div></div>`;
+  }
+  return `<div class="l l-C"><p class="rotulo lc-rot"><b>Brunin Tks</b> já dividiu o line com</p>
+    ${NAC.map(n => `<p class="titulo lc-nome">${n}</p>`).join('')}
+    <div class="lc-parede"><span class="lc-e">e no underground</span>${UNDER.map(n => `<span>${n}</span>`).join('')}</div>
+    <p class="rotulo lc-cont">01 / 08</p><p class="rotulo lc-grupo">nacionais</p></div>`;
+}
+function renderLine() { for (const v of Object.values(vLine)) v.innerHTML = htmlLine(estado.line); quadroLine(performance.now()); }
+const suave = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+const faixa01 = (p, a, b) => suave((p - a) / (b - a));
+function quadroLine(agora) {
+  const p = estado.p;
+  for (const v of Object.values(vLine)) {
+    if (estado.line === 'A') {
+      const cp = v.querySelector('.cp'), e = faixa01(p, 0, .32);
+      cp.style.transform = `translateY(${(1 - e) * 75}%) rotate(${-8 + 6 * e}deg)`;
+      [['.cp-t1', .32, .42], ['.cp-t2', .42, .52], ['.cp-t3', .52, .62], ['.cp-pe', .58, .66]].forEach(([s, a, b]) => {
+        const k = faixa01(p, a, b); const el = v.querySelector(s);
+        el.style.opacity = k; el.style.transform = `scale(${1.25 - .25 * k})`;
+      });
+      const k = faixa01(p, .68, .76), selo = v.querySelector('.cp-selo');
+      selo.style.opacity = k; selo.style.transform = `scale(${2.2 - 1.2 * k}) rotate(${-30 + 42 * k}deg)`;
+    } else if (estado.line === 'B') {
+      v.querySelectorAll('[data-vel]').forEach(l => {
+        const tr = l.firstElementChild, terco = tr.scrollWidth / 3;
+        const x = ((agora / 1000 * 60 + p * 900) * Number(l.dataset.vel)) % terco;
+        tr.style.transform = `translateX(${(x > 0 ? x - terco : x)}px)`;
+      });
+    } else if (estado.line === 'C') {
+      const nomes = v.querySelectorAll('.lc-nome'), fim = .74, passo = fim / nomes.length;
+      nomes.forEach((n, i) => {
+        const t = (p - i * passo) / passo;
+        const entra = suave(t / .3), sai = suave((t - .78) / .22);
+        n.style.opacity = t < 0 || t > 1 ? 0 : entra * (1 - sai);
+        n.style.transform = `translateY(-50%) scale(${1.3 - .3 * entra}) translateY(${-sai * 30}px)`;
+      });
+      const parede = v.querySelectorAll('.lc-parede span');
+      parede.forEach((s, i) => { s.style.opacity = faixa01(p, fim + i * .015, fim + i * .015 + .04); });
+      const idx = Math.min(nomes.length, Math.floor(p / passo) + 1);
+      v.querySelector('.lc-cont').textContent = p < fim ? `${String(idx).padStart(2, '0')} / ${String(NAC.length).padStart(2, '0')}` : `+ ${UNDER.length}`;
+      v.querySelector('.lc-grupo').textContent = p < fim ? 'nacionais' : 'underground';
+    }
+  }
+}
+botoes('c-line', [['A', 'A · cartaz'], ['B', 'B · letreiro'], ['C', 'C · um por vez'], ['hoje', 'Hoje']], 'line', renderLine);
+const auto = document.getElementById('auto-line'), barra = document.getElementById('p-line');
+barra.oninput = () => { auto.checked = false; estado.p = barra.value / 1000; };
+let ultimo = performance.now();
+function laco(agora) {
+  if (auto.checked) { estado.p = (estado.p + (agora - ultimo) / 9000) % 1.12; barra.value = Math.min(1, estado.p) * 1000; }
+  ultimo = agora;
+  const real = estado.p; estado.p = Math.min(1, real); quadroLine(agora); estado.p = real;
+  requestAnimationFrame(laco);
+}
+renderLine(); requestAnimationFrame(laco);
+
+/* ---------- 3 · agenda ---------- */
+const vAg = { pc: virtual(document.getElementById('ag-pc'), 1440, 900, false), cel: virtual(document.getElementById('ag-cel'), 390, 844, true) };
+const fmt = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+function partes(iso) {
+  const o = Object.fromEntries(fmt.formatToParts(new Date(iso)).map(p => [p.type, p.value.replace('.', '')]));
+  return { dia: o.day, mes: o.month, semana: o.weekday, hora: `${o.hour}:${o.minute}` };
+}
+const lineDe = (l, max) => `com <b>${l.slice(0, max).join(', ')}</b>${l.length > max ? ` +${l.length - max}` : ''}`;
+function htmlAgenda(cel) {
+  const topo = `<p class="rotulo"><span class="gotica">Nº 005</span> — Agenda</p><h3 class="titulo ag-tit">Próximos shows</h3>`;
+  const rodape = `<p class="rotulo ag-rodape">Agenda completa no <b>Ayon ↗</b></p>`;
+  if (estado.vazio) return `<div class="ag">${topo}<div class="ag-vazio"><p class="titulo">Agenda aberta</p>
+    <p>Nenhuma data anunciada agora. Quer o Brunin Tks no seu line? As próximas datas estão sendo fechadas.</p>
+    <span class="botao">Contrate ↓</span></div>${rodape}</div>`;
+  if (estado.agenda === 'A') return `<div class="ag">${topo}<ol class="ag-lista">${EVENTOS.map(e => { const d = partes(e.inicio); return `
+    <li class="ag-ev"><div class="ag-data"><span class="titulo ag-dia">${d.dia}</span><span class="rotulo ag-mes">${d.mes}</span></div>
+      <div><p class="rotulo ag-quando">${d.semana} · ${d.hora}</p><p class="titulo ag-nome">${e.nome}</p><p class="ag-line">${lineDe(e.line, cel ? 3 : 5)}</p></div>
+      <p class="rotulo ag-local">${e.local}<br><span>${e.cidade}</span></p>
+      <a class="botao" href="${e.ingresso}" target="_blank" rel="noopener">Ingressos ↗</a>
+      <img class="ag-flyer" src="${e.capa}" alt=""></li>`; }).join('')}</ol>${rodape}</div>`;
+  return `<div class="ag">${topo}<div class="ag-cards">${EVENTOS.map(e => { const d = partes(e.inicio); return `
+    <article class="ag-card"><img src="${e.capa}" alt=""><div class="ag-selo"><span class="titulo">${d.dia}</span><span class="rotulo">${d.mes}</span></div>
+      <div class="ag-corpo"><p class="rotulo ag-quando">${d.semana} · ${d.hora} · ${e.local}</p><p class="titulo ag-nome">${e.nome}</p>
+        <p class="ag-line">${lineDe(e.line, 3)}</p><a class="botao" href="${e.ingresso}" target="_blank" rel="noopener">Ingressos ↗</a></div></article>`; }).join('')}</div>${rodape}</div>`;
+}
+function renderAgenda() { vAg.pc.innerHTML = htmlAgenda(false); vAg.cel.innerHTML = htmlAgenda(true); }
+botoes('c-agenda', [['A', 'A · lista'], ['B', 'B · flyers']], 'agenda', () => { estado.vazio = false; document.querySelector('#c-agenda [data-v=vazio]').setAttribute('aria-pressed', 'false'); renderAgenda(); });
+{ const c = document.getElementById('c-agenda'), b = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Sem datas' });
+  b.dataset.v = 'vazio'; b.setAttribute('aria-pressed', 'false');
+  b.onclick = () => { estado.vazio = !estado.vazio; b.setAttribute('aria-pressed', String(estado.vazio)); renderAgenda(); };
+  c.append(document.createElement('span'), b); }
+renderAgenda();
+</script>
+</body>
+</html>

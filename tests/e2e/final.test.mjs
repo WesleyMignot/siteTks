@@ -6,45 +6,71 @@ let amb;
 before(async () => { amb = await iniciarAmbiente(); });
 after(async () => { await amb.fechar(); });
 
-const NACIONAIS = ['KL Jay', 'Rincon Sapiência', 'Raffa Moreira', 'MC Binn', 'Pocah', 'MC Felipinho', 'Wesley Gonzaga'];
-const UNDER = ['DJ Patife', 'Caio Prince', 'Bonekinha Iraquiana', 'Ramon Sucesso', 'Nanda Tsunami', 'Young Clubber',
-  'Carlos do Complexo', 'Idlibra', 'Dayeh', 'Bassan', 'Kenan e Kel', 'DJ Lorrany', 'Brum'];
+// rodada 5: cartaz de festival em três níveis (Nanda Tsunami sobe para o destaque)
+const N1 = ['KL Jay', 'Rincon Sapiência'];
+const N2 = ['Pocah', 'Raffa Moreira', 'MC Binn', 'MC Felipinho', 'Wesley Gonzaga', 'Nanda Tsunami'];
+const N3 = ['DJ Patife', 'Caio Prince', 'Bonekinha Iraquiana', 'Ramon Sucesso', 'Young Clubber', 'Carlos do Complexo',
+  'Idlibra', 'Dayeh', 'Bassan', 'Kenan e Kel', 'DJ Lorrany', 'Brum'];
+const NIVEIS = [['.cartaz__n1', N1], ['.cartaz__n2', N2], ['.cartaz__n3', N3]];
 
 test('line-up com todos os nomes', async () => {
   const { page } = await abrir(amb);
   const t = await page.$eval('#lineup', e => e.textContent);
-  for (const n of [...NACIONAIS, ...UNDER, 'Planeta Atlântida', 'Relativa']) assert.ok(t.includes(n), n);
+  for (const n of [...N1, ...N2, ...N3, 'Planeta Atlântida', 'Relativa']) assert.ok(t.includes(n), n);
 });
 
-const opacNomes = p => p.$$eval('.cartaz__nome', l => l.map(e => +getComputedStyle(e).opacity));
-test('cartaz: nomes acendem com o scroll', async () => {
+test('cartaz: 2 + 6 + 12 nomes separados por 17 morcegos', async () => {
   const { page } = await abrir(amb);
-  await page.evaluate(() => { const c = document.querySelector('.cartaz'); scrollTo(0, c.getBoundingClientRect().top + scrollY - innerHeight * 0.85); });
-  await new Promise(r => setTimeout(r, 500));
-  assert.ok((await opacNomes(page))[0] < 0.5);
-  await rolarPara(page, '.cartaz', 200);
-  await new Promise(r => setTimeout(r, 500));
-  const fim = await opacNomes(page);
-  assert.equal(fim.length, 20); assert.ok(fim.every(o => o > 0.9));
+  for (const [sel, nomes] of NIVEIS) {
+    assert.deepEqual(await page.$$eval(`${sel} .cartaz__nome`, l => l.map(e => e.textContent.trim())), nomes, sel);
+  }
+  assert.equal(await page.$$eval('.cartaz .div-morcego svg.morcego--div', l => l.length), 1 + 5 + 11);
+  assert.equal(await page.$('#lineup .letreiro'), null);
 });
 
 test('cartaz: leitor de tela ouve os nomes separados', async () => {
   const { page } = await abrir(amb);
-  for (const [sel, nomes] of [['.cartaz__nacionais', NACIONAIS], ['.cartaz__under', UNDER]]) {
+  for (const [sel, nomes] of NIVEIS) {
     const arvore = await page.accessibility.snapshot({ root: await page.$(sel), interestingOnly: false });
     const textos = [];
     (function andar(n) { if (n.role === 'StaticText') textos.push(n.name); (n.children ?? []).forEach(andar); })(arvore);
     const lido = textos.join('').replace(/\s+/g, ' ').trim();
-    assert.equal(lido.toLowerCase(), nomes.join(', ').toLowerCase(), sel); // o under tem text-transform: uppercase
+    assert.equal(lido.toLowerCase(), nomes.join(', ').toLowerCase(), sel); // o nível 3 tem text-transform: uppercase
   }
 });
 
-test('cartaz: 7 nacionais e 13 do underground, separados por morcegos', async () => {
+const giroGraus = t => { const m = t.match(/matrix\(([^)]+)\)/); if (!m) return 0; const [a, b] = m[1].split(',').map(Number); return Math.atan2(b, a) * 180 / Math.PI; };
+test('cartaz: legível no ponto de leitura', async () => {
   const { page } = await abrir(amb);
-  assert.deepEqual(await page.$$eval('.cartaz__nacionais .cartaz__nome', l => l.map(e => e.textContent.trim())), NACIONAIS);
-  assert.deepEqual(await page.$$eval('.cartaz__under .cartaz__nome', l => l.map(e => e.textContent.trim())), UNDER);
-  assert.equal(await page.$$eval('.cartaz .div-morcego svg.morcego--div', l => l.length), 6 + 12);
-  assert.equal(await page.$('#lineup .letreiro'), null);
+  const meio = await page.$eval('.cartaz', c => Math.round(c.offsetHeight / 2 - innerHeight / 2) + 40);
+  await rolarPara(page, '.cartaz', meio);
+  await new Promise(r => setTimeout(r, 600));
+  const ops = await page.$$eval('.cartaz__n1, .cartaz__n2, .cartaz__n3, .cartaz__pe, .cartaz__selo', l => l.map(e => +getComputedStyle(e).opacity));
+  assert.equal(ops.length, 5);
+  assert.ok(ops.every(o => o > 0.95), JSON.stringify(ops));
+  const giro = giroGraus(await page.$eval('.cartaz__folha', f => getComputedStyle(f).transform));
+  assert.ok(Math.abs(giro + 2) <= 0.5, `giro ${giro}`);
+});
+
+test('cartaz: nenhum nome quebrado nem morcego abrindo linha', async () => {
+  for (const largura of [1440, 390, 320]) {
+    const { page } = await abrir(amb, { largura, altura: largura > 900 ? 900 : 760 });
+    const r = await page.evaluate(() => ({
+      quebrados: [...document.querySelectorAll('.cartaz__nome')].filter(n => n.getClientRects().length !== 1).map(n => n.textContent),
+      abrindo: [...document.querySelectorAll('.cartaz__par')].filter(p => {
+        const nome = p.querySelector('.cartaz__nome'), morcego = p.querySelector('.div-morcego');
+        return morcego && morcego.getBoundingClientRect().left < nome.getBoundingClientRect().left;
+      }).map(p => p.textContent.trim()),
+      // medidas de layout (sem o giro da folha): cada nome cabe dentro da folha, com 8 px de folga
+      estourando: [...document.querySelectorAll('.cartaz__nome')].filter(n => {
+        const folha = n.closest('.cartaz__folha');
+        let x = 0;
+        for (let el = n; el && el !== folha; el = el.offsetParent) x += el.offsetLeft; // o nível transformado vira offsetParent
+        return x < 8 || x + n.offsetWidth > folha.clientWidth - 8;
+      }).map(n => n.textContent),
+    }));
+    assert.deepEqual(r, { quebrados: [], abrindo: [], estourando: [] }, `${largura}`);
+  }
 });
 
 const escuros = p => p.$eval('.assinatura__tela', c => {

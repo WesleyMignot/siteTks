@@ -150,7 +150,9 @@ main > section:focus { outline: none; } /* seção focada pelo menu: o foco é p
 /* ---------- menu ---------- */
 .menu {
   position: fixed; inset: 0; z-index: 80; background: var(--preto);
-  display: flex; flex-direction: column; justify-content: center;
+  /* flex-start, não center: quando os itens não cabem (celular deitado), o excesso vai só para baixo e rola;
+     com espaço sobrando nada muda, porque a margem automática do rodapé ocupa o espaço livre */
+  display: flex; flex-direction: column; justify-content: flex-start;
   padding: 90px var(--gutter) var(--gutter); overflow-y: auto;
 }
 .menu[hidden] { display: none; }

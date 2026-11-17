@@ -2,7 +2,8 @@
 # Reels do Instagram (@djbrunintks) para a janela do hero e o fundo dos sets 6–8.
 # Uso:
 #   bash tools/baixar-reels.sh baixar   # baixa os 4 reels (sem áudio) em bruto/reels/ e gera folhas de quadros
-#   bash tools/baixar-reels.sh cortar   # corta os trechos da tabela TRECHOS em assets/video/
+#   bash tools/baixar-reels.sh cortar   # corta os trechos da tabela TRECHOS (e CELULAR) em assets/video/
+#   bash tools/baixar-reels.sh celular  # só as versões do celular em pé (tabela CELULAR)
 # Requer: yt-dlp (pip install yt-dlp) e ffmpeg. Nenhum reel se repete no site.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -27,6 +28,12 @@ sets/reel-a DO1bP5kEUF_ 1.5 4 720 30
 sets/reel-b DRuX77XEWlI 16 4 720 32
 sets/reel-c DG_97MaOjeD 1.5 4 960 30 2
 "
+# versões do celular em pé (9:16, 540×960) dos reels que viram horizontais: nome id início duração foco topo giro
+# (tabela à parte porque o giro é opcional no fim de TRECHOS). foco/topo como em tools/baixar-sets.sh.
+CELULAR="
+sets/reel-c-cel DG_97MaOjeD 1.5 4 0.50 0 2
+"
+recorte_cel() { echo "crop=w='trunc(ih*(1-$2)*9/16/2)*2':h='trunc(ih*(1-$2)/2)*2':x='max(0,min(iw-ow,$1*iw-ow/2))':y='trunc(ih*$2)',scale=540:960"; }
 
 baixar() {
   for id in $IDS; do
@@ -58,8 +65,19 @@ cortar() {
   done <<< "$TRECHOS"
 }
 
+celular() {
+  while read -r nome id ini dur foco topo giro; do
+    [ -z "$nome" ] && continue
+    local vf; vf="transpose=${giro},$(recorte_cel "$foco" "$topo")"
+    ffmpeg -nostdin -v error -y -ss "$ini" -t "$dur" -i "$BRUTO/$id.mp4" -an -vf "$vf,fps=24"       -c:v libx264 -crf "${CRF_CEL:-30}" -preset slow -pix_fmt yuv420p -movflags +faststart "$OUT/$nome.mp4"
+    ffmpeg -nostdin -v error -y -ss "$(awk "BEGIN{print $ini+0.6}")" -i "$BRUTO/$id.mp4" -frames:v 1 -vf "$vf" -q:v 4 "$OUT/$nome.jpg"
+    echo "ok $nome $(wc -c < "$OUT/$nome.mp4") bytes"
+  done <<< "$CELULAR"
+}
+
 case "${1:-}" in
   baixar) baixar ;;
-  cortar) cortar ;;
-  *) echo "uso: bash tools/baixar-reels.sh baixar|cortar"; exit 1 ;;
+  cortar) cortar; celular ;;
+  celular) celular ;;
+  *) echo "uso: bash tools/baixar-reels.sh baixar|cortar|celular"; exit 1 ;;
 esac

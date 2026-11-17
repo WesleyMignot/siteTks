@@ -1,6 +1,6 @@
 """Gera as texturas de chamas tribais (no espírito das chamas do PDF do press kit).
 
-Saída: assets/texturas/{preto-no-vermelho,vermelho-no-preto,creme-no-preto,vermelho-no-creme}.webp
+Saída: assets/texturas/{preto-no-vermelho,vermelho-no-preto,creme-no-preto,vermelho-no-creme,preto-no-creme}.webp
 Uso: python tools/gerar-texturas.py   (requer Pillow)
 
 As texturas são periódicas na horizontal (a borda direita emenda com a esquerda), porque o site as
@@ -24,6 +24,7 @@ TEXTURAS = {
     "vermelho-no-preto": (PRETO, VERMELHO, 13, 28),
     "creme-no-preto": (PRETO, CREME, 12, 24),
     "vermelho-no-creme": (CREME, VERMELHO, 14, 28),
+    "preto-no-creme": (CREME, PRETO, 15, 28),  # rodada 5: Assinatura depois da Agenda
 }
 
 

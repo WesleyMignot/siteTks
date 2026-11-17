@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { statSync, readdirSync, readFileSync } from 'node:fs';
+import { statSync, readdirSync, readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
@@ -13,7 +13,7 @@ test('fotos cor e tks ≤ 350 KB', () => {
     assert.ok(tam(`assets/img/foto-${f}-${v}.webp`) <= 350_000, `${f}-${v}`);
 });
 test('texturas ≤ 200 KB', () => {
-  for (const t of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme'])
+  for (const t of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme', 'preto-no-creme'])
     assert.ok(tam(`assets/texturas/${t}.webp`) <= 200_000, t);
 });
 test('sem clipes órfãos do reel em assets/video (os dos sets ficam em sets/)', () => {
@@ -61,6 +61,26 @@ test('sem imagens órfãs em assets/img', () => {
 });
 
 test('sem clipes órfãos em assets/video/sets', () => {
-  const usados = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-a', 'reel-b', 'reel-c'];
+  const usados = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-a', 'reel-b', 'reel-c']
+    .flatMap(n => [n, `${n}-cel`]);
   assert.deepEqual(readdirSync(join(RAIZ, 'assets/video/sets')).filter(f => !usados.includes(f.replace(/\.(mp4|jpg)$/, ''))), []);
+});
+
+// rodada 5: versões verticais (celular em pé) dos 6 sets horizontais, enquadradas no Bruno
+const SETS_CEL = ['senso', 'grau', 'ataque', 'veneno-lab', 'sensi', 'reel-c'];
+test('versões -cel dos 6 sets horizontais cabem no orçamento', () => {
+  for (const n of SETS_CEL) {
+    assert.ok(tam(`assets/video/sets/${n}-cel.mp4`) <= 700_000, `${n}-cel.mp4`);
+    const p = tam(`assets/video/sets/${n}-cel.jpg`);
+    assert.ok(p > 0 && p <= 120_000, `${n}-cel.jpg`);
+  }
+});
+
+// rodada 5: flyers da agenda, gravados pelo robô (tools/agenda.mjs)
+test('flyers da agenda cabem no orçamento e os do index.html existem', () => {
+  const pasta = join(RAIZ, 'assets/agenda');
+  const flyers = existsSync(pasta) ? readdirSync(pasta).filter(f => f.endsWith('.jpg')) : [];
+  for (const f of flyers) assert.ok(tam(`assets/agenda/${f}`) <= 120_000, f);
+  const html = readFileSync(join(RAIZ, 'index.html'), 'utf8');
+  for (const [, src] of html.matchAll(/src="(assets\/agenda\/[^"]+)"/g)) assert.ok(existsSync(join(RAIZ, src)), src);
 });

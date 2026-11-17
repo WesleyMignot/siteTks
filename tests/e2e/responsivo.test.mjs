@@ -7,7 +7,7 @@ let amb;
 before(async () => { amb = await iniciarAmbiente(); mkdirSync('tests/e2e/telas', { recursive: true }); });
 after(async () => { await amb.fechar(); });
 const espera = ms => new Promise(r => setTimeout(r, ms));
-const SECOES = ['#hero', '#carreira', '#numeros', '#producoes', '#sets', '#lineup', '#assinatura', '#contrate'];
+const SECOES = ['#hero', '#carreira', '#numeros', '#producoes', '#sets', '#lineup', '#agenda', '#assinatura', '#contrate'];
 
 for (const [largura, altura] of [[390, 844], [1440, 900]]) {
   test(`varredura ${largura}px: sem rolagem horizontal e sem erros`, async () => {

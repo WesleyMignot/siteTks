@@ -50,10 +50,10 @@ test('sem JS os divisores mostram ✦', async () => {
   assert.equal(await page.$eval('#hero .div-morcego', d => d.textContent.trim()), '✦');
 });
 
-test('menu com 5 seções numeradas', async () => {
+test('menu com 6 seções numeradas', async () => {
   const { page } = await abrir(amb);
   assert.deepEqual(await page.$$eval('#menu .menu__links a', l => l.map(a => a.getAttribute('href'))),
-    ['#carreira', '#producoes', '#sets', '#lineup', '#contrate']);
+    ['#carreira', '#producoes', '#sets', '#lineup', '#agenda', '#contrate']);
 });
 
 test('céu: faixa cheia na virada para os Sets', async () => {
@@ -138,7 +138,7 @@ test('texturas de chamas emendam sem corte quando se repetem na horizontal', asy
   const { page } = await abrir(amb);
   const r = await page.evaluate(async () => {
     const out = {};
-    for (const n of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme']) {
+    for (const n of ['preto-no-vermelho', 'vermelho-no-preto', 'creme-no-preto', 'vermelho-no-creme', 'preto-no-creme']) {
       const img = new Image(); img.src = `assets/texturas/${n}.webp`; await img.decode();
       const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
       const g = c.getContext('2d'); g.drawImage(img, 0, 0);

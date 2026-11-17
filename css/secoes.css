@@ -237,32 +237,41 @@
 
 /* ---------- line-up ---------- */
 .lineup { position: relative; padding: clamp(80px, 12vw, 180px) 0; overflow: hidden; }
-.lineup__topo, .lineup__palcos { padding-inline: var(--gutter); }
+.lineup__topo { padding-inline: var(--gutter); }
 .lineup__titulo { font-size: clamp(40px, 6vw, 96px); max-width: 14ch; margin: 28px 0 24px; }
 .lineup__intro { max-width: 72ch; font-size: 13px; font-weight: 500; text-transform: uppercase; line-height: 1.6; color: var(--creme-60); }
 /* Cartaz de festival: nomes centralizados, morcegos de separador; acendem em sequência (iniciarCartaz). */
-.cartaz { margin-top: clamp(48px, 6vw, 96px); padding-inline: var(--gutter); text-align: center; }
-.cartaz__rotulo { margin-bottom: clamp(16px, 2vw, 28px); }
-.cartaz__nacionais {
-  font-family: var(--fonte-titulo); font-weight: 400; font-size: clamp(36px, 6vw, 96px); line-height: 1.05;
-  max-width: 1200px; margin-inline: auto;
+/* cartaz de festival (rodada 5): folha preta inclinada, nomes em três níveis, palcos no rodapé, selo do Planeta Atlântida.
+   Estado final no CSS (reduzido, estático e sem JS); o modo animado parte de baixo e "carimba" os níveis (iniciarCartaz). */
+.cartaz { margin-top: clamp(48px, 6vw, 96px); padding-inline: var(--gutter); }
+.cartaz__folha {
+  position: relative; width: min(1080px, 100%); margin-inline: auto;
+  padding: clamp(26px, 3.2vw, 46px) clamp(16px, 4.2vw, 60px) clamp(22px, 2.8vw, 40px);
+  background: var(--preto); color: var(--creme); text-align: center;
+  transform: rotate(-2deg); box-shadow: 0 40px 80px rgba(60, 8, 4, .45);
+  --creme-60: rgba(241, 226, 196, .6); --linha: rgba(241, 226, 196, .15);
 }
-.cartaz__under {
-  max-width: 64ch; margin: clamp(20px, 3vw, 40px) auto 0;
-  font-weight: 700; font-size: clamp(13px, 1.4vw, 18px); line-height: 2; text-transform: uppercase; letter-spacing: .08em;
+.cartaz__folha::after { content: ''; position: absolute; inset: 0; background: var(--grao); opacity: .16; mix-blend-mode: screen; pointer-events: none; }
+.cartaz__topo { margin: 0; padding-bottom: 14px; border-bottom: 1px solid var(--linha); color: var(--creme-60); text-align: left; font-size: clamp(9px, .9vw, 12px); }
+.cartaz__topo b { color: var(--vermelho); }
+.cartaz__n1 { font-size: clamp(36px, 11.8vw, 104px); line-height: .95; margin: clamp(22px, 2.4vw, 34px) 0 12px; text-wrap: balance; }
+.cartaz__n2 { font-size: clamp(29px, 4.4vw, 64px); line-height: 1.02; margin: 0 0 clamp(18px, 1.8vw, 26px); text-wrap: balance; }
+.cartaz__n3 { max-width: 76ch; margin: 0 auto clamp(18px, 2.1vw, 30px); font-size: clamp(10.5px, 1.05vw, 15px); line-height: 1.9; }
+.cartaz__pe { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin: 0; padding-top: 16px;
+  border-top: 1px solid var(--linha); color: var(--creme-60); font-size: clamp(9px, .78vw, 11px); }
+.cartaz__pe b { color: var(--creme); }
+.cartaz__selo {
+  position: absolute; right: clamp(-34px, -2.4vw, -10px); top: clamp(-54px, calc(-60px + 1.4vw), -40px);
+  width: clamp(92px, 10.4vw, 150px); aspect-ratio: 1; margin: 0; border-radius: 50%;
+  display: grid; place-content: center; text-align: center; background: var(--vermelho); color: var(--preto);
+  box-shadow: inset 0 0 0 5px var(--preto), inset 0 0 0 8px var(--vermelho), inset 0 0 0 10px var(--preto);
 }
+.cartaz__selo-num { font-size: clamp(34px, 3.9vw, 56px); line-height: .8; }
+.cartaz__selo-txt { font-size: clamp(8px, .76vw, 11px); line-height: 1.25; }
 /* nome + morcego seguinte não se separam: o morcego nunca abre uma linha */
 .cartaz__nome, .cartaz__par { white-space: nowrap; }
-.cartaz__nacionais .morcego--div { height: .62em; margin-block: -.1em; } /* viewBox alto (curso da batida): .62em ≈ o tamanho visual antigo */
-.anima-cartaz .cartaz__nome { opacity: .18; }
-.lineup__palcos { margin-top: clamp(48px, 6vw, 96px); text-align: center; }
-.lineup__palcos h3 { color: var(--creme-60); margin-bottom: 14px; }
-.lineup__palcos ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-.lineup__palcos li {
-  padding: 8px 16px; border: 2px solid var(--preto); border-radius: 99px;
-  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
-}
-.lineup__palcos small { font-size: 1em; color: var(--creme-60); font-weight: 500; }
+.cartaz .div-morcego { color: var(--vermelho); }
+.cartaz__n1 .morcego--div, .cartaz__n2 .morcego--div { height: .62em; margin-block: -.1em; } /* viewBox alto (curso da batida): .62em ≈ o tamanho visual antigo */
 
 /* ---------- assinatura (morcegos formam o "Brunin": js/assinatura.js) ---------- */
 .assinatura { position: relative; }
@@ -333,7 +342,8 @@
 #producoes { --chamas: url("../assets/texturas/creme-no-preto.webp"); }
 #sets { background: var(--preto); --chamas: url("../assets/texturas/creme-no-preto.webp"); --chamas-giro: scaleY(-1); --chamas-sentido: to top; }
 #lineup { background: var(--vermelho); --chamas: url("../assets/texturas/preto-no-vermelho.webp"); }
-#assinatura { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); }
+#agenda { background: var(--preto); --chamas: url("../assets/texturas/vermelho-no-preto.webp"); }
+#assinatura { --chamas: url("../assets/texturas/preto-no-creme.webp"); } /* desde a rodada 5 vem depois da Agenda (preta) */
 #contrate { --chamas: url("../assets/texturas/vermelho-no-creme.webp"); --chamas-giro: scaleY(-1); --chamas-sentido: to top; }
 .producoes__titulo, .sets__titulo, .lineup__titulo { font-size: clamp(48px, 7vw, 112px); }
 
@@ -344,3 +354,42 @@
 .carreira__texto { font-size: 14px; line-height: 1.7; }
 .numero__valor { font-size: clamp(56px, 8vw, 128px); }
 @media (max-width: 820px) { .carreira__grade { grid-template-columns: 1fr; } }
+
+/* ---------- agenda (rodada 5): próximos shows, gerados pelo robô (tools/agenda.mjs) a partir do Ayon ---------- */
+.agenda { padding: clamp(80px, 12vw, 180px) var(--gutter); }
+.agenda__titulo { font-size: clamp(48px, 7vw, 112px); max-width: 14ch; margin: 28px 0 clamp(32px, 4vw, 56px); }
+.agenda__cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.evento {
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  background: #181c1b; border: 1px solid var(--linha); border-radius: 6px;
+}
+.evento__flyer { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: cover; }
+/* sem flyer (falhou ao baixar): fundo neutro com o logo */
+.evento__flyer--vazio { background: url("../assets/logo/logo-creme.png") center / 42% auto no-repeat, var(--preto); }
+.evento__selo {
+  position: absolute; left: 12px; top: 12px; margin: 0; padding: 6px 10px 5px; border-radius: 4px;
+  display: flex; flex-direction: column; align-items: center; background: var(--vermelho); color: var(--preto);
+}
+.evento__selo .titulo { font-size: 40px; line-height: .8; }
+.evento__selo .rotulo { font-size: 10px; }
+.evento__corpo { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 16px 18px 18px; }
+.evento__quando { margin: 0; color: var(--creme-60); }
+.evento__nome { margin: 0; font-size: clamp(28px, 2.4vw, 34px); line-height: .95; overflow-wrap: anywhere; }
+.evento__line { margin: 0; font-size: 12px; color: var(--creme-60); overflow-wrap: anywhere; }
+.evento__line b { color: var(--creme); }
+.evento__link { margin-top: auto; align-self: flex-start; }
+.agenda__vazia { padding: clamp(32px, 4vw, 48px) 0; border-block: 1px solid var(--linha); }
+.agenda__vazia-titulo { margin: 0 0 14px; font-size: clamp(44px, 5vw, 72px); color: var(--vermelho); }
+.agenda__vazia p:not(.agenda__vazia-titulo) { max-width: 52ch; margin: 0 0 22px; color: var(--creme-60); }
+.agenda__ayon { margin: 22px 0 0; color: var(--creme-60); font-size: 11px; }
+.agenda__ayon a { color: inherit; }
+.agenda__ayon b { color: var(--creme); }
+@media (max-width: 820px) {
+  /* carrossel: rola por dentro (a página nunca rola de lado); encosta nas bordas e mostra a ponta do próximo */
+  .agenda__cartoes {
+    display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter);
+  }
+  .agenda__cartoes::-webkit-scrollbar { display: none; }
+  .evento { flex: 0 0 min(300px, 82%); scroll-snap-align: start; }
+}
